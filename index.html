@@ -50,13 +50,24 @@
     .chapter-two {position:relative;background:radial-gradient(ellipse at 65% 5%,#113344 0%,#061b2a 46%,#04121b 85%);min-height:102svh;display:flex;align-items:center;padding:112px 30px 100px;overflow:hidden}
     .orb {position:absolute;width:min(95vw,590px);aspect-ratio:1;border:1px solid rgba(130,232,216,.17);border-radius:50%;right:-48%;top:-5%;box-shadow:0 0 0 38px rgba(130,232,216,.025),0 0 0 86px rgba(130,232,216,.018);pointer-events:none}
     .next-inner {position:relative;z-index:1;max-width:640px;margin:0 auto;width:100%}
-    .next-inner .eyebrow {margin-bottom:34px}
+    .next-inner .eyebrow {margin-bottom:22px}
     .next-inner h2 {font-size:clamp(28px,8vw,49px);font-weight:740;letter-spacing:-.048em;line-height:1.38;word-break:keep-all}
-    .big-number {font:700 clamp(100px,30vw,188px)/1.12 system-ui;letter-spacing:-.095em;color:var(--mint);margin:33px 0 13px;white-space:nowrap}
+    .big-number {font:700 clamp(90px,27vw,176px)/1 system-ui;letter-spacing:-.095em;color:var(--mint);margin:24px 0 16px;white-space:nowrap}
+    .big-number span {font-size:.37em;letter-spacing:-.05em;margin-left:.14em}
+    .ocean-share {margin:0 0 20px}
+    .ocean-share-track {display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px}
+    .ocean-share-track span {height:clamp(18px,5vw,32px);background:#193c49;border-radius:2px}
+    .ocean-share-track span:nth-child(-n+6) {background:var(--mint)}
+    .ocean-share figcaption {display:flex;justify-content:space-between;gap:12px;margin-top:10px;color:#dbeff0;font-size:12px}
+    .ocean-share figcaption span:first-child {color:var(--mint);font-weight:700}
+    @keyframes reveal-share {from{background:#193c49}to{background:var(--mint)}}
+    @media (prefers-reduced-motion:no-preference) {
+      .ocean-share.is-visible .ocean-share-track span:nth-child(-n+6) {animation:reveal-share .5s both;animation-delay:calc(var(--step) * 90ms)}
+    }
     .next-inner p {font-size:15px;line-height:1.85;color:rgba(219,236,237,.82);word-break:keep-all}
     .fine-line {height:1px;background:linear-gradient(90deg,rgba(130,232,216,.4),transparent);margin:42px 0 25px}
     .disclaimer {font-size:11px!important;color:rgba(214,232,231,.55)!important}
-    .endlabel {font:700 10px/1.3 system-ui;color:var(--mint);letter-spacing:.2em;margin-top:48px}
+    .source-link {color:inherit;text-underline-offset:3px}
     .restart {display:inline-flex;align-items:center;gap:9px;margin-top:18px;border:1px solid rgba(130,232,216,.5);border-radius:100px;background:transparent;color:#e8f7f6;font:600 12px/1.2 system-ui;padding:15px 20px;cursor:pointer;touch-action:manipulation}
     .restart:focus-visible {outline:2px solid var(--mint);outline-offset:4px}
     .video-play {position:absolute;z-index:32;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 145px);transform:translateX(-50%);white-space:nowrap;display:none;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.45);border-radius:24px;padding:10px 15px;background:rgba(1,14,20,.65);color:#fff;font-size:12px;cursor:pointer}
@@ -104,16 +115,24 @@
         <button class="video-play" id="playVideo" type="button">▶ 영상 재생하기</button>
       </div>
     </section>
-    <section class="chapter-two" id="next" aria-label="다음 장면 미리보기">
+    <section class="chapter-two" id="next" aria-labelledby="highSeasTitle">
       <div class="orb" aria-hidden="true"></div>
       <div class="next-inner">
         <p class="eyebrow">02 / THE UNSEEN OCEAN</p>
-        <h2>그 바다는,<br/>생각보다 훨씬 넓습니다.</h2>
-        <div class="big-number" aria-label="약 60퍼센트">60<span style="font-size:.37em;letter-spacing:-.05em">%</span></div>
-        <p>전 세계 바다의 약 60%는 어느 한 국가의 관할권 밖에 있는 공해입니다.</p>
+        <h2 id="highSeasTitle">바다 열 칸 중<br/>여섯 칸은 공해입니다.</h2>
+        <div class="big-number" aria-hidden="true">60<span>%</span></div>
+        <figure class="ocean-share" id="oceanShare">
+          <div class="ocean-share-track" aria-hidden="true">
+            <span style="--step:0"></span><span style="--step:1"></span><span style="--step:2"></span>
+            <span style="--step:3"></span><span style="--step:4"></span><span style="--step:5"></span>
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <figcaption><span>공해 약 60%</span><span>국가 관할 해역 약 40%</span></figcaption>
+        </figure>
+        <p>공해는 어느 한 국가의 관할권도 미치지 않는 해역입니다. 이 넓은 바다를 보호하려면 여러 나라가 함께 움직여야 합니다.</p>
+        <p class="disclaimer">면적 기준 · <a class="source-link" href="https://es.greenpeace.org/es/wp-content/uploads/sites/3/2023/09/30x30-From-GOT-to-protection-at-sea-Full-report.pdf">그린피스 국제본부 보고서</a>의 61%를 반올림</p>
         <div class="fine-line"></div>
         <p class="disclaimer">2025 그린피스 동아시아지부 연차보고서 기반 · 비공식 디자인 시연</p>
-        <p class="endlabel">SCENE 01 COMPLETE · NEXT SCENE PREVIEW</p>
         <button class="restart" type="button" id="restart">↺ 첫 장면 다시 체험하기</button>
       </div>
     </section>
@@ -181,6 +200,15 @@
           const visible=entries[0]?.isIntersecting;
           if(!visible)video.pause();else if(!document.hidden)attemptPlay();
         },{threshold:.02}); observer.observe(stage);
+        if (!reduced) {
+          const share = document.getElementById('oceanShare');
+          const reveal = new IntersectionObserver(([entry]) => {
+            if (!entry.isIntersecting) return;
+            share.classList.add('is-visible');
+            reveal.disconnect();
+          }, {threshold:.4});
+          reveal.observe(share);
+        }
       }
       document.getElementById('restart').addEventListener('click',()=>window.scrollTo({top:0,behavior:reduced?'auto':'smooth'}));
     })();
