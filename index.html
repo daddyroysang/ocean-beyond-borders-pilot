@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#04121b" />
+  <meta name="description" content="바다에는 국경이 없습니다. 그린피스 2025 연차보고서를 모바일 시네마틱 경험으로 재해석한 비공식 쇼케이스." />
+  <title>국경 밖의 바다 — Mobile Cinematic Pilot</title>
+  <link rel="preload" as="image" href="ocean-poster.jpg" fetchpriority="high" />
+  <style>
+    :root {color-scheme: dark; --night:#04121b; --ink:#061b29; --mint:#82e8d8; --white:#f4f8f5; --p:0; }
+    * {box-sizing:border-box}
+    html {background:var(--night);scroll-behavior:auto;-webkit-text-size-adjust:100%}
+    body {margin:0;background:var(--night);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;overflow-x:hidden;overscroll-behavior-x:none}
+    .stage {height:295svh;min-height:1700px;position:relative}
+    .viewport {position:sticky;top:0;height:100vh;height:100svh;min-height:480px;isolation:isolate;overflow:hidden;background:#052330}
+    .ocean {position:absolute;inset:-2.5%;z-index:-4;transform:translate3d(0,0,0) scale(1.012);will-change:transform;overflow:hidden}
+    .ocean video, .ocean .poster {position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top}
+    .ocean .poster {background:#06212f url('ocean-poster.jpg') center top/cover no-repeat}
+    .ocean video {opacity:0;transition:opacity .7s ease}
+    .ocean.video-ready video {opacity:1}
+    .ocean.video-ready .poster {opacity:0;transition:opacity .8s ease}
+    .shadow {pointer-events:none;position:absolute;inset:0;z-index:-3;background:linear-gradient(to bottom,rgba(1,16,25,.23) 0%,transparent 22%,rgba(1,9,18,.28) 45%,rgba(0,7,14,.32) 60%,rgba(0,5,12,.65) 100%)}
+    .dive-shadow {pointer-events:none;position:absolute;inset:0;z-index:-2;background:#03121d;opacity:0;will-change:opacity}
+    .film-grain {pointer-events:none;position:absolute;z-index:-1;inset:0;background-image:url('data:image/svg+xml,%3Csvg viewBox=%220 0 160 160%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%22.6%22 numOctaves=%222%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%22.07%22/%3E%3C/svg%3E');opacity:.18;mix-blend-mode:soft-light}
+    .topbar {position:absolute;top:0;left:0;right:0;display:flex;align-items:start;justify-content:space-between;z-index:30;padding:calc(env(safe-area-inset-top,0px) + 22px) max(22px,env(safe-area-inset-right,0px)) 0 max(22px,env(safe-area-inset-left,0px));gap:12px}
+    .mark {display:flex;flex-direction:column;gap:4px}
+    .mark strong {font-family:system-ui,sans-serif;font-size:11px;line-height:1.1;letter-spacing:.24em;font-weight:800}
+    .mark small {font-family:system-ui,sans-serif;font-size:9px;line-height:1.25;letter-spacing:.1em;color:rgba(235,249,249,.68)}
+    .pilot {font-size:9px;letter-spacing:.15em;line-height:1.3;text-align:right;color:rgba(235,249,249,.82);padding-top:1px}
+    .chapter-mark {position:absolute;left:max(24px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 23px);font:600 10px/1.4 system-ui;letter-spacing:.18em;color:rgba(224,245,245,.72);pointer-events:none}
+    .progress {position:absolute;right:max(18px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);height:76px;width:2px;border-radius:5px;background:rgba(255,255,255,.22);z-index:20;pointer-events:none}
+    .progress-fill {height:0%;width:100%;border-radius:5px;background:var(--mint);box-shadow:0 0 10px rgba(130,232,216,.6)}
+    .copy-layer {position:absolute;z-index:10;inset:0;display:flex;align-items:center;justify-content:center;padding:10px 35px 10px 27px;pointer-events:none}
+    .copy {position:absolute;left:max(27px,env(safe-area-inset-left,0px));right:max(36px,env(safe-area-inset-right,0px));top:45%;transform:translate3d(0,0,0);will-change:opacity,transform;opacity:0;max-width:550px}
+    .eyebrow {margin:0 0 24px;font-size:10px;letter-spacing:.22em;font-weight:700;color:var(--mint)}
+    h1,h2,p {margin:0}
+    h1 {font-size:clamp(36px,11vw,64px);letter-spacing:-.052em;line-height:1.27;font-weight:730;word-break:keep-all;text-wrap:balance;text-shadow:0 2px 18px rgba(0,13,19,.2)}
+    .copy--one {opacity:1} /* fallback: first caption remains visible without JavaScript */
+    .copy--one h1 em {font-style:normal;color:#ffffff}
+    .copy--two h2 {font-size:clamp(35px,10.4vw,62px);letter-spacing:-.049em;line-height:1.3;font-weight:740;word-break:keep-all;text-wrap:balance}
+    .copy--two h2 span {color:var(--mint)}
+    .copy--two .under {margin-top:20px;font-size:13px;color:rgba(236,246,247,.74);line-height:1.8;letter-spacing:-.015em}
+    .copy--three {text-align:left;top:48%}
+    .copy--three p.main {font-size:clamp(28px,8vw,48px);letter-spacing:-.048em;font-weight:690;line-height:1.45;word-break:keep-all}
+    .copy--three p.sub {margin-top:19px;font-size:13px;color:rgba(210,230,231,.8);line-height:1.85}
+    .scroll-hint {position:absolute;z-index:21;bottom:calc(env(safe-area-inset-bottom,0px) + 68px);right:max(32px,env(safe-area-inset-right,0px));display:flex;align-items:center;gap:10px;color:#e8f7f6;font:600 9px/1.2 system-ui;letter-spacing:.16em;transition:opacity .2s ease}
+    .scroll-hint:after {content:'';height:33px;width:1px;display:inline-block;background:linear-gradient(var(--mint),transparent);animation:flow 2.6s ease-in-out infinite}
+    @keyframes flow {0%,100%{transform:translateY(-3px);opacity:.65}50%{transform:translateY(5px);opacity:1}}
+    .chapter-two {position:relative;background:radial-gradient(ellipse at 65% 5%,#113344 0%,#061b2a 46%,#04121b 85%);min-height:102svh;display:flex;align-items:center;padding:112px 30px 100px;overflow:hidden}
+    .orb {position:absolute;width:min(95vw,590px);aspect-ratio:1;border:1px solid rgba(130,232,216,.17);border-radius:50%;right:-48%;top:-5%;box-shadow:0 0 0 38px rgba(130,232,216,.025),0 0 0 86px rgba(130,232,216,.018);pointer-events:none}
+    .next-inner {position:relative;z-index:1;max-width:640px;margin:0 auto;width:100%}
+    .next-inner .eyebrow {margin-bottom:34px}
+    .next-inner h2 {font-size:clamp(28px,8vw,49px);font-weight:740;letter-spacing:-.048em;line-height:1.38;word-break:keep-all}
+    .big-number {font:700 clamp(100px,30vw,188px)/1.12 system-ui;letter-spacing:-.095em;color:var(--mint);margin:33px 0 13px;white-space:nowrap}
+    .next-inner p {font-size:15px;line-height:1.85;color:rgba(219,236,237,.82);word-break:keep-all}
+    .fine-line {height:1px;background:linear-gradient(90deg,rgba(130,232,216,.4),transparent);margin:42px 0 25px}
+    .disclaimer {font-size:11px!important;color:rgba(214,232,231,.55)!important}
+    .endlabel {font:700 10px/1.3 system-ui;color:var(--mint);letter-spacing:.2em;margin-top:48px}
+    .restart {display:inline-flex;align-items:center;gap:9px;margin-top:18px;border:1px solid rgba(130,232,216,.5);border-radius:100px;background:transparent;color:#e8f7f6;font:600 12px/1.2 system-ui;padding:15px 20px;cursor:pointer;touch-action:manipulation}
+    .restart:focus-visible {outline:2px solid var(--mint);outline-offset:4px}
+    .video-play {position:absolute;z-index:32;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 145px);transform:translateX(-50%);white-space:nowrap;display:none;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.45);border-radius:24px;padding:10px 15px;background:rgba(1,14,20,.65);color:#fff;font-size:12px;cursor:pointer}
+    .video-play.visible {display:flex}
+    @media (min-width:700px) { .topbar {padding:38px 6vw 0} .mark strong{font-size:15px}.mark small{font-size:10px}.pilot{font-size:10px}.copy{left:12vw;top:44%;right:auto}.copy--two h2{max-width:670px}.chapter-mark{left:6vw}.progress{right:6vw}.scroll-hint{right:8vw}.chapter-two{padding:140px 10vw}.orb{right:-12%;top:-25%} }
+    @media (max-height:700px){.copy{top:41%}.scroll-hint{bottom:calc(env(safe-area-inset-bottom,0px) + 52px)}.chapter-mark{bottom:calc(env(safe-area-inset-bottom,0px) + 19px)}}
+    @media (prefers-reduced-motion:reduce) {.ocean video{display:none}.ocean{transform:none!important}.copy{transition:none}.scroll-hint:after{animation:none} }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="stage" id="intro" aria-label="첫 번째 장면: 바다에는 국경이 없습니다">
+      <div class="viewport" id="viewport">
+        <div class="ocean" id="ocean">
+          <div class="poster"></div>
+          <video id="heroVideo" muted loop playsinline webkit-playsinline autoplay preload="metadata" poster="ocean-poster.jpg" aria-hidden="true">
+            <source src="ocean.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <div class="shadow"></div>
+        <div class="dive-shadow" id="diveShadow"></div>
+        <div class="film-grain"></div>
+        <header class="topbar">
+          <div class="mark"><strong>OCEAN PROJECT</strong><small>2025 IMPACT REPORT</small></div>
+          <div class="pilot">MOBILE EXPERIENCE<br/>DESIGN PILOT</div>
+        </header>
+        <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="copy-layer">
+          <div class="copy copy--one" id="lineOne">
+            <p class="eyebrow">01 / INTO THE OCEAN</p>
+            <h1><em>바다에는</em><br/>국경이 없습니다.</h1>
+          </div>
+          <div class="copy copy--two" id="lineTwo">
+            <p class="eyebrow">BEYOND BORDERS</p>
+            <h2>하지만 모든 바다가<br/><span>보호받는 것은<br/>아닙니다.</span></h2>
+          </div>
+          <div class="copy copy--three" id="lineThree">
+            <p class="eyebrow">A STORY WORTH EXPLORING</p>
+            <p class="main">우리가 미처 알지 못했던<br/>바다의 이야기가 시작됩니다.</p>
+            <p class="sub">손끝을 따라, 조금 더 깊이 내려가 볼까요?</p>
+          </div>
+        </div>
+        <div class="chapter-mark" aria-hidden="true">CHAPTER 01 <span style="opacity:.55">— 05</span></div>
+        <div class="scroll-hint" id="scrollHint" aria-hidden="true">SCROLL TO DIVE</div>
+        <button class="video-play" id="playVideo" type="button">▶ 영상 재생하기</button>
+      </div>
+    </section>
+    <section class="chapter-two" id="next" aria-label="다음 장면 미리보기">
+      <div class="orb" aria-hidden="true"></div>
+      <div class="next-inner">
+        <p class="eyebrow">02 / THE UNSEEN OCEAN</p>
+        <h2>그 바다는,<br/>생각보다 훨씬 넓습니다.</h2>
+        <div class="big-number" aria-label="약 60퍼센트">60<span style="font-size:.37em;letter-spacing:-.05em">%</span></div>
+        <p>전 세계 바다의 약 60%는 어느 한 국가의 관할권 밖에 있는 공해입니다.</p>
+        <div class="fine-line"></div>
+        <p class="disclaimer">2025 그린피스 동아시아지부 연차보고서 기반 · 비공식 디자인 시연</p>
+        <p class="endlabel">SCENE 01 COMPLETE · NEXT SCENE PREVIEW</p>
+        <button class="restart" type="button" id="restart">↺ 첫 장면 다시 체험하기</button>
+      </div>
+    </section>
+  </main>
+  <script>
+    (function () {
+      'use strict';
+      const stage = document.getElementById('intro');
+      const ocean = document.getElementById('ocean');
+      const video = document.getElementById('heroVideo');
+      const diveShadow = document.getElementById('diveShadow');
+      const progressFill = document.getElementById('progressFill');
+      const scrollHint = document.getElementById('scrollHint');
+      const button = document.getElementById('playVideo');
+      const layers = [document.getElementById('lineOne'),document.getElementById('lineTwo'),document.getElementById('lineThree')];
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const dataSaver = navigator.connection && navigator.connection.saveData;
+      const clamp = v => Math.max(0, Math.min(1, v));
+      const smooth = (a,b,x) => {const t=clamp((x-a)/(b-a));return t*t*(3-2*t)};
+      let ticking=false;
+      let phase=-1;
+      function update () {
+        ticking=false;
+        const box=stage.getBoundingClientRect();
+        const distance=Math.max(1,box.height-window.innerHeight);
+        const p=clamp(-box.top/distance);
+        const a=1-smooth(.15,.32,p);
+        const b=smooth(.24,.41,p)*(1-smooth(.67,.82,p));
+        const c=smooth(.78,.93,p);
+        const vals=[a,b,c];
+        layers.forEach((layer,i)=>{
+          const alpha=vals[i];
+          layer.style.opacity=alpha.toFixed(3);
+          const dy=i===0 ? (1-alpha)*-15 : (1-alpha)*16;
+          layer.style.transform=`translate3d(0,${dy.toFixed(2)}px,0)`;
+          layer.setAttribute('aria-hidden', alpha < .1 ? 'true' : 'false');
+        });
+        if (!reduced) {
+          ocean.style.transform=`translate3d(0,${(-2*p).toFixed(2)}%,0) scale(${(1.012+.09*p).toFixed(4)})`;
+        }
+        diveShadow.style.opacity=(.02 + .75*smooth(.20,.95,p)).toFixed(3);
+        progressFill.style.height=Math.round(p*100)+'%';
+        scrollHint.style.opacity=(1-smooth(.04,.18,p)).toFixed(2);
+        if (p>.12 && phase!==1) {phase=1;scrollHint.style.pointerEvents='none'}
+      }
+      function schedule () {if(!ticking){ticking=true;requestAnimationFrame(update)}}
+      addEventListener('scroll',schedule,{passive:true});
+      addEventListener('resize',schedule,{passive:true});
+      addEventListener('pageshow',schedule);
+      schedule();
+      video.addEventListener('playing',()=>{ocean.classList.add('video-ready');button.classList.remove('visible')});
+      video.addEventListener('error',()=>{ocean.classList.remove('video-ready');button.classList.remove('visible')});
+      function attemptPlay () {
+        if (reduced||dataSaver) return;
+        const promise=video.play();
+        if(promise && typeof promise.catch==='function')promise.catch(()=>button.classList.add('visible'));
+      }
+      if (!reduced&&!dataSaver){attemptPlay();}
+      else {video.pause();}
+      button.addEventListener('click',attemptPlay);
+      document.addEventListener('visibilitychange',()=>{if(document.hidden)video.pause();else attemptPlay()});
+      if ('IntersectionObserver' in window) {
+        const observer=new IntersectionObserver((entries)=>{
+          const visible=entries[0]?.isIntersecting;
+          if(!visible)video.pause();else if(!document.hidden)attemptPlay();
+        },{threshold:.02}); observer.observe(stage);
+      }
+      document.getElementById('restart').addEventListener('click',()=>window.scrollTo({top:0,behavior:reduced?'auto':'smooth'}));
+    })();
+  </script>
+</body>
+</html>
+
