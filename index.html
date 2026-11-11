@@ -63,7 +63,7 @@
     .video-play.visible {display:flex}
     @media (min-width:700px) { .topbar {padding:38px 6vw 0} .mark strong{font-size:15px}.mark small{font-size:10px}.pilot{font-size:10px}.copy{left:12vw;top:44%;right:auto}.copy--two h2{max-width:670px}.chapter-mark{left:6vw}.progress{right:6vw}.scroll-hint{right:8vw}.chapter-two{padding:140px 10vw}.orb{right:-12%;top:-25%} }
     @media (max-height:700px){.copy{top:41%}.scroll-hint{bottom:calc(env(safe-area-inset-bottom,0px) + 52px)}.chapter-mark{bottom:calc(env(safe-area-inset-bottom,0px) + 19px)}}
-    @media (prefers-reduced-motion:reduce) {.ocean video{display:none}.ocean{transform:none!important}.copy{transition:none}.scroll-hint:after{animation:none} }
+    @media (prefers-reduced-motion:reduce) {.ocean video{transition:none}.ocean{transform:none!important}.copy{transition:none}.scroll-hint:after{animation:none} }
   </style>
 </head>
 <body>
@@ -166,14 +166,15 @@
       schedule();
       video.addEventListener('playing',()=>{ocean.classList.add('video-ready');button.classList.remove('visible')});
       video.addEventListener('error',()=>{ocean.classList.remove('video-ready');button.classList.remove('visible')});
+      let manualPlayback = false;
       function attemptPlay () {
-        if (reduced||dataSaver) return;
+        if ((reduced||dataSaver) && !manualPlayback) return;
         const promise=video.play();
         if(promise && typeof promise.catch==='function')promise.catch(()=>button.classList.add('visible'));
       }
       if (!reduced&&!dataSaver){attemptPlay();}
-      else {video.pause();}
-      button.addEventListener('click',attemptPlay);
+      else {video.pause();button.classList.add('visible');}
+      button.addEventListener('click',()=>{manualPlayback=true;attemptPlay()});
       document.addEventListener('visibilitychange',()=>{if(document.hidden)video.pause();else attemptPlay()});
       if ('IntersectionObserver' in window) {
         const observer=new IntersectionObserver((entries)=>{
@@ -186,4 +187,3 @@
   </script>
 </body>
 </html>
-
