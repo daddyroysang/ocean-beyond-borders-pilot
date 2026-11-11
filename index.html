@@ -70,6 +70,20 @@
     .source-link {color:inherit;text-underline-offset:3px}
     .restart {display:inline-flex;align-items:center;gap:9px;margin-top:18px;border:1px solid rgba(130,232,216,.5);border-radius:100px;background:transparent;color:#e8f7f6;font:600 12px/1.2 system-ui;padding:15px 20px;cursor:pointer;touch-action:manipulation}
     .restart:focus-visible {outline:2px solid var(--mint);outline-offset:4px}
+    .chapter-next {text-decoration:none}
+    .chapter-three {position:relative;isolation:isolate;background:#04121b;overflow:hidden;padding:clamp(76px,14vw,140px) max(24px,6vw) 88px}
+    .chapter-three::before {content:'';position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,#04121b 0%,rgba(4,18,27,.8) 38%,#04121b 88%),url('ocean-poster.jpg') center 23%/cover no-repeat;opacity:.68}
+    .chapter-three .next-inner {max-width:760px}
+    .treaty-steps {list-style:none;counter-reset:steps;margin:34px 0 24px;padding:0}
+    .treaty-steps li {counter-increment:steps;display:grid;grid-template-columns:2.5rem minmax(0,1fr);gap:14px;padding:19px 0;border-top:1px solid rgba(130,232,216,.27)}
+    .treaty-steps li:last-child {border-bottom:1px solid rgba(130,232,216,.27)}
+    .treaty-steps li::before {content:counter(steps,decimal-leading-zero);color:var(--mint);font:600 13px/1.7 system-ui;letter-spacing:.09em}
+    .treaty-steps h3 {margin:0 0 4px;font-size:clamp(18px,4vw,22px);letter-spacing:-.02em}
+    .treaty-steps p {margin:0}
+    @keyframes reveal-treaty-step {from{opacity:.55;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @media (prefers-reduced-motion:no-preference) {
+      .treaty-steps.is-visible li {animation:reveal-treaty-step .55s both;animation-delay:calc(var(--step) * 110ms)}
+    }
     .video-play {position:absolute;z-index:32;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 145px);transform:translateX(-50%);white-space:nowrap;display:none;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.45);border-radius:24px;padding:10px 15px;background:rgba(1,14,20,.65);color:#fff;font-size:12px;cursor:pointer}
     .video-play.visible {display:flex}
     @media (min-width:700px) { .topbar {padding:38px 6vw 0} .mark strong{font-size:15px}.mark small{font-size:10px}.pilot{font-size:10px}.copy{left:12vw;top:44%;right:auto}.copy--two h2{max-width:670px}.chapter-mark{left:6vw}.progress{right:6vw}.scroll-hint{right:8vw}.chapter-two{padding:140px 10vw}.orb{right:-12%;top:-25%} }
@@ -133,6 +147,20 @@
         <p class="disclaimer">면적 기준 · <a class="source-link" href="https://es.greenpeace.org/es/wp-content/uploads/sites/3/2023/09/30x30-From-GOT-to-protection-at-sea-Full-report.pdf">그린피스 국제본부 보고서</a>의 61%를 반올림</p>
         <div class="fine-line"></div>
         <p class="disclaimer">2025 그린피스 동아시아지부 연차보고서 기반 · 비공식 디자인 시연</p>
+        <a class="restart chapter-next" href="#protect">공해를 지키는 방법 ↓</a>
+      </div>
+    </section>
+    <section class="chapter-three" id="protect" aria-labelledby="protectTitle">
+      <div class="next-inner">
+        <p class="eyebrow">03 / PROTECTING THE HIGH SEAS</p>
+        <h2 id="protectTitle">함께 쓰는 바다,<br/>어떻게 지킬까요?</h2>
+        <p>2026년 1월 17일 발효된 유엔 공해협약(BBNJ)은 국가들이 공해에 해양보호구역을 만들 수 있는 절차를 마련했습니다.</p>
+        <ol class="treaty-steps" id="treatySteps" aria-label="해양보호구역 지정 절차">
+          <li style="--step:0"><div><h3>보호가 필요한 곳을 제안합니다</h3><p>협약 당사국이 과학적 근거를 바탕으로 보호할 해역과 관리 방안을 제안합니다.</p></div></li>
+          <li style="--step:1"><div><h3>근거와 의견을 검토합니다</h3><p>과학기술기구가 제안서를 검토하고, 사무국은 관련 국가와 원주민, 지역 공동체 등의 의견을 모읍니다.</p></div></li>
+          <li style="--step:2"><div><h3>함께 결정하고 관리합니다</h3><p>당사국총회가 보호구역 지정과 관련 조치를 결정할 수 있습니다. 시행 후에는 효과를 점검합니다.</p></div></li>
+        </ol>
+        <p class="disclaimer"><a class="source-link" href="https://www.un.org/bbnjagreement/en">유엔 공해협약</a> · <a class="source-link" href="https://www.un.org/bbnjagreement/en/bbnj-agreement/text-bbnj-agreement">협약문 제19~26조</a></p>
         <button class="restart" type="button" id="restart">↺ 첫 장면 다시 체험하기</button>
       </div>
     </section>
@@ -201,13 +229,15 @@
           if(!visible)video.pause();else if(!document.hidden)attemptPlay();
         },{threshold:.02}); observer.observe(stage);
         if (!reduced) {
-          const share = document.getElementById('oceanShare');
-          const reveal = new IntersectionObserver(([entry]) => {
-            if (!entry.isIntersecting) return;
-            share.classList.add('is-visible');
-            reveal.disconnect();
+          const reveal = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+              if (entry.intersectionRatio < .4) continue;
+              entry.target.classList.add('is-visible');
+              reveal.unobserve(entry.target);
+            }
           }, {threshold:.4});
-          reveal.observe(share);
+          reveal.observe(document.getElementById('oceanShare'));
+          reveal.observe(document.getElementById('treatySteps'));
         }
       }
       document.getElementById('restart').addEventListener('click',()=>window.scrollTo({top:0,behavior:reduced?'auto':'smooth'}));
