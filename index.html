@@ -60,10 +60,8 @@
     .ocean-share-track span:nth-child(-n+6) {background:var(--mint)}
     .ocean-share figcaption {display:flex;justify-content:space-between;gap:12px;margin-top:10px;color:#dbeff0;font-size:12px}
     .ocean-share figcaption span:first-child {color:var(--mint);font-weight:700}
-    @media (prefers-reduced-motion:no-preference) {
-      .ocean-share.has-scroll-motion .ocean-share-track span:nth-child(-n+6) {position:relative;background:#193c49;overflow:hidden}
-      .ocean-share.has-scroll-motion .ocean-share-track span:nth-child(-n+6)::before {content:'';position:absolute;inset:0;background:var(--mint);transform-origin:left;transform:scaleX(var(--fill,0))}
-    }
+    .ocean-share.has-scroll-motion .ocean-share-track span:nth-child(-n+6) {position:relative;background:#193c49;overflow:hidden}
+    .ocean-share.has-scroll-motion .ocean-share-track span:nth-child(-n+6)::before {content:'';position:absolute;inset:0;background:var(--mint);transform-origin:left;transform:scaleX(var(--fill,0))}
     .next-inner p {font-size:15px;line-height:1.85;color:rgba(219,236,237,.82);word-break:keep-all}
     .fine-line {height:1px;background:linear-gradient(90deg,rgba(130,232,216,.4),transparent);margin:42px 0 25px}
     .disclaimer {font-size:11px!important;color:rgba(214,232,231,.55)!important}
@@ -81,11 +79,11 @@
     .treaty-steps h3 {margin:0 0 4px;font-size:clamp(18px,4vw,22px);letter-spacing:-.02em}
     .treaty-steps p {margin:0}
     .treaty-steps li {position:relative;isolation:isolate}
-    @media (prefers-reduced-motion:no-preference) {
-      .treaty-steps.has-scroll-motion li::after {content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(130,232,216,.16),transparent 85%);opacity:var(--focus,0);pointer-events:none}
-      .treaty-steps.has-scroll-motion li::before {transform:translateX(var(--shift,0px))}
-      .treaty-steps.has-scroll-motion h3 {color:color-mix(in srgb,var(--mint) var(--emphasis,0%),var(--white))}
-    }
+    .treaty-steps.has-scroll-motion li::after {content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(130,232,216,.16),transparent 85%);opacity:var(--focus,0);pointer-events:none}
+    .treaty-steps.has-scroll-motion li::before {transform:translateX(var(--shift,0px))}
+    .treaty-steps.has-scroll-motion h3 {color:color-mix(in srgb,var(--mint) var(--emphasis,0%),var(--white))}
+    .motion-toggle {display:block;margin:18px 0;color:var(--mint);background:none;border:0;padding:5px 0;text-decoration:underline;text-underline-offset:4px;font:inherit;cursor:pointer}
+    .motion-toggle[hidden] {display:none}
     .chapter-three .next-inner {padding-bottom:clamp(30px,18svh,150px)}
     .video-play {position:absolute;z-index:32;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 145px);transform:translateX(-50%);white-space:nowrap;display:none;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.45);border-radius:24px;padding:10px 15px;background:rgba(1,14,20,.65);color:#fff;font-size:12px;cursor:pointer}
     .video-play.visible {display:flex}
@@ -137,6 +135,7 @@
       <div class="next-inner">
         <p class="eyebrow">02 / THE UNSEEN OCEAN</p>
         <h2 id="highSeasTitle">바다 열 칸 중<br/>여섯 칸은 공해입니다.</h2>
+        <button class="motion-toggle" id="motionToggle" type="button" hidden aria-pressed="false">스크롤 애니메이션</button>
         <div class="big-number" aria-hidden="true">60<span>%</span></div>
         <figure class="ocean-share" id="oceanShare">
           <div class="ocean-share-track" aria-hidden="true">
@@ -184,15 +183,25 @@
       const shareCells = oceanShare.querySelectorAll('.ocean-share-track span:nth-child(-n+6)');
       const treatySteps = document.getElementById('treatySteps');
       const steps = treatySteps.querySelectorAll('li');
+      const motionToggle = document.getElementById('motionToggle');
       const dataSaver = navigator.connection && navigator.connection.saveData;
       const clamp = v => Math.max(0, Math.min(1, v));
       const smooth = (a,b,x) => {const t=clamp((x-a)/(b-a));return t*t*(3-2*t)};
       let ticking=false;
       let phase=-1;
-      if (!reduced) {
-        oceanShare.classList.add('has-scroll-motion');
-        treatySteps.classList.add('has-scroll-motion');
+      let chapterMotion = !reduced;
+      function setChapterMotion () {
+        oceanShare.classList.toggle('has-scroll-motion',chapterMotion);
+        treatySteps.classList.toggle('has-scroll-motion',chapterMotion);
+        motionToggle.setAttribute('aria-pressed',String(chapterMotion));
+        schedule();
       }
+      motionToggle.hidden = !reduced;
+      motionToggle.addEventListener('click',()=>{
+        chapterMotion = !chapterMotion;
+        setChapterMotion();
+      });
+      setChapterMotion();
       function updateChapters (height) {
         const chartTop = oceanShare.getBoundingClientRect().top;
         const share = smooth(.46,.78,1-chartTop/height);
@@ -226,8 +235,8 @@
         });
         if (!reduced) {
           ocean.style.transform=`translate3d(0,${(-2*p).toFixed(2)}%,0) scale(${(1.012+.09*p).toFixed(4)})`;
-          updateChapters(window.innerHeight);
         }
+        if (chapterMotion) updateChapters(window.innerHeight);
         diveShadow.style.opacity=(.02 + .75*smooth(.20,.95,p)).toFixed(3);
         progressFill.style.height=Math.round(p*100)+'%';
         scrollHint.style.opacity=(1-smooth(.04,.18,p)).toFixed(2);
