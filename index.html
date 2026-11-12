@@ -212,8 +212,7 @@
   
     <section class="ending-scene" id="ending" aria-labelledby="endingTitle">
       <div class="ending-media" id="endingMedia" aria-hidden="true">
-        <video id="endingOceanVideo" muted autoplay playsinline webkit-playsinline loop preload="none" poster="https://d2ol7oe51mr4n9.cloudfront.net/user_3GGj4FFoSNBW4rsznlPtATizErk/39163965-eaa0-406c-b3ac-0aa17e910b21.jpg">
-          <source data-src="https://d2ol7oe51mr4n9.cloudfront.net/user_3GGj4FFoSNBW4rsznlPtATizErk/b8dba8b7-09ec-4b39-bb6a-81b068ee2cb3.mp4" type="video/mp4">
+        <video id="endingOceanVideo" muted autoplay playsinline webkit-playsinline loop preload="metadata" src="ending.mp4" poster="https://d2ol7oe51mr4n9.cloudfront.net/user_3GGj4FFoSNBW4rsznlPtATizErk/39163965-eaa0-406c-b3ac-0aa17e910b21.jpg">
         </video>
       </div>
       <div class="ending-shade" aria-hidden="true"></div>
@@ -345,21 +344,18 @@
       const scene=document.getElementById('ending');
       const wrap=document.getElementById('endingMedia');
       const video=document.getElementById('endingOceanVideo');
-      const source=video.querySelector('source');
       const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const saver=!!(navigator.connection&&navigator.connection.saveData);
       const playButton=document.getElementById('endingPlay');
       let visible=false;
       let manualPlayback=false;
-      function start(){
-        if(!visible||document.hidden)return;
-        if((reduced||saver)&&!manualPlayback){
-          playButton.hidden=false;
-          return;
-        }
+      video.autoplay=!(reduced||saver);
+      function start(fromButton=false){
+        if((!visible&&!fromButton)||document.hidden)return;
+        if(video.paused||!wrap.classList.contains('is-playing'))playButton.hidden=false;
+        if((reduced||saver)&&!manualPlayback)return;
         video.muted=true;
-        if(!video.getAttribute('src'))video.src=source.dataset.src;
-        else if(video.error)video.load();
+        if(fromButton&&video.error)video.load();
         const promise=video.play();
         if(promise&&promise.catch)promise.catch(()=>{
           if(visible&&!document.hidden&&video.paused)playButton.hidden=false;
@@ -367,7 +363,7 @@
       }
       playButton.addEventListener('click',()=>{
         manualPlayback=true;
-        start();
+        start(true);
       });
       video.addEventListener('playing',()=>{
         wrap.classList.add('is-playing');
