@@ -841,22 +841,32 @@ function tick(){
   raf=0;
   const r=sec.getBoundingClientRect(),p=clamp(-r.top/(r.height-innerHeight),0,1);
   G.band=ease(seg(p,.0,.2));G.high=ease(seg(p,.3,.56));
-  G.lon=150+55*ease(seg(p,0,.92))+uLon;
+  G.lon=150+55*ease(seg(p,0,.92))+uLon;G.lat=14+uLat;
   n60.textContent=Math.round(60*seg(p,.3,.56));
   const s=p<.28?0:p<.64?1:2;if(s!==step){step=s;caps.forEach((c,i)=>c.classList.toggle('on',i===s))}
-  const k=[G.band.toFixed(3),G.high.toFixed(3),G.lon.toFixed(2),!!G.pin,G.W].join();
+  const k=[G.band.toFixed(3),G.high.toFixed(3),G.lon.toFixed(2),G.lat.toFixed(2),!!G.pin,G.W].join();
   if(k!==key){key=k;fast=true;draw();clearTimeout(fineT);fineT=setTimeout(()=>{fast=false;draw()},160)}
 }
 new IntersectionObserver(es=>{vis=es[0].isIntersecting;if(vis)req()},{rootMargin:'120px 0px'}).observe(sec);
 addEventListener('scroll',()=>{if(vis)req()},{passive:true});
 let rz=0;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(layout,150)});
 // 옆으로만 돌린다. 위아래 움직임은 페이지 스크롤에 맡긴다(touch-action:pan-y)
-gt.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,t:performance.now(),lon:uLon,m:false,id:e.pointerId}});
+// 옆으로 밀기 시작하면 위아래로도 돌아간다. 처음부터 위아래로 밀면 페이지 스크롤.
+let uLat=0,vx=0,vy=0,inert=0;
+gt.addEventListener('pointerdown',e=>{cancelAnimationFrame(inert);drag={x:e.clientX,y:e.clientY,lx:e.clientX,ly:e.clientY,lt:performance.now(),t:performance.now(),lon:uLon,lat:uLat,m:false,id:e.pointerId};vx=vy=0});
 gt.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
-  if(!drag.m){if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(dy)){drag.m=true;try{gt.setPointerCapture(drag.id)}catch(_){}}else if(Math.abs(dy)>8){drag=null;return}}
-  if(drag.m){uLon=drag.lon-dx/G.R*57.3;req()}});
+  if(!drag.m){const ax=Math.abs(dx),ay=Math.abs(dy);if(ax+ay<7)return;
+    if(ax>=ay*.6){drag.m=true;try{gt.setPointerCapture(drag.id)}catch(_){}}else{drag=null;return}}
+  const now=performance.now(),dt=Math.max(1,now-drag.lt);
+  vx=.8*vx+.2*((e.clientX-drag.lx)/dt);vy=.8*vy+.2*((e.clientY-drag.ly)/dt);drag.lx=e.clientX;drag.ly=e.clientY;drag.lt=now;
+  const k=57.3/G.R;uLon=drag.lon-dx*k;uLat=clamp(drag.lat+dy*k,-60,60);req();e.preventDefault()},{passive:false});
 const end=e=>{if(!drag)return;const d=drag;drag=null;
-  if(!d.m&&performance.now()-d.t<500&&e.type==='pointerup'){const r=gc.getBoundingClientRect();probe(e.clientX-r.left,e.clientY-r.top)}req()};
+  if(!d.m){if(performance.now()-d.t<500&&e.type==='pointerup'){const r=gc.getBoundingClientRect();probe(e.clientX-r.left,e.clientY-r.top)}return}
+  // 관성
+  let last=performance.now();const k=57.3/G.R;
+  (function spin(t){const dt=t-last;last=t;vx*=Math.pow(.92,dt/16);vy*=Math.pow(.92,dt/16);
+    if(Math.abs(vx)+Math.abs(vy)<.01)return;uLon-=vx*dt*k;uLat=clamp(uLat+vy*dt*k,-60,60);req();inert=requestAnimationFrame(spin)})(last);
+  };
 gt.addEventListener('pointerup',end);gt.addEventListener('pointercancel',end);
 function probe(x,y){
   const R=G.R;hpj.scale(R).translate([G.cx,G.cy]).rotate([-G.lon,-G.lat]);
