@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2025 연차보고서, 펼쳐 보기 — 국경 밖의 바다 (비공식 시안)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;600;900&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="assets/page08.jpg">
+<style>
+:root{--paper:#ECEEE9;--sheet:#FAFAF7;--ink:#0B1622;--ink2:#15283A;--mute:#5D6A70;--green:#78BE43;--blue:#2440D0}
+:root{
+  --abyss:#010a14; --deep:#03182b; --sea:#0b3d5c; --foam:#e8f6ff;
+  --muted:#8fb3c9; --lime:#9be15d; --cyan:#5fd4ff;
+  --serif:'Noto Serif KR',serif; --sans:'Noto Sans KR',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--abyss);color:var(--foam);font-family:var(--sans);font-weight:400;line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+#ocean img{display:block;max-width:100%}
+.demo-tag{position:fixed;top:12px;left:12px;z-index:50;font-size:11px;letter-spacing:.04em;padding:5px 10px;border-radius:99px;background:rgba(1,10,20,.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);color:var(--muted)}
+#ocean .depth{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:8px;pointer-events:none;opacity:0;transition:opacity .6s}
+#ocean .depth.on{opacity:1}
+#ocean .depth .bar{width:2px;height:140px;background:rgba(255,255,255,.12);position:relative;border-radius:2px;overflow:hidden}
+#ocean .depth .fill{position:absolute;left:0;top:0;width:100%;background:linear-gradient(var(--cyan),var(--lime));height:0}
+#ocean .depth .val{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;writing-mode:vertical-rl;letter-spacing:.08em}
+#ocean .hero{position:relative;height:100vh;height:100svh;min-height:560px;overflow:hidden}
+#ocean #heroGL{position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y}
+#ocean .hero-in{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 24px;pointer-events:none}
+#ocean .eyebrow{text-shadow:0 1px 12px rgba(0,20,40,.9);font-size:12px;letter-spacing:.32em;color:var(--muted);text-transform:uppercase;margin-bottom:22px;opacity:0;animation:fadeUp 1.2s .3s forwards}
+#ocean .title{font-family:var(--serif);font-weight:900;font-size:clamp(46px,11vw,128px);line-height:1.05;letter-spacing:-.02em;text-shadow:0 0 40px rgba(95,212,255,.25)}
+#ocean .title span{display:inline-block;opacity:0;filter:blur(18px);transform:translateY(40px) scale(1.1);animation:charIn 1.4s cubic-bezier(.2,.8,.2,1) forwards}
+#ocean .hero-sub{margin-top:26px;max-width:520px;font-size:clamp(15px,2.2vw,18px);color:#c4dcea;font-weight:300;opacity:0;animation:fadeUp 1.4s 1.9s forwards}
+#ocean .hint{position:absolute;bottom:28px;left:0;right:0;z-index:2;text-align:center;font-size:12px;color:var(--muted);letter-spacing:.15em;opacity:0;animation:fadeUp 1s 2.6s forwards;pointer-events:none}
+#ocean .hint i{display:block;width:1px;height:38px;margin:10px auto 0;background:linear-gradient(var(--muted),transparent);animation:drip 2s infinite}
+#ocean .tap{position:absolute;bottom:96px;left:0;right:0;z-index:2;text-align:center;font-size:12px;color:rgba(232,246,255,.55);opacity:0;animation:fadeUp 1s 3.2s forwards;pointer-events:none}
+@keyframes charIn{to{opacity:1;filter:blur(0);transform:none}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+#ocean section{position:relative}
+#ocean .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+#ocean .kicker{font-size:12px;letter-spacing:.28em;color:var(--cyan);margin-bottom:14px}
+#ocean .h2{font-family:var(--serif);font-weight:900;font-size:clamp(30px,6vw,60px);line-height:1.2;letter-spacing:-.01em}
+#ocean .lead{font-size:clamp(16px,2.3vw,19px);color:#c4dcea;font-weight:300;max-width:560px}
+#ocean .big{font-family:var(--serif);font-weight:900;font-variant-numeric:tabular-nums;line-height:1}
+#ocean .rv{opacity:0;transform:translateY(30px);transition:opacity 1s cubic-bezier(.2,.8,.2,1),transform 1s cubic-bezier(.2,.8,.2,1)}
+#ocean .rv.in{opacity:1;transform:none}
+#ocean .d1{transition-delay:.12s}
+#ocean .d2{transition-delay:.24s}
+#ocean .d3{transition-delay:.36s}
+#ocean .pin{height:260vh}
+#ocean .s60bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.35;-webkit-mask-image:linear-gradient(transparent,#000 15%,#000 85%,transparent);mask-image:linear-gradient(transparent,#000 15%,#000 85%,transparent)}
+#ocean #s60 .stage{z-index:1}
+#ocean .pin .stage{position:sticky;top:0;height:100vh;height:100svh;display:flex;align-items:center;overflow:hidden}
+#ocean .grid100{display:grid;grid-template-columns:repeat(10,1fr);gap:clamp(5px,1.2vw,10px);width:min(80vw,380px);aspect-ratio:1}
+#ocean .grid100 b{border-radius:50%;background:rgba(255,255,255,.08);transition:background .5s,box-shadow .5s,transform .5s}
+#ocean .grid100 b.hs{background:#2a7fb0;box-shadow:0 0 10px rgba(95,212,255,.35)}
+#ocean .grid100 b.pr{background:var(--lime);box-shadow:0 0 18px var(--lime),0 0 40px rgba(155,225,93,.6);transform:scale(1.25)}
+#ocean .scene{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;width:100%}
+@media(max-width:760px){#ocean .scene{grid-template-columns:1fr;gap:28px;justify-items:center;text-align:center}
+#ocean .scene .lead{margin:0 auto}}
+#ocean .stat{font-size:clamp(72px,16vw,150px);color:var(--cyan)}
+#ocean .stat small{font-size:.4em;margin-left:4px}
+#ocean .legend{display:flex;gap:16px;margin-top:18px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+@media(max-width:760px){#ocean .legend{justify-content:center}}
+#ocean .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+#ocean .guess{padding:22vh 0;text-align:center}
+#ocean .guess .h2{margin:0 auto 14px;max-width:720px}
+#ocean .slider-box{max-width:520px;margin:46px auto 0;padding:30px 26px;border-radius:24px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(10px)}
+#ocean .gval{font-size:64px;color:var(--foam)}
+#ocean .gval small{font-size:.45em;color:var(--muted)}
+#ocean input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:6px;background:linear-gradient(90deg,var(--cyan) var(--p,20%),rgba(255,255,255,.12) var(--p,20%));margin:22px 0 26px;outline:none}
+#ocean input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:var(--foam);box-shadow:0 0 0 6px rgba(95,212,255,.25),0 4px 14px rgba(0,0,0,.4);cursor:grab}
+#ocean input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;background:var(--foam);border:none;box-shadow:0 0 0 6px rgba(95,212,255,.25)}
+#ocean .btn{display:inline-flex;align-items:center;gap:8px;font:600 15px var(--sans);color:var(--abyss);background:var(--foam);border:none;padding:14px 26px;border-radius:99px;cursor:pointer;transition:transform .2s,box-shadow .3s}
+#ocean .btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(95,212,255,.35)}
+#ocean .btn.ghost{background:transparent;color:var(--foam);border:1px solid rgba(255,255,255,.3)}
+#ocean .answer{max-height:0;overflow:hidden;transition:max-height 1.2s cubic-bezier(.2,.8,.2,1)}
+#ocean .answer.open{max-height:900px}
+#ocean .answer-in{padding-top:44px;display:flex;flex-direction:column;align-items:center;gap:20px}
+#ocean .answer .stat{color:var(--lime)}
+#ocean .verdict{font-size:17px;color:#d6e9f5;max-width:440px}
+#ocean #dissGL{position:absolute;inset:0;width:100%;height:100%}
+#ocean .diss-txt{position:relative;z-index:2;width:100%;text-align:center;padding:0 24px}
+#ocean .diss-txt p{font-family:var(--serif);font-weight:900;font-size:clamp(26px,5.4vw,52px);line-height:1.35;text-shadow:0 2px 30px rgba(0,0,0,.7);position:absolute;left:24px;right:24px;top:50%;transform:translateY(-50%);transition:opacity .6s}
+#ocean .cap{position:absolute;right:14px;bottom:12px;z-index:3;font-size:10px;color:rgba(255,255,255,.55)}
+#ocean .tl{padding:18vh 0 10vh}
+#ocean .tl-head{margin-bottom:9vh}
+#ocean .tl-list{position:relative;padding-left:34px}
+#ocean .tl-list:before{content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;background:rgba(255,255,255,.08)}
+#ocean .tl-line{position:absolute;left:8px;top:0;width:2px;height:0;background:linear-gradient(var(--cyan),var(--lime));box-shadow:0 0 12px var(--cyan)}
+#ocean .ev{position:relative;margin-bottom:12vh}
+#ocean .ev:before{content:"";position:absolute;left:-31px;top:10px;width:14px;height:14px;border-radius:50%;background:var(--abyss);border:2px solid rgba(255,255,255,.3);transition:.5s}
+#ocean .ev.in:before{border-color:var(--cyan);background:var(--cyan);box-shadow:0 0 16px var(--cyan)}
+#ocean .ev .m{font-size:13px;letter-spacing:.2em;color:var(--cyan);margin-bottom:6px}
+#ocean .ev h3{font-family:var(--serif);font-size:clamp(22px,3.6vw,32px);font-weight:900;line-height:1.3;margin-bottom:12px}
+#ocean .ev p{color:#b7d0df;font-size:15.5px;max-width:560px}
+#ocean .card{margin-top:22px;border-radius:18px;overflow:hidden;position:relative;max-width:620px;transform-style:preserve-3d;transition:transform .2s ease-out;box-shadow:0 30px 60px rgba(0,0,0,.45)}
+#ocean .card img{width:100%;clip-path:inset(0 0 100% 0);transition:clip-path 1.3s cubic-bezier(.7,0,.2,1) .2s;transform:scale(1.15);transition-property:clip-path,transform;transition-duration:1.3s,2.2s}
+#ocean .ev.in .card img{clip-path:inset(0 0 0 0);transform:scale(1)}
+#ocean .card figcaption{position:absolute;right:10px;bottom:8px;font-size:10px;color:rgba(255,255,255,.7);text-shadow:0 1px 4px #000}
+#ocean .ev.hl h3{color:var(--lime)}
+#ocean .badge{display:inline-flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+#ocean .badge span{font-size:13px;padding:7px 14px;border-radius:99px;border:1px solid rgba(155,225,93,.5);color:var(--lime);background:rgba(155,225,93,.07)}
+#ocean .float{position:absolute;pointer-events:none;z-index:1;filter:drop-shadow(0 20px 30px rgba(0,0,0,.5))}
+#ocean #whale{width:min(46vw,420px);right:-40px;top:-10px;opacity:.9}
+#ocean .ev>*:not(.float){position:relative;z-index:2}
+@media(max-width:760px){#ocean #whale{width:52vw;right:-14px;top:-96px;opacity:.85}
+#ocean .depth{right:4px}
+#ocean .depth .val{display:none}
+#ocean .depth .bar{height:90px}}
+#ocean .chips{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+#ocean .chips span{font-size:13px;padding:6px 12px;border-radius:10px;background:rgba(255,255,255,.06);color:#cfe3ef}
+#ocean .cnt-stage{flex-direction:column;justify-content:center;text-align:center;gap:26px}
+#ocean .grid60{display:grid;grid-template-columns:repeat(10,1fr);gap:clamp(6px,1.4vw,12px);width:min(86vw,460px)}
+#ocean .grid60 b{aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.07);transform:scale(.6);transition:all .35s cubic-bezier(.2,.9,.3,1.4);position:relative}
+#ocean .grid60 b.on{background:var(--cyan);transform:scale(1);box-shadow:0 0 12px rgba(95,212,255,.6)}
+#ocean .grid60 b.kr.on{background:var(--lime);box-shadow:0 0 18px var(--lime),0 0 40px rgba(155,225,93,.5);transform:scale(1.35)}
+#ocean .kr-label{font-size:14px;color:var(--lime);min-height:24px;opacity:0;transition:opacity .5s}
+#ocean .kr-label.on{opacity:1}
+#ocean #cntNum{font-size:clamp(90px,20vw,190px);color:var(--foam)}
+#ocean .cnt-cap{color:var(--muted);font-size:15px}
+#ocean .climax{min-height:110vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;position:relative}
+#ocean .climax .bgv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#ocean .climax .shade{position:absolute;inset:0;background:linear-gradient(var(--abyss),transparent 18%,transparent 55%,rgba(1,10,20,.75) 85%,var(--abyss)),radial-gradient(ellipse at 50% 60%,rgba(1,10,20,.45),transparent 70%)}
+#ocean .climax-in>*{opacity:0;transform:translateY(30px);filter:blur(10px);transition:opacity 1.4s,transform 1.4s cubic-bezier(.2,.8,.2,1),filter 1.4s}
+#ocean .climax.surf .climax-in>*{opacity:1;transform:none;filter:none}
+#ocean .climax.surf .climax-in>:nth-child(2){transition-delay:.25s}
+#ocean .climax.surf .climax-in>:nth-child(3){transition-delay:.6s}
+#ocean .climax h2, #ocean .climax .date, #ocean .climax .lead{text-shadow:0 2px 24px rgba(0,15,30,.85)}
+#ocean .replay{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);z-index:3;font:500 13px var(--sans);color:rgba(232,246,255,.75);background:rgba(1,10,20,.35);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:8px 16px;cursor:pointer;opacity:0;transition:opacity .8s 1.5s}
+#ocean .climax.surf .replay{opacity:1}
+#ocean .climax-in{position:relative;z-index:2;padding:0 24px;margin-top:18vh}
+#ocean .climax .date{font-size:15px;letter-spacing:.3em;color:var(--lime);margin-bottom:18px}
+#ocean .climax h2{font-family:var(--serif);font-weight:900;font-size:clamp(40px,9vw,104px);line-height:1.1}
+#ocean .climax h2 em{font-style:normal;background:linear-gradient(90deg,#ffffff,var(--lime),#ffffff);background-size:200% 100%;filter:drop-shadow(0 0 18px rgba(155,225,93,.45));-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 4s linear infinite}
+@keyframes shine{to{background-position:-200% 0}}
+#ocean .climax .lead{margin:26px auto 0}
+#ocean .goal{padding:20vh 0}
+#ocean .meter{margin-top:48px;max-width:760px}
+#ocean .meter .track{height:64px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);position:relative;overflow:hidden}
+#ocean .meter .now{position:absolute;inset:0 auto 0 0;width:1%;background:var(--lime);box-shadow:0 0 24px var(--lime)}
+#ocean .meter .tgt{position:absolute;inset:0 auto 0 0;width:0;background:repeating-linear-gradient(-45deg,rgba(95,212,255,.35) 0 8px,rgba(95,212,255,.12) 8px 16px);transition:width 2.4s cubic-bezier(.2,.8,.2,1)}
+#ocean .meter.in .tgt{width:30%}
+#ocean .meter .ticks{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:10px}
+#ocean .meter .labels{display:flex;gap:26px;margin-top:22px;flex-wrap:wrap;font-size:14px;color:#cfe3ef}
+#ocean .meter .labels i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:8px;vertical-align:-1px}
+#ocean .next{margin-top:56px;padding:28px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(135deg,rgba(95,212,255,.07),rgba(155,225,93,.04));max-width:760px}
+#ocean .next b{color:var(--lime);font-weight:700}
+#ocean .signal{padding:16vh 0 12vh;text-align:center}
+#ocean .signal .lead{margin:0 auto}
+#ocean .sig-form{display:flex;gap:10px;max-width:460px;margin:36px auto 0;flex-wrap:wrap;justify-content:center}
+#ocean .sig-form input{flex:1 1 220px;font:400 16px var(--sans);padding:14px 18px;border-radius:99px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);color:var(--foam);outline:none}
+#ocean .sig-form input:focus{border-color:var(--cyan)}
+#ocean .sea-pick{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+#ocean .sea-pick button{font:500 14px var(--sans);padding:9px 16px;border-radius:99px;border:1px solid rgba(255,255,255,.2);background:transparent;color:#cfe3ef;cursor:pointer;transition:.25s}
+#ocean .sea-pick button.sel{background:var(--cyan);color:var(--abyss);border-color:var(--cyan)}
+#ocean .card-out{margin:40px auto 0;max-width:380px;display:none}
+#ocean .card-out.show{display:block;animation:fadeUp .8s}
+#ocean .card-out img{width:100%;border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.1)}
+#ocean .card-out .row{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+#ocean .note{font-size:12px;color:var(--muted);margin-top:12px}
+#ocean .links{margin-top:46px;font-size:14px}
+#ocean .links a{color:var(--cyan);text-decoration:none;border-bottom:1px solid rgba(95,212,255,.4)}
+#ocean footer{padding:60px 24px 80px;text-align:center;font-size:12px;color:#6c8ca1;line-height:1.9;border-top:1px solid rgba(255,255,255,.06)}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
+body.lock{overflow:hidden}
+#gp a{color:inherit}
+#gp button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+#gp :focus-visible{outline:3px solid var(--green);outline-offset:3px}
+#gp .wrap{max-width:480px;margin:0 auto;position:relative;overflow:clip}
+#gp .pin{position:sticky;top:0;height:100svh;min-height:560px;overflow:hidden}
+#gp .serif{font-family:var(--serif)}
+#gp .num{font-variant-numeric:tabular-nums}
+#gp .dark{background:var(--ink);color:#F2F4F1}
+#gp .light{background:var(--paper);color:var(--ink)}
+#gp .fade{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+#gp .fade.on{opacity:1;transform:none}
+#gp .src{font-size:11.5px;line-height:1.55;color:var(--mute)}
+#gp .dark .src{color:#8FA0A8}
+#gp #hub{height:620svh}
+#gp #hub .pin{background:radial-gradient(90% 60% at 50% 46%,#1A3044 0%,var(--ink) 70%)}
+#gp .htop{position:absolute;left:24px;right:24px;top:9%;color:#F2F4F1}
+#gp .htop .k{font-size:13px;font-weight:500;color:#9FB0B8}
+#gp .htop h1{margin-top:8px;font-family:var(--serif);font-size:38px;font-weight:800;letter-spacing:-.04em;line-height:1.18}
+#gp .htop h1 em{font-style:normal;color:var(--green)}
+#gp .bookstage{position:absolute;left:0;right:0;top:25%;height:46%;perspective:1500px;perspective-origin:50% 20%}
+#gp .book{position:absolute;left:50%;top:50%;transform-style:preserve-3d;will-change:transform}
+#gp .book .base{position:absolute;top:0;height:100%;background:#F4F4F0;box-shadow:0 30px 60px rgba(0,0,0,.55);transition:opacity .3s}
+#gp .book .shadow{position:absolute;left:-4%;right:-4%;bottom:-14%;height:16%;background:radial-gradient(closest-side,rgba(0,0,0,.6),rgba(0,0,0,0));transform:translateZ(-4px)}
+#gp .leaf{position:absolute;top:0;height:100%;transform-origin:0 50%;transform-style:preserve-3d;will-change:transform}
+#gp .face{position:absolute;inset:0;-webkit-backface-visibility:hidden;backface-visibility:hidden;background-color:#fff;background-repeat:no-repeat;background-size:200% 100%;overflow:hidden}
+#gp .face.f{background-position:100% 0;border-radius:0 3px 3px 0}
+#gp .face.b{background-position:0 0;transform:rotateY(180deg);border-radius:3px 0 0 3px}
+#gp .face i{position:absolute;inset:0;pointer-events:none;opacity:0}
+#gp .face.f i{background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(0,0,0,.05) 40%,rgba(255,255,255,.12))}
+#gp .face.b i{background:linear-gradient(270deg,rgba(0,0,0,.35),rgba(0,0,0,.05) 40%,rgba(255,255,255,.12))}
+#gp .face.f::after{content:"";position:absolute;left:0;top:0;bottom:0;width:12%;background:linear-gradient(90deg,rgba(0,0,0,.2),rgba(0,0,0,0))}
+#gp .face.b::after{content:"";position:absolute;right:0;top:0;bottom:0;width:12%;background:linear-gradient(270deg,rgba(0,0,0,.2),rgba(0,0,0,0))}
+#gp .tapzone{position:absolute;inset:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transform:translateZ(20px)}
+#gp .glowring{position:absolute;border-radius:6px;opacity:0;transition:opacity .4s;pointer-events:none;transform:translateZ(-1px)}
+#gp .glowring.on{opacity:1;animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 2px #78BE43,0 0 18px rgba(120,190,67,.35)}50%{box-shadow:0 0 0 2px #78BE43,0 0 40px rgba(120,190,67,.75)}}
+#gp .pgno{position:absolute;left:0;right:0;top:100%;margin-top:20px;text-align:center;font-size:12px;font-weight:500;color:#9FB0B8;font-variant-numeric:tabular-nums}
+#gp .hcap{position:absolute;left:24px;right:24px;bottom:12%;color:#F2F4F1;min-height:96px}
+#gp .hcap .pp{font-size:12.5px;color:#9FB0B8}
+#gp .hcap b{display:block;margin-top:4px;font-family:var(--serif);font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.3}
+#gp .hcap .go{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:12px 18px;border-radius:999px;background:var(--green);color:var(--ink);font-size:14.5px;font-weight:700}
+#gp .hcap .not{margin-top:12px;font-size:13px;color:#9FB0B8}
+#gp .hhint{position:absolute;left:0;right:0;bottom:4.5%;text-align:center;font-size:12px;color:#9FB0B8}
+#gp .zoom{position:fixed;z-index:65;pointer-events:none;background:#fff center/cover no-repeat;border-radius:3px;opacity:0}
+#gp .btn{display:block;width:100%;margin-top:16px;padding:17px;border-radius:999px;background:var(--green);color:var(--ink);font-size:16.5px;font-weight:700;text-align:center}
+#gp .btn2{display:flex;gap:8px;margin-top:10px}
+#gp .btn2 button{flex:1;padding:13px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.4);font-size:14px;font-weight:700;color:#fff}
+#gp .rx{position:fixed;inset:0;z-index:70;visibility:hidden}
+#gp .rx.open{visibility:visible}
+#gp .rx .scr{position:absolute;inset:0;max-width:480px;margin:0 auto;overflow:auto;-webkit-overflow-scrolling:touch;background:var(--paper);opacity:0;transition:opacity .35s}
+#gp .rx.open .scr{opacity:1}
+#gp .rx .x{position:sticky;top:10px;float:right;margin:10px 10px 0 0;z-index:5;width:40px;height:40px;border-radius:50%;background:var(--ink);color:#fff;font-size:21px}
+#gp .rx .top{padding:58px 24px 0;clear:both}
+#gp .rx .top .k{font-size:13px;font-weight:500;color:var(--mute)}
+#gp .rx .top h2{margin-top:6px;font-family:var(--serif);font-size:32px;font-weight:800;letter-spacing:-.04em;line-height:1.22}
+#gp .amt{margin-top:26px;display:flex;align-items:center;gap:10px}
+#gp .amt .v{flex:1;font-family:var(--serif);font-weight:900;font-size:46px;letter-spacing:-.05em;line-height:1}
+#gp .amt .v small{font-family:var(--sans);font-size:15px;font-weight:500;letter-spacing:0;color:var(--mute);margin-left:4px}
+#gp .amt button{width:48px;height:48px;border-radius:50%;border:1.5px solid var(--ink);font-size:24px;line-height:1}
+#gp .qk{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap}
+#gp .qk button{padding:8px 14px;border-radius:999px;border:1px solid rgba(11,22,34,.25);font-size:13.5px;font-weight:500}
+#gp .qk button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+#gp .printb{display:block;width:100%;margin-top:22px;padding:17px;border-radius:999px;background:var(--ink);color:#fff;font-size:16.5px;font-weight:700}
+#gp .printer{margin:36px 14px 0;position:relative}
+#gp .slot{height:18px;border-radius:10px;background:var(--ink);position:relative;z-index:3;box-shadow:0 6px 12px rgba(11,22,34,.3)}
+#gp .slot::after{content:"";position:absolute;left:14px;right:14px;top:8px;height:2px;background:#000;border-radius:1px}
+#gp .feed{overflow:hidden;margin-top:-9px;padding:0 10px 30px}
+#gp .paper{background:var(--sheet);padding:30px 20px 34px;position:relative;transform:translateY(-101%);will-change:transform;box-shadow:0 10px 24px rgba(11,22,34,.14)}
+#gp .paper::after{content:"";position:absolute;left:0;right:0;bottom:-10px;height:10px;background:radial-gradient(circle at 8px 0,var(--sheet) 7px,transparent 7.5px) 0 0/16px 10px repeat-x}
+#gp .paper .ln{opacity:0}
+#gp .paper .ln.on{opacity:1}
+#gp .ph{text-align:center}
+#gp .ph b{display:block;font-family:var(--serif);font-size:19px;font-weight:800;letter-spacing:-.02em}
+#gp .ph span{font-size:12px;color:var(--mute)}
+#gp .dash{border:0;border-top:1.5px dashed #B7B9B0;margin:16px 0}
+#gp .r2{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;color:var(--mute)}
+#gp .tot{font-family:var(--serif);font-weight:900;font-size:50px;letter-spacing:-.05em;line-height:1.1;margin-top:2px}
+#gp .tot.long{font-size:40px}
+#gp .tot small{font-family:var(--sans);font-size:17px;font-weight:700;letter-spacing:0;margin-left:4px}
+#gp .it{padding:9px 0}
+#gp .it .row{display:flex;align-items:baseline;gap:6px;font-size:14.5px}
+#gp .it .row .nm{flex:none;max-width:62%}
+#gp .it .row .dots{flex:1;border-bottom:1.5px dotted #B7B9B0;transform:translateY(-4px)}
+#gp .it .row b{flex:none;font-weight:700}
+#gp .it .bar{height:4px;margin-top:6px;background:#E6E7E1}
+#gp .it .bar i{display:block;height:100%;width:0;background:var(--ink);transition:width .9s cubic-bezier(.2,.7,.2,1)}
+#gp .it.sea .bar i{background:var(--blue)}
+#gp .it .lnk{display:inline-block;margin-top:6px;font-size:12.5px;font-weight:700;color:var(--blue);text-decoration:underline;text-underline-offset:3px}
+#gp .bc{display:flex;gap:2px;height:36px;margin:6px auto 4px;width:72%}
+#gp .bc i{flex:1;background:var(--ink)}
+#gp .fn{font-size:11.5px;line-height:1.55;color:var(--mute);text-align:center}
+#gp .after{padding:6px 24px 48px;opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s}
+#gp .after.on{opacity:1;transform:none}
+#gp .after h3{font-family:var(--serif);font-size:26px;font-weight:800;letter-spacing:-.04em;line-height:1.3}
+#gp .after p{margin-top:8px;font-size:14.5px;color:var(--mute)}
+#gp .after .btn{background:var(--ink);color:#fff}
+#gp .after .again{display:block;width:100%;margin-top:10px;padding:12px;font-size:14px;font-weight:600;text-decoration:underline;text-underline-offset:4px}
+#gp #rst{min-height:20px;margin-top:6px;text-align:center;font-size:13px}
+#gp .tear{transition:transform .9s cubic-bezier(.3,.6,.2,1),opacity .9s}
+#gp .tear.go{transform:translate(30px,-40px) rotate(-7deg);opacity:.0}
+#gp .split{margin-top:22px}
+#gp .split .strip{display:flex;height:16px;border-radius:999px;overflow:hidden;gap:2px;background:transparent}
+#gp .split .strip i{display:block;height:100%;transition:flex-grow .5s}
+#gp .split .lg{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:9px 14px;margin-top:16px}
+#gp .split .lg li{display:flex;align-items:center;gap:7px;font-size:12.5px;line-height:1.3}
+#gp .split .lg li i{flex:none;width:10px;height:10px;border-radius:3px}
+#gp .split .lg li span{flex:1;min-width:0}
+#gp .split .lg li b{font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums}
+#gp .split .cap{margin-top:10px;font-size:11.5px;color:var(--mute)}
+#gp .rx .top{background:radial-gradient(120% 60% at 100% 0%,rgba(120,190,67,.18) 0%,rgba(120,190,67,0) 55%),radial-gradient(110% 60% at 0% 30%,rgba(61,91,255,.14) 0%,rgba(61,91,255,0) 60%);padding-bottom:6px}
+#gp .it .bar i{background:var(--c,var(--ink))}
+#gp .qk button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+#gp .kin .ch{display:inline-block;opacity:0;transform:translateY(.45em) rotateX(-75deg);transform-origin:50% 100%;transition:opacity .55s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i)*45ms)}
+#gp .kin.on .ch{opacity:1;transform:none}
+#gp .kin .sp{display:inline-block;width:.28em}
+#gp .kin{white-space:nowrap}
+#gp .sec{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:15px;font-weight:800;padding:12px 0 2px}
+#gp .sec em{font-style:normal;font-size:12px;font-weight:500;color:var(--mute);margin-left:6px}
+#gp .sec.ov{margin-top:6px;padding-top:14px;border-top:1.5px dashed #B7B9B0}
+#gp .ovn{font-size:12px;line-height:1.55;color:var(--mute);margin:2px 0 4px}
+#gp .open-tag{display:inline-block;margin-left:6px;font-size:11px;font-weight:700;color:#3d7a14;background:rgba(120,190,67,.18);border-radius:4px;padding:1px 6px;vertical-align:2px}
+#gp .rs{position:relative}
+#gp .rpin{position:sticky;top:0;height:100svh;overflow:hidden}
+#gp .rpin::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,26,25,.25) 0%,rgba(7,26,25,.1) 30%,rgba(7,26,25,.85) 100%)}
+#gp .shot{position:absolute;inset:0;background-size:cover;background-position:center}
+#gp .credit{position:absolute;right:12px;bottom:10px;font-size:10px;color:rgba(255,255,255,.65);z-index:2}
+#gp .rover{position:relative;margin-top:-100svh;z-index:2;color:#fff}
+#gp .beat{min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 24px 56px}
+#gp .beat.mid{justify-content:center;padding-bottom:0}
+#gp .kind{font-size:15px;font-weight:700}
+#gp .huge{font-family:var(--sans);font-weight:700;font-size:min(20vw,92px);letter-spacing:-.05em;line-height:1.02;color:#F6E84B;white-space:nowrap}
+#gp .huge.long{font-size:min(14.5vw,68px)}
+#gp .huge small{font-size:26px;margin-left:6px;letter-spacing:0}
+#gp .beat h3{margin-top:14px;font-size:32px;font-weight:700;letter-spacing:-.04em;line-height:1.2}
+#gp .glass{background:rgba(7,26,25,.74);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-radius:16px;padding:24px 20px}
+#gp .glass p{font-size:16px;line-height:1.65;color:#E9F2EE}
+#gp .quote{font-family:var(--serif);font-size:21px;line-height:1.6;font-weight:800}
+#gp .glass .quote{margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.2)}
+#gp .quote cite{display:block;margin-top:12px;font-family:var(--sans);font-style:normal;font-size:12.5px;font-weight:500;color:#C9DDD6}
+#gp .tl{list-style:none;border-left:2px solid rgba(255,255,255,.3);margin-left:6px}
+#gp .tl li{position:relative;padding:0 0 20px 20px}
+#gp .tl li:last-child{padding-bottom:0}
+#gp .tl li::before{content:"";position:absolute;left:-8px;top:6px;width:14px;height:14px;border-radius:50%;background:#F6E84B}
+#gp .tl time{display:block;font-size:13px;font-weight:700;color:#C9DDD6}
+#gp .tl span{font-size:17px;font-weight:700;line-height:1.4}
+#gp .glass .aft{margin-top:20px;padding-top:18px;border-top:1px solid rgba(255,255,255,.2);font-size:14.5px;color:#C9DDD6}
+#gp .toSea{margin-top:16px;font-size:14px;font-weight:700;color:#F6E84B;text-decoration:underline;text-underline-offset:4px}
+#gp .voice{background:var(--sheet);color:var(--ink);padding:96px 24px}
+#gp .voice .kind{color:#2E9E4A}
+#gp .voice .quote{font-size:28px;line-height:1.45;margin-top:16px;letter-spacing:-.02em}
+#gp .voice mark{background:linear-gradient(transparent 55%,#F6E84B 55%);color:inherit}
+#gp .person{display:flex;gap:16px;align-items:center;margin-top:30px}
+#gp .person img{width:84px;height:84px;object-fit:cover;object-position:50% 10%;border-radius:50%;border:2px solid var(--ink);flex:none;background:#fff}
+#gp .person div{font-size:13.5px;color:var(--mute)}
+#gp .person strong{display:block;font-size:18px;color:var(--ink)}
+#gp .rend{position:relative;padding:120px 22px 56px;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;color:#fff}
+#gp .rend::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,26,25,.1),rgba(7,26,25,.55) 45%,rgba(7,26,25,.92))}
+#gp .rend>*:not(.shot):not(.credit){position:relative;z-index:2}
+#gp .rend .credit{top:12px;bottom:auto;z-index:3}
+#gp .rend h3{font-size:36px;font-weight:700;letter-spacing:-.04em;line-height:1.15}
+#gp .kard{margin-top:24px;background:var(--sheet);color:var(--ink);border-radius:4px;padding:24px 20px 20px;transform:rotate(-2deg);box-shadow:0 24px 50px rgba(0,0,0,.5)}
+#gp .kard .t{font-size:13px;font-weight:700;color:var(--mute)}
+#gp .kard .big{font-family:var(--sans);font-weight:700;font-size:46px;letter-spacing:-.05em;line-height:1.1;margin-top:2px}
+#gp .kard .big small{font-size:20px;margin-left:4px;letter-spacing:0}
+#gp .kard ul{list-style:none;margin-top:10px}
+#gp .kard li{display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:7px 0;border-top:1px dashed #B9B5A3}
+#gp .kard li b{white-space:nowrap}
+#gp .kard .of{margin-top:12px;font-family:var(--serif);font-size:15.5px;font-weight:800;line-height:1.5}
+#gp .rend .btn{background:#F6E84B;color:#14201B;margin-top:28px}
+#gp .rend .again{display:block;width:100%;margin-top:10px;padding:12px;font-size:14px;font-weight:600;color:#fff;text-decoration:underline;text-underline-offset:4px}
+#gp #rst{min-height:20px;margin-top:6px;text-align:center;font-size:13px}
+@media (prefers-reduced-motion:reduce){#gp .fade, #gp .rx .scr, #gp .it .bar i, #gp .tear, #gp .grid i{transition:none}}
+
+#gp{position:relative;word-break:keep-all;line-height:1.6}
+#gp .rx{color:var(--ink);font-family:var(--sans)}
+#gp #hub{color:#F2F4F1}
+#gp .wrap{max-width:480px;margin:0 auto;position:relative;overflow:clip}
+#hubWrap{background:radial-gradient(90% 60% at 50% 46%,#1A3044 0%,var(--ink) 70%)}
+#gp #hub{height:520svh}
+#ocean .cta{padding:14vh 0 10vh;text-align:center}
+#ocean .cta .lead{margin:14px auto 0}
+#ocean .cta .row2{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+#ocean .duo{display:grid;grid-template-columns:.8fr 1.2fr;gap:12px;margin-top:22px;max-width:620px}
+#ocean .duo .card{margin-top:0}
+#ocean .duo .card img{height:100%;object-fit:cover}
+@media(max-width:520px){#ocean .duo{grid-template-columns:1fr}}
+#ocean .gv-cap{font-size:13px;color:#9fbccc;margin-top:10px;max-width:620px}
+
+</style>
+</head>
+<body>
+<div class="demo-tag">제안용 데모 시안 · 공식 페이지 아님</div>
+<div id="gp">
+  <div id="hubWrap"><div class="wrap">
+  <section id="hub">
+    <div class="pin dark" id="hpin">
+      <div class="htop">
+        <p class="k">그린피스 동아시아지부 · 2025 연차보고서</p>
+        <h1>27쪽짜리 한 해를<br><em>펼쳐 봅니다.</em></h1>
+      </div>
+      <div class="bookstage" id="bst"><div class="book" id="book"><div class="shadow"></div><div class="glowring" id="glow"></div><div class="base" id="baseL"></div><div class="base" id="baseR"></div><div class="pgno" id="pgno"></div><button class="tapzone" id="tapz" aria-label="펼쳐진 지면 열기"></button></div></div>
+      <div class="hcap" id="hcap"></div>
+      <p class="hhint" id="hhint">내려가면 보고서가 펼쳐집니다</p>
+    </div>
+  </section>
+  </div></div>
+  <div class="zoom" id="zoom"></div>
+<!-- 영수증: 24~25쪽 -->
+<div class="rx" id="rx" aria-hidden="true">
+  <div class="scr" id="rxs" data-lenis-prevent role="dialog" aria-modal="true" aria-labelledby="rxh">
+    <button class="x" id="rxx" aria-label="닫기">×</button>
+    <div class="top">
+      <p class="k">연차보고서 24~25쪽 · 후원금 사용 내역</p>
+      <h2 id="rxh">보고서는 결국<br>영수증입니다.</h2>
+      <div class="amt"><button id="mn" aria-label="1만 원 줄이기">−</button><div class="v num" aria-live="polite"><span id="mv">30,000</span>원<small>매달</small></div><button id="pl" aria-label="1만 원 늘리기">+</button></div>
+      <div class="split" aria-label="매달 후원금이 나뉘는 비율"><div class="strip" id="strip"></div><ul class="lg" id="lg"></ul><p class="cap">한 달 후원금이 이렇게 나뉩니다 · 보고서 24~25쪽 비율 · 운영비 포함</p></div>
+      <div class="qk" id="qk"><button data-v="10000" aria-pressed="false">1만</button><button data-v="20000" aria-pressed="false">2만</button><button data-v="30000" aria-pressed="true">3만</button><button data-v="50000" aria-pressed="false">5만</button><button data-v="100000" aria-pressed="false">10만</button></div>
+      <button class="printb" id="pr">내 영수증 출력하기</button>
+    </div>
+    <div class="printer" id="ptr" hidden>
+      <div class="slot"></div>
+      <div class="feed"><div class="tear" id="tear"><div class="paper" id="paper">
+        <div class="ln ph"><b>그린피스 2025</b><span>후원 영수증 · 후원자님 앞</span></div>
+        <hr class="ln dash">
+        <div class="ln r2"><span>월 <span id="pm"></span>원 × 12개월</span><span>합계</span></div>
+        <div class="ln tot num" id="tot"><span id="tv">0</span><small>원</small></div>
+        <hr class="ln dash">
+        <div id="items"></div>
+        <hr class="ln dash">
+        <div class="ln bc" id="bc" aria-hidden="true"></div>
+        <p class="ln fn">보고서 25쪽 동아시아 지부 총지출 비율(캠페인 60.1% · 모금 22.5% · 조직 17.4%)과<br>24쪽 캠페인 배분 비율을 내 금액에 적용한 시뮬레이션입니다.<br>실제 개인별 집행 내역이 아니며, 금액은 저장되지 않습니다.</p>
+      </div></div></div>
+    </div>
+    <div id="rscenes" hidden>
+      <section class="rs">
+        <div class="rpin"><div class="shot" style="background-image:url(assets/fire.jpg);background-position:62% center"></div><span class="credit">© Jung-geun Augustine Park / Greenpeace</span></div>
+        <div class="rover">
+          <div class="beat"><div class="kind">기후위기 대응</div><div class="huge num" data-a="0"><span>0</span><small>원</small></div><h3>3월, 가장 먼저<br>산불 현장으로 갔습니다</h3></div>
+          <div class="beat mid"><div class="glass"><p>영남 초대형 산불 직후, 기후재난 대응팀이 피해 현황을 조사했습니다. 시민대응단은 이재민의 이야기를 기록했습니다.</p>
+            <blockquote class="quote">“고사리가 다 타버렸지만, 뿌리가 남아 있어서 괜찮다고 말씀하시더라고요.”<cite>기후재난 시민대응단 3기 문유빈 님 · 보고서 8~9쪽</cite></blockquote></div></div>
+        </div>
+      </section>
+      <section class="rs">
+        <div class="rpin"><div class="shot" style="background-image:url(assets/fjord.jpg)"></div><span class="credit">© Christian Åslund / Greenpeace</span></div>
+        <div class="rover">
+          <div class="beat"><div class="kind">해양보호</div><div class="huge num" data-a="1"><span>0</span><small>원</small></div><h3>20년을 기다린<br>바다의 법이 생겼습니다</h3></div>
+          <div class="beat mid"><div class="glass">
+            <ol class="tl">
+              <li><time>2025년 3월</time><span>한국, 동아시아 최초로 글로벌 해양조약 비준</span></li>
+              <li><time>2025년 9월</time><span>비준국 60개국, 발효 조건 충족</span></li>
+              <li><time>2026년 1월</time><span>조약 발효. 공해 보호구역을 지정할 국제 절차가 생겼습니다</span></li>
+            </ol>
+            <p class="aft">시민 3,000여 명의 후원으로 만든 다큐 〈씨그널〉이 국회와 전국 상영회에서 비준을 요구하는 목소리를 전했습니다.</p>
+            <button class="toSea" data-tosea>이 바다 이야기 펼쳐 보기 →</button>
+          </div></div>
+        </div>
+      </section>
+      <section class="voice">
+        <div class="kind">같은 영수증을 받은 사람</div>
+        <blockquote class="quote">“저에게 바다는 <mark>‘회사’</mark>예요. 쓰레기 때문에 곤란할 때가 많아요. 그래도 <mark>제 회사니까</mark> 계속 치우고 있습니다.”</blockquote>
+        <div class="person"><img loading="lazy" src="assets/haenyeo.jpg" alt="마이크를 들고 이야기하는 이유정 해녀"><div><strong>이유정 님</strong>그린피스 후원자, 제주 이호테우 해변의 6년차 해녀 · 보고서 20~21쪽</div></div>
+      </section>
+      <section class="rend">
+        <div class="shot" style="background-image:url(assets/hill.jpg)"></div>
+        <h3>이건 자랑해도 되는<br>영수증입니다</h3>
+        <div class="kard"><div class="t">나의 2025 그린피스</div><div class="big num"><span id="ktot"></span><small>원</small></div><ul id="ktop"></ul>
+          <div class="of">기후와 숲, 바다를 지키는 활동에 함께했습니다.</div></div>
+        <button class="btn" id="rsh">영수증 공유하기</button>
+        <div id="rst" role="status"></div>
+        <button class="again" id="ag">금액 바꿔서 다시 출력하기</button>
+        <span class="credit">© Pedro Armestre / Greenpeace</span>
+      </section>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<div id="ocean">
+
+
+<div class="depth" id="depth"><div class="bar"><div class="fill" id="depthFill"></div></div><div class="val" id="depthVal">수심 0m</div></div>
+
+<!-- 0. HERO -->
+<header class="hero" id="hero">
+  <canvas id="heroGL"></canvas>
+  <div class="hero-in">
+    <div class="eyebrow">Greenpeace 2025 Annual Report · Ocean</div>
+    <h1 class="title" id="title">국경 밖의 바다</h1>
+    <p class="hero-sub">어느 나라의 것도 아닌 바다를 지키기 위한 20년.<br>그리고 그 마지막 한 걸음이 된 2025년의 이야기입니다.</p>
+  </div>
+  <div class="tap">화면을 터치해 보세요</div>
+  <div class="hint">아래로 잠수하기<i></i></div>
+</header>
+
+<!-- 1. 60% -->
+<section class="pin" id="s60"><div class="s60bg" style="background-image:url('assets/surface.jpg')"></div>
+  <div class="stage"><div class="wrap scene">
+    <div>
+      <div class="kicker">01 · 공해</div>
+      <div class="big stat"><span id="n60">0</span><small>%</small></div>
+      <h2 class="h2" style="font-size:clamp(24px,4.4vw,40px);margin:12px 0 16px">전 세계 바다의 60%는<br>어느 나라의 바다도 아닙니다</h2>
+      <p class="lead">공해(公海)라 불리는 이 바다는 누구의 관할도 아니기에, 남획과 개발의 위협에 그대로 놓여 있습니다.</p>
+      <div class="legend"><span><i style="background:#2a7fb0"></i>공해</span><span><i style="background:rgba(255,255,255,.15)"></i>각국 관할 바다</span></div>
+    </div>
+    <div class="grid100" id="g60"></div>
+  </div></div>
+</section>
+
+<!-- 2. GUESS -->
+<section class="guess" id="guess"><div class="wrap">
+  <div class="kicker rv">02 · 맞혀보세요</div>
+  <h2 class="h2 rv d1">그렇다면 이 넓은 공해 중<br>보호받는 바다는 몇 %일까요?</h2>
+  <div class="slider-box rv d2">
+    <div class="big gval"><span id="gv">20</span><small>%</small></div>
+    <input type="range" id="gr" min="0" max="50" value="20" aria-label="예상 비율">
+    <button class="btn" id="gbtn">정답 확인하기</button>
+  </div>
+  <div class="answer" id="ans"><div class="answer-in">
+    <div class="big stat">1<small>%</small></div>
+    <div class="grid100" id="g1" style="width:min(70vw,300px)"></div>
+    <p class="verdict" id="verdict"></p>
+  </div></div>
+</div></section>
+
+<!-- 3. DISSOLVE -->
+<section class="pin" id="sdiss" style="height:240vh">
+  <div class="stage">
+    <canvas id="dissGL"></canvas>
+    <div class="diss-txt">
+      <p id="dt1">이 1%를 바꾸기 위해<br>바다 밖에서 사람들이 움직였습니다</p>
+      <p id="dt2" style="opacity:0">2025년, 서울에서도</p>
+    </div>
+    <div class="cap" id="dcap">© Greenpeace</div>
+  </div>
+</section>
+
+<!-- 4. TIMELINE -->
+<section class="tl" id="tl"><div class="wrap" style="position:relative">
+  <div class="tl-head">
+    <div class="kicker rv">03 · 서울사무소의 2025년</div>
+    <h2 class="h2 rv d1">조약이 현실이 되기까지</h2>
+    <p class="lead rv d2" style="margin-top:14px">글로벌 해양조약(BBNJ)은 60개국이 비준해야 발효됩니다. 그린피스 서울사무소는 한국이 그 숫자에 들어가도록 한 해를 보냈습니다.</p>
+  </div>
+  <div class="tl-list" id="tlList">
+    <div class="tl-line" id="tlLine"></div>
+
+    <div class="ev rv">
+      <div class="m">2월</div>
+      <h3>국회에서 비준을 촉구하다</h3>
+      <p>시민사회 연대체와 함께 국회에서 비준 촉구 기자회견을 열고, 외교부와 관련 의원실을 만나 공해 보호구역 확대의 필요성과 조약 발효의 시급성을 전달했습니다.</p>
+      <figure class="card tilt"><img src="assets/press.jpg" alt="국회 비준 촉구 기자회견"><figcaption>© Yeo-sun Park / Greenpeace</figcaption></figure>
+    </div>
+
+    <div class="ev hl rv">
+      <div class="m">3월</div>
+      <h3>한국, 동아시아 최초로 비준</h3>
+      <p>제3차 유엔해양총회를 앞두고 다양한 이해관계자, 시민들과 캠페인을 이어온 결과, 한국 정부가 조약 비준에 동참했습니다.</p>
+      <div class="badge"><span>동아시아 최초</span><span>유엔 회원국 중 21번째</span></div>
+    </div>
+
+    <div class="ev rv" style="position:relative">
+      <img class="float" id="whale" src="assets/whale.webp" alt="">
+      <div class="m">4월</div>
+      <h3>부산, 600명이 함께 본 바다</h3>
+      <p>제10차 아워오션컨퍼런스(OOC)를 계기로 부산 영화의전당에서 600여 명의 시민과 해양 다큐멘터리 〈씨그널(SEAGNAL)〉 상영회를 열고, 20여 개 해양 시민사회 단체와 공동 캠페인을 진행했습니다.</p>
+      <figure class="card tilt"><img src="assets/screen.jpg" alt="씨그널 상영회 현장"><figcaption>© Greenpeace</figcaption></figure>
+    </div>
+
+    <div class="ev rv">
+      <div class="m">7월</div>
+      <h3>심해 채굴에 반대하다</h3>
+      <p>국제해저기구(ISA) 총회에 맞춰 한국 정부를 포함한 회원국들에 심해 채굴 중단과 심해 생태계 보호 강화를 촉구하는 성명을 발표했습니다.</p>
+    </div>
+
+    <div class="ev rv">
+      <div class="m">8월 ~ 9월</div>
+      <h3>전국으로 번진 〈씨그널〉</h3>
+      <p>3,000여 명 시민의 후원으로 제작된 다큐멘터리 상영회를 국회 시사회에 이어 전국으로 넓혔습니다.</p>
+      <div class="chips"><span>국회</span><span>대전</span><span>대구</span><span>광주</span></div>
+      <div class="duo">
+        <figure class="card tilt"><img src="assets/signal-poster.jpg" alt="다큐멘터리 〈씨그널: 바다의 마지막 신호〉 포스터" loading="lazy"><figcaption>〈씨그널〉 포스터</figcaption></figure>
+        <figure class="card tilt"><img src="assets/signal-gv.jpg" alt="〈씨그널〉 상영 후 관객과의 대화. 화면에 그린피스 해양 캠페이너 김연하, 제주 해녀 이유정" loading="lazy"><figcaption>상영 후 관객과의 대화</figcaption></figure>
+      </div>
+      <p class="gv-cap">상영 후 관객과의 대화에는 그린피스 해양 캠페이너 김연하 님과 제주 해녀 이유정 님이 함께했습니다.</p>
+    </div>
+
+    <div class="ev hl rv">
+      <div class="m">9월</div>
+      <h3>비준국 60개국 달성</h3>
+      <p>조약 발효에 필요한 숫자가 채워졌습니다.</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- 5. COUNTER -->
+<section class="pin" id="scnt" style="height:230vh">
+  <div class="stage cnt-stage">
+    <div class="kicker">04 · 한 나라씩</div>
+    <div class="big" id="cntNum">0</div>
+    <div class="grid60" id="g60b"></div>
+    <div class="kr-label" id="krLabel">● 21번째, 대한민국</div>
+    <div class="cnt-cap">비준한 나라들</div>
+  </div>
+</section>
+
+<!-- 6. CLIMAX -->
+<section class="climax" id="climax">
+  <video class="bgv" id="climaxV" src="assets/climax.mp4" poster="assets/poster.jpg" muted playsinline preload="auto"></video>
+  <div class="shade"></div>
+  <div class="climax-in" id="climaxIn">
+    <div class="date">2026. 01</div>
+    <h2>글로벌 해양조약<br><em>발효</em></h2>
+    <p class="lead">20년에 걸친 캠페인 끝에, 공해에 해양보호구역을 지정할 수 있는 최초의 법적 기반이 마련되었습니다.</p>
+  </div>
+  <button class="replay" id="replay" type="button">↺ 다시 떠오르기</button>
+</section>
+
+<!-- 7. 30x30 -->
+<section class="goal" id="goal"><div class="wrap">
+  <div class="kicker rv">05 · 다음 목표</div>
+  <h2 class="h2 rv d1">1%에서 30%로</h2>
+  <p class="lead rv d2" style="margin-top:14px">2030년까지 전 세계 바다의 30%를 보호하자는 ‘30x30’ 목표. 조약 발효로 여기에 속도가 붙었습니다.</p>
+  <div class="meter rv" id="meter">
+    <div class="track"><div class="tgt"></div><div class="now"></div></div>
+    <div class="ticks"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
+    <div class="labels"><span><i style="background:var(--lime)"></i>지금, 공해 보호구역 1%</span><span><i style="background:rgba(95,212,255,.5)"></i>2030 목표 30%</span></div>
+  </div>
+  <div class="next rv">
+    <div class="kicker" style="margin-bottom:8px">2026 · 서울사무소</div>
+    그린피스는 한국 정부가 <b>황제해산 등 공해 우선 보호해역</b>을 해양보호구역으로 지정하고, 공해 보호 확대에 앞장서도록 요구하는 캠페인을 이어갑니다.
+  </div>
+</div></section>
+
+<!-- 8. NEXT -->
+<section class="cta" id="next"><div class="wrap">
+  <div class="kicker rv">06 · 이 이야기의 영수증</div>
+  <h2 class="h2 rv d1">이 바다에 닿은<br>내 후원금은 얼마였을까요?</h2>
+  <p class="lead rv d2">연차보고서 24~25쪽의 지출 내역으로, 운영비까지 숨김 없이 계산해 드립니다.</p>
+  <div class="row2 rv d3"><button class="btn" type="button" data-rx>🧾 내 영수증 뽑기</button><button class="btn ghost" type="button" id="toBook">보고서로 돌아가기</button></div>
+</div></section>
+
+<footer>
+  내용 출처: 그린피스 동아시아지부 「2025 연차보고서」 해양보호 편<br>
+  사진 © Greenpeace, © Yeo-sun Park / Greenpeace (연차보고서 수록 이미지)<br>〈씨그널〉 포스터와 관객과의 대화 사진은 온라인 공개 이미지로, 원본과 사용 허락을 확인 중입니다.<br>
+  첫 화면과 바다 표면 배경은 Higgsfield로 생성한 AI 이미지이며, 물결·빛 효과는 코드로 그렸습니다.<br>
+  이 페이지는 연차보고서의 인터랙티브 전환 가능성을 보여주기 위한 제안용 시안이며, 그린피스 공식 페이지가 아닙니다.<br>책 넘김과 영수증 연출은 VengeanceUI(MIT)의 기법을 참고했습니다.
+</footer>
+
+
+</div>
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const ease=t=>1-Math.pow(1-t,3);
+
+/* ---------- title stagger ---------- */
+const t=$('#title');const chars=[...t.textContent];t.textContent='';
+chars.forEach((c,i)=>{const s=document.createElement('span');s.textContent=c===' '?' ':c;s.style.animationDelay=(0.5+i*0.12)+'s';t.appendChild(s)});
+
+/* ---------- WebGL helpers ---------- */
+function makeGL(canvas,frag){
+  const gl=canvas.getContext('webgl',{premultipliedAlpha:false,antialias:false});
+  if(!gl) return null;
+  const vs='attribute vec2 p;varying vec2 v;void main(){v=p*.5+.5;gl_Position=vec4(p,0,1);}';
+  const sh=(type,src)=>{const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))console.warn(gl.getShaderInfoLog(s));return s};
+  const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,frag));gl.linkProgram(pr);gl.useProgram(pr);
+  const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const loc=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  const U={};const u=n=>U[n]||(U[n]=gl.getUniformLocation(pr,n));
+  return {gl,u};
+}
+function fit(c,scale){const d=Math.min(window.devicePixelRatio||1,1.6)*scale;const w=Math.round(c.clientWidth*d),h=Math.round(c.clientHeight*d);if(c.width!==w||c.height!==h){c.width=w;c.height=h}return [w,h]}
+
+/* ---------- HERO underwater shader ---------- */
+const heroFrag=`precision highp float;varying vec2 v;uniform vec2 R;uniform float T;uniform vec3 M;uniform float D;uniform sampler2D I;uniform vec2 SI;uniform float L;
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+void main(){vec2 uv=v;float asp=R.x/R.y;vec2 q=vec2((uv.x-.5)*asp,uv.y);
+ vec2 mp=vec2((M.x-.5)*asp,M.y);float dd=distance(q,mp);float age=T-M.z;
+ float rip=sin(dd*55.-age*9.)*exp(-dd*4.)*exp(-age*1.1)*step(0.,age)*smoothstep(age*.55+.05,age*.55-.15,dd);
+ vec2 off=normalize(q-mp+1e-4)*rip*.03;
+ // gentle water wobble, stronger near the surface (top)
+ float wob=smoothstep(.35,1.,uv.y);
+ off+=vec2(sin(uv.y*18.+T*1.1)*.004,cos(uv.x*14.+T*.9)*.003)*wob;
+ float ri=asp,ii=SI.x/SI.y;vec2 sc=ri>ii?vec2(1.,ii/ri):vec2(ri/ii,1.);
+ vec2 tu=(uv+off-.5)*sc+.5;tu.y=1.-tu.y;
+ vec3 col=L>.5?texture2D(I,tu).rgb:mix(vec3(.004,.04,.08),vec3(.1,.45,.6),uv.y);
+ // shimmering rays on top of the photo
+ vec2 dv=q-vec2(0.,1.3);float ang=atan(dv.x,-dv.y);
+ float r=(sin(ang*23.+T*.5)*.5+.5)*(sin(ang*37.-T*.4)*.5+.5);
+ col+=vec3(.5,.9,1.)*pow(r,3.)*smoothstep(.2,1.,uv.y)*smoothstep(.7,0.,abs(ang))*.18;
+ // marine snow drifting up
+ vec2 g=q*26.+vec2(0.,-T*.25);vec2 id=floor(g);vec2 f=fract(g)-.5;
+ vec2 o=vec2(h(id+3.1)-.5,h(id+7.7)-.5)*.6;float s=smoothstep(.06,.0,length(f-o))*step(.88,h(id));
+ col+=vec3(.75,.9,1.)*s*(.2+.4*(1.-uv.y));
+ col+=vec3(.6,.9,1.)*max(rip,0.)*.3;
+ col*=1.-D*.75;
+ gl_FragColor=vec4(col,1.);}`;
+const hc=$('#heroGL');const H=makeGL(hc,heroFrag);
+let mouse=[.5,.6,-99],heroVisible=true,depthK=0;const t0=performance.now();
+function heroPointer(e){const r=hc.getBoundingClientRect();const p=e.touches?e.touches[0]:e;mouse=[(p.clientX-r.left)/r.width,1-(p.clientY-r.top)/r.height,(performance.now()-t0)/1000]}
+hc.addEventListener('pointerdown',heroPointer);
+let lastMove=0;hc.addEventListener('pointermove',e=>{const n=performance.now();if(e.pointerType==='mouse'&&n-lastMove>900){lastMove=n;heroPointer(e)}});
+new IntersectionObserver(es=>{heroVisible=es[0].isIntersecting}).observe(hc);
+let heroL=0,heroS=[16,9];
+if(H){const{gl}=H;const tx=gl.createTexture();const im=new Image();im.onload=()=>{gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,tx);
+ gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+ gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,im);gl.uniform1i(H.u('I'),2);heroS=[im.width,im.height];heroL=1};im.src='assets/light.jpg'}
+function drawHero(){if(!H||!heroVisible)return;const[w,h]=fit(hc,1);const{gl,u}=H;gl.viewport(0,0,w,h);
+ gl.uniform2f(u('R'),w,h);gl.uniform1f(u('T'),(performance.now()-t0)/1000);gl.uniform3f(u('M'),...mouse);gl.uniform1f(u('D'),depthK);gl.uniform1f(u('L'),heroL);gl.uniform2f(u('SI'),...heroS);gl.drawArrays(gl.TRIANGLE_STRIP,0,4)}
+
+/* ---------- DISSOLVE shader (scroll pixel-dissolve, after VengeanceUI) ---------- */
+const dissFrag=`precision highp float;varying vec2 v;uniform sampler2D A;uniform sampler2D B;uniform vec2 R;uniform vec2 SA;uniform vec2 SB;uniform float P;uniform float T;
+float h(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+1.),f.x),f.y);}
+float fbm(vec2 p){float s=0.,a=.5;for(int i=0;i<5;i++){s+=a*n(p);p*=2.;a*=.5;}return s;}
+vec2 cover(vec2 uv,vec2 img){float ra=R.x/R.y,ri=img.x/img.y;vec2 s=ra>ri?vec2(1.,ri/ra):vec2(ra/ri,1.);return (uv-.5)*s+.5;}
+void main(){float px=7.;vec2 pv=floor(v*R/px)*px/R;
+ float nz=fbm(pv*vec2(R.x/R.y,1.)*4.)*.6+ (1.-distance(pv,vec2(.5)))*.55;
+ float th=P*1.6-.1;float m=smoothstep(th-.02,th,nz);
+ float edge=smoothstep(th-.08,th-.02,nz)*(1.-m);
+ vec2 ua=cover(v,SA);vec2 ub=cover(v,SB);
+ ua.y=1.-ua.y;ub.y=1.-ub.y;
+ vec3 a=texture2D(A,ua+vec2(sin(v.y*30.+T)*.002,0.)).rgb;vec3 b=texture2D(B,ub).rgb;
+ vec3 col=mix(b,a,m);col+=vec3(.37,.83,1.)*edge*2.2;
+ col*=.82;col*=smoothstep(1.2,.3,length(v-.5));
+ gl_FragColor=vec4(col,1.);}`;
+const dc=$('#dissGL');const Dg=makeGL(dc,dissFrag);let dissP=0,dissReady=0,dissVisible=false;const sizes={};
+function tex(unit,src,key){const{gl}=Dg;const tx=gl.createTexture();const im=new Image();im.onload=()=>{gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,tx);
+ gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+ gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,im);sizes[key]=[im.width,im.height];dissReady++};im.src=src}
+if(Dg){tex(0,'assets/surface.jpg','A');tex(1,'assets/screen.jpg','B');Dg.gl.uniform1i(Dg.u('A'),0);Dg.gl.uniform1i(Dg.u('B'),1)}
+new IntersectionObserver(es=>{dissVisible=es[0].isIntersecting}).observe(dc);
+function drawDiss(){if(!Dg||dissReady<2||!dissVisible)return;const[w,h]=fit(dc,1);const{gl,u}=Dg;gl.viewport(0,0,w,h);
+ gl.uniform2f(u('R'),w,h);gl.uniform2f(u('SA'),...sizes.A);gl.uniform2f(u('SB'),...sizes.B);gl.uniform1f(u('P'),dissP);gl.uniform1f(u('T'),performance.now()/1000);gl.drawArrays(gl.TRIANGLE_STRIP,0,4)}
+
+/* ---------- dot grids ---------- */
+const g60=$('#g60');for(let i=0;i<100;i++)g60.appendChild(document.createElement('b'));
+// spread the 60 high-seas dots so it reads as "open ocean", deterministic shuffle
+const order=[...Array(100).keys()].sort((a,b)=>((a*37)%101)-((b*37)%101));
+const g1=$('#g1');for(let i=0;i<100;i++){const b=document.createElement('b');b.className='hs';g1.appendChild(b)}
+const g60b=$('#g60b');for(let i=0;i<60;i++){const b=document.createElement('b');if(i===20)b.className='kr';g60b.appendChild(b)}
+
+/* ---------- guess ---------- */
+const gr=$('#gr'),gv=$('#gv');
+const upd=()=>{gv.textContent=gr.value;gr.style.setProperty('--p',(gr.value/50*100)+'%')};gr.addEventListener('input',upd);upd();
+$('#gbtn').addEventListener('click',()=>{
+  const g=+gr.value;$('#ans').classList.add('open');
+  const dots=g1.children;[...dots].forEach(d=>d.classList.remove('pr'));
+  setTimeout(()=>dots[44].classList.add('pr'),700);
+  let msg;
+  if(g===1) msg='정확합니다. 공해 100곳 중 단 한 곳만이 보호받고 있습니다.';
+  else if(g===0) msg='거의 맞습니다. 0은 아니지만, 공해 100곳 중 보호받는 곳은 단 한 곳뿐입니다.';
+  else msg=`예상하신 ${g}%의 ${g>=2?g+'분의 1':'절반'}. 공해 100곳 중 보호받는 곳은 단 한 곳뿐입니다.`;
+  $('#verdict').textContent=msg;
+  $('#gbtn').textContent='다시 맞혀보기';
+});
+
+/* ---------- scroll engine ---------- */
+const prog=el=>{const r=el.getBoundingClientRect();const tot=r.height-innerHeight;return clamp(-r.top/tot,0,1)};
+const s60=$('#s60'),sd=$('#sdiss'),sc=$('#scnt'),tl=$('#tlList'),line=$('#tlLine'),whale=$('#whale'),climax=$('#climax');
+const n60=$('#n60'),cnt=$('#cntNum'),krl=$('#krLabel'),dt1=$('#dt1'),dt2=$('#dt2');
+const depth=$('#depth'),dFill=$('#depthFill'),dVal=$('#depthVal');
+let lastN=-1,lastC=-1;
+function onScroll(){
+  const oc=document.getElementById('ocean'),o0=oc.offsetTop,y=scrollY-o0,max=oc.offsetHeight-innerHeight;
+  // depth meter
+  const k=clamp(y/max,0,1);depth.classList.toggle('on',y>innerHeight*.5&&y<max+innerHeight*.2);dFill.style.height=(k*100)+'%';
+  dVal.textContent='수심 '+Math.round(k*4000).toLocaleString()+'m';
+  depthK=clamp(y/innerHeight,0,1);
+  // 60%
+  const p1=ease(clamp(prog(s60)*1.4,0,1));const n=Math.round(p1*60);
+  if(n!==lastN){lastN=n;n60.textContent=n;const ds=g60.children;for(let i=0;i<100;i++)ds[order[i]].classList.toggle('hs',i<n)}
+  // dissolve
+  const pd=prog(sd);dissP=clamp((pd-.15)/.6,0,1);dt1.style.opacity=pd<.35?1:0;dt2.style.opacity=pd>.7?1:0;document.getElementById('dcap').style.opacity=pd>.6?1:0;
+  // timeline line
+  const tr=tl.getBoundingClientRect();line.style.height=clamp(innerHeight*.6-tr.top,0,tr.height)+'px';
+  if(whale){const wr=whale.parentElement.getBoundingClientRect();whale.style.transform=`translate(${(wr.top/innerHeight)*-60}px,${wr.top*.15}px) rotate(${-6+wr.top/innerHeight*6}deg)`}
+  // counter
+  const pc=clamp(prog(sc)*1.25,0,1);const c=Math.round(pc*60);
+  if(c!==lastC){lastC=c;cnt.textContent=c;const ds=g60b.children;for(let i=0;i<60;i++)ds[i].classList.toggle('on',i<c);krl.classList.toggle('on',c>=21)}
+  // climax parallax
+  
+}
+addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);onScroll();
+
+/* ---------- reveal ---------- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.2,rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.rv,.meter').forEach(el=>io.observe(el));
+
+/* ---------- tilt cards ---------- */
+document.querySelectorAll('.tilt').forEach(c=>{
+  c.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;const r=c.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`perspective(900px) rotateY(${x*8}deg) rotateX(${-y*8}deg)`});
+  c.addEventListener('pointerleave',()=>c.style.transform='');
+});
+
+/* ---------- climax: rise to the surface once ---------- */
+const cv=$('#climaxV');let played=false,surfT=null;
+const surface=()=>climax.classList.add('surf');
+const rise=()=>{climax.classList.remove('surf');try{cv.currentTime=0}catch(_){}
+  cv.playbackRate=1.8;const pr=cv.play();if(pr&&pr.catch)pr.catch(()=>surface());clearTimeout(surfT);surfT=setTimeout(surface,2200)};
+cv.addEventListener('timeupdate',()=>{if(cv.currentTime>2.4)surface()});
+cv.addEventListener('error',surface);
+new IntersectionObserver(es=>{if(es[0].isIntersecting&&!played){played=true;rise()}},{threshold:.35}).observe(climax);
+$('#replay').addEventListener('click',rise);
+
+/* ---------- loop ---------- */
+(function loop(){drawHero();drawDiss();requestAnimationFrame(loop)})();
+})();
+</script>
+<script>
+(function(){
+"use strict";
+var calm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+var $=function(id){return document.getElementById(id)};
+var clamp=function(v,a,b){return v<a?a:v>b?b:v},lerp=function(a,b,t){return a+(b-a)*t};
+var seg=function(p,a,b){return clamp((p-a)/(b-a),0,1)},ease=function(t){return t*t*(3-2*t)},eOut=function(t){return 1-Math.pow(1-t,3)};
+var VW=window.innerWidth,VH=window.innerHeight;
+var fmt=function(n){return Math.round(n).toLocaleString("ko-KR")};
+function prog(el){var r=el.getBoundingClientRect();return {p:clamp(-r.top/(r.height-VH),0,1),vis:r.top<VH&&r.bottom>0}}
+function lock(on){document.body.classList.toggle("lock",on)}
+function goTo(y,ms){if(calm){window.scrollTo(0,y);return}var y0=window.scrollY,t0=performance.now();ms=ms||1200;(function f(t){var k=Math.min(1,(t-t0)/ms);k=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;window.scrollTo(0,y0+(y-y0)*k);if(k<1)requestAnimationFrame(f)})(t0)}
+// 소리는 이번 통합본에서는 끔 (안정성 우선)
+var sfx={flick:function(){},tick:function(){},motor:function(){},paper:function(){},amb:function(){},on:false};
+
+/* ═════ 보고서 릴 ═════ */
+var PAGES=[
+ {img:"assets/page01.jpg",pp:"표지",t:"그린피스 동아시아지부 2025 연차보고서"},
+ {img:"assets/page02.jpg",pp:"2~3쪽",t:"우리의 지구, 글로벌 해양 보호의 새로운 전환점"},
+ {img:"assets/page03.jpg",pp:"4~5쪽",t:"첫인상, 낯선 곳이 집으로 변하는 과정"},
+ {img:"assets/page04.jpg",pp:"6~7쪽",t:"인간과 지구, 조화의 삶"},
+ {img:"assets/page05.jpg",pp:"8~9쪽",t:"기후위기 시대, 사람과 지구 곁을 지키다"},
+ {img:"assets/page06.jpg",pp:"10~11쪽",t:"기후위기와 교통"},
+ {img:"assets/page07.jpg",pp:"12~13쪽",t:"플라스틱 오염, 위기를 넘어 변화로"},
+ {img:"assets/page08.jpg",big:"assets/page08-big.jpg",pp:"14~15쪽",t:"글로벌 해양조약, 드디어 현실로!",open:"sea",go:"바다 이야기 보기"},
+ {img:"assets/page09.jpg",pp:"16~17쪽",t:"숲과 생명을 되살리는 변화"},
+ {img:"assets/page10.jpg",pp:"18~19쪽",t:"시민들이 주인공이 되는 캠페인"},
+ {img:"assets/page11.jpg",pp:"20~21쪽",t:"그린피스 사람들"},
+ {img:"assets/page12.jpg",pp:"22~23쪽",t:"후원자님과 함께 만들어갈 캠페인 로드맵"},
+ {img:"assets/page13.jpg",big:"assets/page13-big.jpg",pp:"24~25쪽",t:"후원금 사용 내역 보고",open:"rx",go:"내 영수증 뽑기"},
+ {img:"assets/page14.jpg",pp:"26~27쪽",t:"2025 서울사무소 수입 및 지출 내역"}
+];
+/* 책: 넘길 때마다 다음 펼침면이 열린다 (VengeanceUI interactive-book 참고) */
+var N=PAGES.length,book=$("book"),leaves=[],hub={pw:0,ph:0,front:-1,shown:null,f:0,ft:0};
+for(var j=0;j<N;j++){
+  var lf=document.createElement("div");lf.className="leaf";
+  lf.innerHTML='<div class="face f" style="background-image:url('+PAGES[j].img+')"><i></i></div><div class="face b" style="background-image:url('+PAGES[(j+1)%N].img+')"><i></i></div>';
+  book.insertBefore(lf,$("pgno"));leaves.push({el:lf,fi:lf.firstChild.firstChild,bi:lf.lastChild.firstChild,last:""});
+}
+function hubLayout(){
+  var W=Math.min(VW,480),hh=$("bst").clientHeight;
+  hub.pw=Math.min((W-32)/2,hh*.9*.76);hub.ph=hub.pw/.76;
+  book.style.width=2*hub.pw+"px";book.style.height=hub.ph+"px";book.style.marginLeft=(-hub.pw)+"px";book.style.marginTop=(-hub.ph/2)+"px";
+  $("baseL").style.cssText="left:0;width:"+hub.pw+"px";$("baseR").style.cssText="left:"+hub.pw+"px;width:"+hub.pw+"px";
+  leaves.forEach(function(l){l.el.style.left=hub.pw+"px";l.el.style.width=hub.pw+"px";l.last=""});
+  $("glow").style.cssText="left:-5px;top:-5px;width:"+(2*hub.pw+10)+"px;height:"+(hub.ph+10)+"px";
+}
+// 스크롤 → 넘긴 장 수. 바다(7장)와 영수증(12장)에서 잠시 멈춘다
+var STOPS=[[0,0],[.06,0],[.36,7],[.52,7],[.74,12],[1,12]];
+function flipsAt(p){for(var i=1;i<STOPS.length;i++){var a=STOPS[i-1],b=STOPS[i];if(p<=b[0]){var k=(p-a[0])/(b[0]-a[0]);k=k*k*(3-2*k);return a[1]+(b[1]-a[1])*k}}return 12}
+function hubFrame(p){
+  hub.ft=flipsAt(p);
+  var d=hub.ft-hub.f;hub.f+=d*(calm?1:.14);if(Math.abs(hub.ft-hub.f)<.0005)hub.f=hub.ft;
+  var f=hub.f,open=ease(clamp(f,0,1));
+  var tilt=lerp(30,10,open),shift=-hub.pw/2*(1-open),sc=lerp(1.12,1,open);
+  book.style.transform="translate3d("+shift.toFixed(1)+"px,0,0) rotateX("+tilt.toFixed(2)+"deg) scale("+sc.toFixed(3)+")";
+  $("baseL").style.opacity=f>.5?1:0;
+  leaves.forEach(function(L,j){
+    var r=clamp(f-j,0,1),z=r>=1?j*.3:(r<=0?(N-j)*.3:N*.35+2);
+    var tr="translateZ("+z.toFixed(2)+"px) rotateY("+(-180*r).toFixed(2)+"deg)";
+    if(tr!==L.last){L.last=tr;L.el.style.transform=tr;var s=Math.sin(r*Math.PI);L.fi.style.opacity=r<.5?s:0;L.bi.style.opacity=r>=.5?s:0}
+  });
+  var k=Math.round(f),settled=Math.abs(f-k)<.1&&k>=1;
+  var P=PAGES[k%N],can=settled&&!!P.open;
+  if(k!==hub.front&&k>0)sfx.flick();
+  if(k!==hub.front||settled!==hub.shown){
+    hub.front=k;hub.shown=settled;
+    $("hcap").innerHTML=!settled?"":'<p class="pp">'+P.pp+'</p><b>'+P.t+'</b>'+(P.open?'<button class="go" id="hgo">'+P.go+' →</button>':'');
+    var g=$("hgo");if(g)g.addEventListener("click",function(){openPage(k)});
+    $("pgno").textContent=(k===0||(settled&&P.open))?"":P.pp;
+  }
+  $("glow").classList.toggle("on",can);
+  $("tapz").style.pointerEvents=can?"auto":"none";
+  $("hhint").textContent=f<.5?"내려가면 보고서가 펼쳐집니다":(can?"펼쳐진 지면을 눌러 보세요":(f>11.9?"":"계속 내리면 다음 장으로 넘어갑니다"));
+  return Math.abs(hub.ft-hub.f)>.0005;
+}
+$("tapz").addEventListener("click",function(e){var k=hub.front;if(PAGES[k]&&PAGES[k].open)openPage(k,e)});
+
+// 고른 쪽이 화면을 채우며 그 이야기가 된다
+
+var zoom=$("zoom");
+function openPage(i,ev){
+  var P=PAGES[i],r=book.getBoundingClientRect(),W=window.innerWidth,H=window.innerHeight;
+  zoom.style.backgroundImage="url("+(P.big||P.img)+")";
+  zoom.style.transition="none";
+  zoom.style.cssText+=";left:"+r.left+"px;top:"+r.top+"px;width:"+r.width+"px;height:"+r.height+"px;opacity:1;border-radius:3px";
+  void zoom.offsetWidth;
+  var ms=calm?0:650;
+  zoom.style.transition="all "+ms+"ms cubic-bezier(.6,0,.2,1)";
+  zoom.style.left="0px";zoom.style.top="0px";zoom.style.width=W+"px";zoom.style.height=H+"px";zoom.style.borderRadius="0";
+  setTimeout(function(){
+    if(P.open==="sea"){window.scrollTo(0,$("ocean").offsetTop)}else{openRx()}
+    zoom.style.transition="opacity "+(calm?0:600)+"ms";zoom.style.opacity="0";
+  },ms+(calm?0:250));
+}
+
+/* ═════ 영수증 ═════ */
+var PARTS=[["기후위기 대응",9235,0,"#78BE43"],["해양보호",1517,"sea","#3D5BFF"],["산림 보호",2220,0,"#1F7A4D"],["플라스틱 / 건강한 삶",315,0,"#F2B134"],["다분야 통합 캠페인",1276,0,"#9B7ED9"],["캠페인 미디어 및 대중 홍보",4746,0,"#F07C5A"],["지역사회 교육, 비폭력 직접행동, 자원봉사",4750,0,"#2FB1C4"],["정책, 비즈니스 및 과학 연구",5941,0,"#0B1622"]];
+var SHORT=["기후위기","해양","산림","플라스틱","통합 캠페인","미디어·홍보","교육·직접행동","정책·연구","모금·후원자","조직 운영"];
+// 보고서 25쪽: 총지출 53,955,669,239원 = 캠페인 32,415,311,169 + 모금·후원자 관리 12,150,627,128 + 조직 관리 9,389,730,942
+// 24쪽 '3만 원' 8개 항목은 캠페인 지출만 나눈 비율이라, 캠페인 몫 안에서 다시 나눈다
+var TOT=53955669239,CAMP=32415311169;
+var OVER=[["모금 및 후원자 관리",12150627128,"#C9A04A","신규 후원자 모집과 후원자 소통·관리. 정부·기업 돈 없이 개인 후원으로만 활동하기에 드는 비용입니다."],["조직 관리",9389730942,"#8C9196","인사·재무·행정·IT·법률 자문 등 단체를 굴리는 기본 비용입니다."]];
+// 합계가 정확히 맞도록 큰 나머지부터 1원씩 배분
+function alloc(total){var w=PARTS.map(function(p){return p[1]/30000*CAMP}).concat(OVER.map(function(o){return o[1]}));
+  var raw=w.map(function(x){return total*x/TOT}),v=raw.map(Math.floor),left=total-v.reduce(function(a,b){return a+b},0);
+  raw.map(function(r,i){return [r-v[i],i]}).sort(function(a,b){return b[0]-a[0]}).slice(0,left).forEach(function(x){v[x[1]]++});return v}
+var COLORS=PARTS.map(function(p){return p[3]}).concat(OVER.map(function(o){return o[2]}));
+$("strip").innerHTML=alloc(30000).map(function(v,i){return '<i style="background:'+COLORS[i]+';flex-grow:'+v+'"></i>'}).join("");
+function drawSplit(){$("lg").innerHTML=alloc(mon).map(function(v,i){return '<li><i style="background:'+COLORS[i]+'"></i><span>'+SHORT[i]+'</span><b>'+fmt(v)+'</b></li>'}).join("")}
+var rx=$("rx"),rxs=$("rxs"),mon=30000,qks=[].slice.call($("qk").children);
+function setM(v){mon=clamp(v,10000,1000000);$("mv").textContent=fmt(mon);drawSplit();qks.forEach(function(b){b.setAttribute("aria-pressed",String(+b.dataset.v===mon))})}
+qks.forEach(function(b){b.addEventListener("click",function(){setM(+b.dataset.v)})});
+drawSplit();
+$("mn").addEventListener("click",function(){setM(mon-10000)});$("pl").addEventListener("click",function(){setM(mon+10000)});
+function openRx(){rx.classList.add("open");rx.setAttribute("aria-hidden","false");lock(true);rxs.scrollTop=0;$("rxx").focus({preventScroll:true})}
+function closeRx(){if(!rx.classList.contains("open"))return;rx.classList.remove("open");rx.setAttribute("aria-hidden","true");lock(false)}
+$("rxx").addEventListener("click",closeRx);
+[].forEach.call(document.querySelectorAll("[data-rx]"),function(b){b.addEventListener("click",openRx)});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closeRx()});
+// 바코드: 장식이지만 2025를 흉내 내지 않고 금액에 따라 굵기가 바뀐다
+function barcode(n){var s=String(n),h="";for(var i=0;i<34;i++){var d=+s[i%s.length]||((i*7)%10);h+='<i style="flex:'+(1+(d+i)%3)+';opacity:'+(i%4===3?0:1)+'"></i>'}return h}
+var timers=[],amts=[];
+$("pr").addEventListener("click",function(){
+  timers.forEach(clearTimeout);timers=[];
+  var year=mon*12;amts=alloc(year);var max=Math.max.apply(null,amts),sum=function(a){return a.reduce(function(x,y){return x+y},0)};
+  $("pm").textContent=fmt(mon);$("tot").classList.toggle("long",fmt(year).length>9);$("tv").textContent=fmt(year);
+  var itm=function(nm,v,c,cls){return '<div class="ln it'+(cls||"")+'"><div class="row"><span class="nm">'+nm+'</span><span class="dots"></span><b class="num">'+fmt(v)+'</b></div><div class="bar"><i style="--c:'+c+'" data-w="'+(v/max*100).toFixed(1)+'"></i></div></div>'};
+  $("items").innerHTML='<div class="ln sec"><span>캠페인 및 캠페인 지원<em>60.1%</em></span><b class="num">'+fmt(sum(amts.slice(0,8)))+'</b></div>'
+    +PARTS.map(function(p,i){return itm(p[0],amts[i],p[3],p[2]?" sea":"")}).join("")
+    +'<div class="ln sec ov"><span>운영비<span class="open-tag">숨김 없이</span><em>39.9%</em></span><b class="num">'+fmt(amts[8]+amts[9])+'</b></div>'
+    +OVER.map(function(o,i){return itm(o[0],amts[8+i],o[2])+'<p class="ln ovn">'+o[3]+'</p>'}).join("");
+  $("bc").innerHTML=barcode(year);
+  [].forEach.call(document.querySelectorAll(".huge[data-a]"),function(h){var v=amts[+h.dataset.a];h.firstElementChild.textContent="0";h.dataset.seen="";h.classList.toggle("long",fmt(v).length>8)});
+  $("ktot").textContent=fmt(year);
+  $("ktop").innerHTML=PARTS.map(function(p,i){return [p[0],amts[i]]}).sort(function(x,y){return y[1]-x[1]}).slice(0,3).map(function(x){return '<li><span>'+x[0]+'</span><b class="num">'+fmt(x[1])+'원</b></li>'}).join("");
+  $("ptr").hidden=false;$("rscenes").hidden=false;
+  var paper=$("paper"),lns=[].slice.call(paper.querySelectorAll(".ln"));
+  lns.forEach(function(l){l.classList.remove("on")});
+  paper.style.transition="none";paper.style.transform="translateY(-101%)";void paper.offsetWidth;
+  rxs.scrollTo({top:$("ptr").offsetTop-70,behavior:calm?"auto":"smooth"});
+  var step=calm?0:110,start=calm?0:500;
+  paper.style.transition="transform "+(calm?0:(lns.length*step+600))+"ms linear";
+  timers.push(setTimeout(function(){paper.style.transform="none";sfx.motor((lns.length*step+600)/1000)},start));
+  lns.forEach(function(l,i){timers.push(setTimeout(function(){l.classList.add("on");sfx.tick();var b=l.querySelector(".bar i");if(b)b.style.width=b.dataset.w+"%"},start+i*step))});
+});
+// 장면 속 금액은 화면에 들어올 때 올라간다
+if("IntersectionObserver" in window){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){var h=e.target;if(e.isIntersecting&&!h.dataset.seen&&amts.length){h.dataset.seen="1";var to=amts[+h.dataset.a],el=h.firstElementChild;if(calm){el.textContent=fmt(to);return}var t0=performance.now();(function f(t){var k=Math.min(1,(t-t0)/1300);el.textContent=fmt(to*eOut(k));if(k<1)requestAnimationFrame(f)})(t0)}})},{root:rxs,threshold:.6});
+  [].forEach.call(document.querySelectorAll(".huge[data-a]"),function(h){io.observe(h)});
+}
+[].forEach.call(document.querySelectorAll("[data-tosea]"),function(b){b.addEventListener("click",function(){closeRx();goTo(document.getElementById("ocean").offsetTop,900)})});
+$("ag").addEventListener("click",function(){rxs.scrollTo({top:0,behavior:calm?"auto":"smooth"});$("rst").textContent=""});
+$("rsh").addEventListener("click",function(){
+  var year=mon*12,tx="나의 2025 그린피스 영수증\n합계 "+fmt(year)+"원\n· 기후위기 대응 "+fmt(amts[0])+"원\n· 해양보호 "+fmt(amts[1])+"원\n· 운영비(모금·조직) "+fmt(amts[8]+amts[9])+"원까지 숨김 없이\n(연차보고서 24~25쪽 비율을 비례 적용)",ok=function(m){$("rst").textContent=m};
+  if(navigator.share)navigator.share({text:tx,url:location.href}).then(function(){ok("공유했습니다.")}).catch(function(){});
+  else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(tx+"\n"+location.href).then(function(){ok("영수증 문구와 링크를 복사했습니다.")}).catch(function(){ok("복사하지 못했습니다. 화면을 캡처해 공유해 주세요.")});
+  else ok("이 브라우저에서는 공유할 수 없습니다. 화면을 캡처해 공유해 주세요.");
+});
+
+
+$("toBook").addEventListener("click",function(){goTo($("hub").offsetTop+($("hub").offsetHeight-VH)*.45,1400)});
+
+// 책은 스크롤에 맞춰 부드럽게 따라온다(목표값으로 보간). 필요할 때만 그린다.
+var hubEl=$("hub"),raf=0;
+function frame(){raf=0;var o=prog(hubEl);if(o.vis&&hubFrame(o.p))req()}
+function req(){if(!raf)raf=requestAnimationFrame(frame)}
+function layout(){VW=window.innerWidth;VH=window.innerHeight;hubLayout();req()}
+addEventListener("scroll",req,{passive:true});addEventListener("resize",layout);
+layout();
+})();
+</script>
+</body>
+</html>
