@@ -39,6 +39,9 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .src{font-size:11.5px;line-height:1.55;color:var(--mute)}
 .dark .src{color:#8FA0A8}
 
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis.lenis-stopped{overflow:hidden}
 /* 고정 */
 #bar{position:fixed;top:0;left:0;height:2px;width:0;background:var(--green);z-index:60}
 #home{position:fixed;top:10px;left:10px;z-index:55;font-size:12.5px;font-weight:700;padding:8px 13px;border-radius:999px;background:rgba(11,22,34,.62);color:#fff;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .3s}
@@ -47,18 +50,30 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 @media(min-width:481px){.tag{right:calc(50% - 230px)}#home{left:calc(50% - 230px)}}
 
 /* ── 보고서: 펼침면 릴 ── */
-#hub{height:300svh}
+#hub{height:620svh}
 #hub .pin{background:radial-gradient(90% 60% at 50% 46%,#1A3044 0%,var(--ink) 70%)}
 .htop{position:absolute;left:24px;right:24px;top:9%;color:#F2F4F1}
 .htop .k{font-size:13px;font-weight:500;color:#9FB0B8}
 .htop h1{margin-top:8px;font-family:var(--serif);font-size:38px;font-weight:800;letter-spacing:-.04em;line-height:1.18}
 .htop h1 em{font-style:normal;color:var(--green)}
-.stage3d{position:absolute;left:0;right:0;top:34%;height:36%;perspective:760px;perspective-origin:50% 50%;touch-action:pan-y}
-.cyl{position:absolute;left:50%;top:50%;transform-style:preserve-3d;will-change:transform}
-.pg{position:absolute;left:0;top:0;transform-style:preserve-3d;-webkit-backface-visibility:hidden;backface-visibility:hidden;border-radius:3px;box-shadow:0 20px 40px rgba(0,0,0,.5);background:#fff;overflow:hidden;will-change:transform,opacity}
-.pg img{display:block;width:100%;height:100%;object-fit:cover;pointer-events:none}
-.pg.open{box-shadow:0 20px 40px rgba(0,0,0,.5),0 0 0 2px var(--green)}
-.pg .tab{position:absolute;right:8px;top:8px;font-size:10.5px;font-weight:700;background:var(--green);color:var(--ink);border-radius:999px;padding:3px 8px}
+.bookstage{position:absolute;left:0;right:0;top:25%;height:46%;perspective:1500px;perspective-origin:50% 20%}
+.book{position:absolute;left:50%;top:50%;transform-style:preserve-3d;will-change:transform}
+.book .base{position:absolute;top:0;height:100%;background:#F4F4F0;box-shadow:0 30px 60px rgba(0,0,0,.55);transition:opacity .3s}
+.book .shadow{position:absolute;left:-4%;right:-4%;bottom:-14%;height:16%;background:radial-gradient(closest-side,rgba(0,0,0,.6),rgba(0,0,0,0));transform:translateZ(-4px)}
+.leaf{position:absolute;top:0;height:100%;transform-origin:0 50%;transform-style:preserve-3d;will-change:transform}
+.face{position:absolute;inset:0;-webkit-backface-visibility:hidden;backface-visibility:hidden;background-color:#fff;background-repeat:no-repeat;background-size:200% 100%;overflow:hidden}
+.face.f{background-position:100% 0;border-radius:0 3px 3px 0}
+.face.b{background-position:0 0;transform:rotateY(180deg);border-radius:3px 0 0 3px}
+.face i{position:absolute;inset:0;pointer-events:none;opacity:0}
+.face.f i{background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(0,0,0,.05) 40%,rgba(255,255,255,.12))}
+.face.b i{background:linear-gradient(270deg,rgba(0,0,0,.35),rgba(0,0,0,.05) 40%,rgba(255,255,255,.12))}
+.face.f::after{content:"";position:absolute;left:0;top:0;bottom:0;width:12%;background:linear-gradient(90deg,rgba(0,0,0,.2),rgba(0,0,0,0))}
+.face.b::after{content:"";position:absolute;right:0;top:0;bottom:0;width:12%;background:linear-gradient(270deg,rgba(0,0,0,.2),rgba(0,0,0,0))}
+.tapzone{position:absolute;inset:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transform:translateZ(20px)}
+.glowring{position:absolute;border-radius:6px;opacity:0;transition:opacity .4s;pointer-events:none;transform:translateZ(-1px)}
+.glowring.on{opacity:1;animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 2px #78BE43,0 0 18px rgba(120,190,67,.35)}50%{box-shadow:0 0 0 2px #78BE43,0 0 40px rgba(120,190,67,.75)}}
+.pgno{position:absolute;left:0;right:0;top:100%;margin-top:20px;text-align:center;font-size:12px;font-weight:500;color:#9FB0B8;font-variant-numeric:tabular-nums}
 .hcap{position:absolute;left:24px;right:24px;bottom:12%;color:#F2F4F1;min-height:96px}
 .hcap .pp{font-size:12.5px;color:#9FB0B8}
 .hcap b{display:block;margin-top:4px;font-family:var(--serif);font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.3}
@@ -72,7 +87,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 #o1 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform}
 #o1 .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,22,34,.15),rgba(11,22,34,.1) 45%,rgba(11,22,34,.7))}
 #o1 .white{position:absolute;inset:0;background:#0E2433;opacity:0}
-.big3{position:absolute;left:24px;right:16px;top:16%;font-family:var(--serif);font-weight:800;color:#fff;font-size:min(15.5vw,74px);letter-spacing:-.05em;line-height:1.08}
+.big3{position:absolute;left:24px;right:16px;top:16%;font-family:var(--serif);font-weight:800;color:#fff;font-size:min(12.8vw,62px);letter-spacing:-.05em;line-height:1.08}
 .big3 span{display:block;will-change:transform,opacity}
 .o1b{position:absolute;left:24px;right:24px;bottom:12%;color:#fff;font-family:var(--serif);font-size:24px;font-weight:600;letter-spacing:-.03em;line-height:1.45;opacity:0}
 
@@ -119,7 +134,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 #o4{height:440svh}
 .dbig{position:absolute;left:24px;right:16px;top:20%;color:#fff}
 .dbig .y{font-family:var(--serif);font-size:24px;font-weight:600;color:#9FB0B8}
-.dbig .d{font-family:var(--serif);font-weight:900;font-size:min(30vw,140px);letter-spacing:-.06em;line-height:.95;margin-top:4px}
+.dbig .d{font-family:var(--serif);font-weight:900;font-size:min(24vw,116px);letter-spacing:-.06em;line-height:.95;margin-top:4px}
 .dbig p{margin-top:20px;font-family:var(--serif);font-size:24px;font-weight:600;line-height:1.4;letter-spacing:-.03em}
 .dbig .sm{margin-top:12px;font-family:var(--sans);font-size:15px;color:#B9C6CC;font-weight:400;letter-spacing:0}
 .steps{position:absolute;left:20px;right:20px;top:13%;height:66%}
@@ -237,6 +252,12 @@ footer p+p{margin-top:8px}
 .qk button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
 
 
+
+.kin .ch{display:inline-block;opacity:0;transform:translateY(.45em) rotateX(-75deg);transform-origin:50% 100%;transition:opacity .55s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i)*45ms)}
+.kin.on .ch{opacity:1;transform:none}
+.kin .sp{display:inline-block;width:.28em}
+.kin{white-space:nowrap}
+
 /* 종이가 바다가 되는 순간 */
 #water{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:100%;z-index:66;display:none;pointer-events:none}
 /* 소리 */
@@ -319,7 +340,7 @@ footer p+p{margin-top:8px}
         <p class="k">그린피스 동아시아지부 · 2025 연차보고서</p>
         <h1>27쪽짜리 한 해를<br><em>펼쳐 봅니다.</em></h1>
       </div>
-      <div class="stage3d" id="s3d"><div class="cyl" id="cyl"></div></div>
+      <div class="bookstage" id="bst"><div class="book" id="book"><div class="shadow"></div><div class="glowring" id="glow"></div><div class="base" id="baseL"></div><div class="base" id="baseR"></div><div class="pgno" id="pgno"></div><button class="tapzone" id="tapz" aria-label="펼쳐진 지면 열기"></button></div></div>
       <div class="hcap" id="hcap"></div>
       <p class="hhint" id="hhint">내려가면 보고서가 펼쳐집니다</p>
     </div>
@@ -330,7 +351,7 @@ footer p+p{margin-top:8px}
     <div class="pin dark">
       <video id="ov" muted loop playsinline preload="auto" poster="assets/ocean-top.jpg" src="assets/ocean-top.mp4"></video>
       <div class="veil"></div>
-      <div class="big3"><span id="b1">바다에는</span><span id="b2">국경이</span><span id="b3">보이지 않습니다.</span></div>
+      <div class="big3"><span id="b1" class="kin">바다에는</span><span id="b2" class="kin">국경이</span><span id="b3" class="kin">보이지 않습니다.</span></div>
       <p class="o1b" id="o1b">그래도 선은 있습니다.<br>문제는 그 선의 바깥입니다.</p>
       <div class="white" id="o1w"></div>
     </div>
@@ -371,7 +392,7 @@ footer p+p{margin-top:8px}
   <!-- 바다 04 -->
   <section id="o4" class="sea">
     <div class="pin dark">
-      <div class="dbig" id="dbig"><div class="y">2026년</div><div class="d num">1월 17일</div><p>유엔 공해협약(BBNJ)이<br>발효됐습니다.</p><p class="sm">공해에 해양보호구역을 만들 수 있는 국제 절차가 생겼습니다. 보호구역은 이렇게 만들어집니다.</p></div>
+      <div class="dbig" id="dbig"><div class="y">2026년</div><div class="d num kin" id="kd">1월 17일</div><p>유엔 공해협약(BBNJ)이<br>발효됐습니다.</p><p class="sm">공해에 해양보호구역을 만들 수 있는 국제 절차가 생겼습니다. 보호구역은 이렇게 만들어집니다.</p></div>
       <p class="sh" id="sh">보호구역이 만들어지는 세 단계</p>
       <div class="steps" id="steps">
         <div class="st"><div class="n">1</div><div class="q">어디를 지켜야 할까요?</div><h3>보호가 필요한 곳을 제안합니다</h3><p>협약 당사국이 과학적 근거를 바탕으로 보호할 해역과 관리 방안을 제안합니다.</p></div>
@@ -412,6 +433,7 @@ footer p+p{margin-top:8px}
 
   <footer>
     <p>그린피스 동아시아지부 2025 연차보고서를 바탕으로 만든 비공식 디자인 시안입니다. 그린피스 공식 제작물이 아닙니다.</p>
+    <p>책 넘김과 글자 등장, 관성 스크롤 연출은 <a href="https://github.com/Ashutoshx7/VengeanceUI" target="_blank" rel="noopener">VengeanceUI</a>(MIT)의 기법을 참고했고 <a href="https://github.com/darkroomengineering/lenis" target="_blank" rel="noopener">Lenis</a>(MIT)를 썼습니다.</p>
     <p>수중 영상은 AI로 만든 상징적 연출이며 실제 현장 기록이 아닙니다. 사진과 보고서 지면 © Greenpeace.</p>
   </footer>
 </div>
@@ -422,7 +444,7 @@ footer p+p{margin-top:8px}
 
 <!-- 영수증: 24~25쪽 -->
 <div class="rx" id="rx" aria-hidden="true">
-  <div class="scr" id="rxs" role="dialog" aria-modal="true" aria-labelledby="rxh">
+  <div class="scr" id="rxs" data-lenis-prevent role="dialog" aria-modal="true" aria-labelledby="rxh">
     <button class="x" id="rxx" aria-label="닫기">×</button>
     <div class="top">
       <p class="k">연차보고서 24~25쪽 · 후원금 사용 내역</p>
@@ -489,6 +511,7 @@ footer p+p{margin-top:8px}
   </div>
 </div>
 
+<script src="assets/lenis.min.js"></script>
 <script src="assets/globe-data.js"></script>
 <script>
 (function(){
@@ -500,7 +523,12 @@ var seg=function(p,a,b){return clamp((p-a)/(b-a),0,1)},ease=function(t){return t
 var DPR=Math.min(window.devicePixelRatio||1,2),VW=0,VH=0;
 var fmt=function(n){return Math.round(n).toLocaleString("ko-KR")};
 function prog(el){var r=el.getBoundingClientRect();return {p:clamp(-r.top/(r.height-VH),0,1),vis:r.top<VH&&r.bottom>0}}
-function goTo(y,ms){if(calm){window.scrollTo(0,y);return}var y0=window.scrollY,t0=performance.now();ms=ms||1200;(function f(t){var k=Math.min(1,(t-t0)/ms);k=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;window.scrollTo(0,y0+(y-y0)*k);if(k<1)requestAnimationFrame(f)})(t0)}
+var lenis=null;
+if(!calm&&window.Lenis){lenis=new Lenis({lerp:.085,wheelMultiplier:.9,touchMultiplier:1.2});(function lr(t){lenis.raf(t);requestAnimationFrame(lr)})(performance.now());window.__ln=lenis}
+window.__yAt=function(a,b){return yAt(a,b)};
+function jump(y){if(lenis)lenis.scrollTo(y,{immediate:true,force:true});else window.scrollTo(0,y)}
+function lock(on){document.body.classList.toggle("lock",on);if(lenis){if(on)lenis.stop();else lenis.start()}}
+function goTo(y,ms){if(lenis){lenis.scrollTo(y,{duration:(ms||1200)/1000,force:true,easing:function(k){return k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2}});return}if(calm){window.scrollTo(0,y);return}var y0=window.scrollY,t0=performance.now();ms=ms||1200;(function f(t){var k=Math.min(1,(t-t0)/ms);k=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;window.scrollTo(0,y0+(y-y0)*k);if(k<1)requestAnimationFrame(f)})(t0)}
 function yAt(id,p){var e=$(id);return e.offsetTop+(e.offsetHeight-VH)*(p||0)}
 
 
@@ -561,65 +589,62 @@ var PAGES=[
  {img:"assets/page13.jpg",big:"assets/page13-big.jpg",pp:"24~25쪽",t:"후원금 사용 내역 보고",open:"rx",go:"내 영수증 뽑기"},
  {img:"assets/page14.jpg",pp:"26~27쪽",t:"2025 서울사무소 수입 및 지출 내역"}
 ];
-var N=PAGES.length,TH=360/N,cyl=$("cyl"),s3d=$("s3d"),hub={k:7,kt:7,user:0,cw:0,ch:0,r:0,front:-1,unf:0};
-PAGES.forEach(function(p,i){
-  var b=document.createElement("button");b.className="pg"+(p.open?" open":"");b.type="button";
-  b.innerHTML='<img src="'+p.img+'" alt="">'+(p.open?'<span class="tab">펼치기</span>':'');
-  b.setAttribute("aria-label",p.pp+" "+p.t+(p.open?", 펼쳐 보기":""));
-  b.addEventListener("click",function(e){if(hub.drag&&hub.drag.moved)return;if(i===hub.front&&p.open)openPage(i,e);else{hub.user+=i-Math.round(hub.k)}});
-  cyl.appendChild(b);p.el=b;
-});
+/* 책: 넘길 때마다 다음 펼침면이 열린다 (VengeanceUI interactive-book 참고) */
+var N=PAGES.length,book=$("book"),leaves=[],hub={pw:0,ph:0,front:-1,shown:null,f:0,ft:0};
+for(var j=0;j<N;j++){
+  var lf=document.createElement("div");lf.className="leaf";
+  lf.innerHTML='<div class="face f" style="background-image:url('+PAGES[j].img+')"><i></i></div><div class="face b" style="background-image:url('+PAGES[(j+1)%N].img+')"><i></i></div>';
+  book.insertBefore(lf,$("pgno"));leaves.push({el:lf,fi:lf.firstChild.firstChild,bi:lf.lastChild.firstChild,last:""});
+}
 function hubLayout(){
-  var W=Math.min(VW,480),hh=s3d.clientHeight;
-  hub.cw=Math.min(W*.66,300);hub.ch=Math.min(hub.cw/1.52,hh*.9);hub.cw=hub.ch*1.52;
-  hub.r=hub.cw/(2*Math.tan(TH/2*Math.PI/180))*1.08;
-  PAGES.forEach(function(p){p.el.style.width=hub.cw+"px";p.el.style.height=hub.ch+"px";p.el.style.marginLeft=(-hub.cw/2)+"px";p.el.style.marginTop=(-hub.ch/2)+"px"});
+  var W=Math.min(VW,480),hh=$("bst").clientHeight;
+  hub.pw=Math.min((W-32)/2,hh*.9*.76);hub.ph=hub.pw/.76;
+  book.style.width=2*hub.pw+"px";book.style.height=hub.ph+"px";book.style.marginLeft=(-hub.pw)+"px";book.style.marginTop=(-hub.ph/2)+"px";
+  $("baseL").style.cssText="left:0;width:"+hub.pw+"px";$("baseR").style.cssText="left:"+hub.pw+"px;width:"+hub.pw+"px";
+  leaves.forEach(function(l){l.el.style.left=hub.pw+"px";l.el.style.width=hub.pw+"px";l.last=""});
+  $("glow").style.cssText="left:-5px;top:-5px;width:"+(2*hub.pw+10)+"px;height:"+(hub.ph+10)+"px";
 }
+// 스크롤 → 넘긴 장 수. 바다(7장)와 영수증(12장)에서 잠시 멈춘다
+var STOPS=[[0,0],[.06,0],[.36,7],[.52,7],[.74,12],[1,12]];
+function flipsAt(p){for(var i=1;i<STOPS.length;i++){var a=STOPS[i-1],b=STOPS[i];if(p<=b[0]){var k=(p-a[0])/(b[0]-a[0]);k=k*k*(3-2*k);return a[1]+(b[1]-a[1])*k}}return 12}
 function hubFrame(p){
-  hub.unf=ease(seg(p,.04,.4));
-  var u=hub.unf;
-  // 스크롤로 해양 쪽(7)에서 출발해 영수증 쪽(12)까지 넘어간다
-  var auto=lerp(7,12,ease(seg(p,.45,.9)));
-  hub.kt=Math.round(auto)+hub.user;hub.kt=((hub.kt%N)+N)%N;
-  var d=hub.kt-hub.k;if(d>N/2)d-=N;if(d<-N/2)d+=N;
-  hub.k+=d*(calm?1:.12);hub.k=((hub.k%N)+N)%N;
-  var front=((Math.round(hub.k)%N)+N)%N;
-  PAGES.forEach(function(pg,i){
-    var rel=i-hub.k;if(rel>N/2)rel-=N;if(rel<-N/2)rel+=N;
-    var ang=rel*TH*u, a=Math.abs(ang);
-    // 펼치기 전: 한 권으로 겹쳐진 보고서
-    var stackY=(i-7)*-1.2*(1-u), stackR=(i-7)*.6*(1-u);
-    var z=-hub.r*Math.cos(ang*Math.PI/180)*u+hub.r*.82*u;
-    var x=hub.r*Math.sin(ang*Math.PI/180)*u;
-    pg.el.style.transform="translate3d("+x+"px,"+stackY+"px,"+z+"px) rotateY("+(-ang)+"deg) rotate("+stackR+"deg)";
-    pg.el.style.opacity=a>80?0:String(clamp(1-(a-50)/30,0,1)*(u<.05&&i!==7?(i>7?0:1):1));
-    pg.el.style.zIndex=String(100-Math.round(a));
-    pg.el.style.pointerEvents=u>.9&&a<60?"auto":"none";
+  hub.ft=flipsAt(p);
+  var d=hub.ft-hub.f;hub.f+=d*(calm?1:.14);if(Math.abs(hub.ft-hub.f)<.0005)hub.f=hub.ft;
+  var f=hub.f,open=ease(clamp(f,0,1));
+  var tilt=lerp(30,10,open),shift=-hub.pw/2*(1-open),sc=lerp(1.12,1,open);
+  book.style.transform="translate3d("+shift.toFixed(1)+"px,0,0) rotateX("+tilt.toFixed(2)+"deg) scale("+sc.toFixed(3)+")";
+  $("baseL").style.opacity=f>.5?1:0;
+  leaves.forEach(function(L,j){
+    var r=clamp(f-j,0,1),z=r>=1?j*.3:(r<=0?(N-j)*.3:N*.35+2);
+    var tr="translateZ("+z.toFixed(2)+"px) rotateY("+(-180*r).toFixed(2)+"deg)";
+    if(tr!==L.last){L.last=tr;L.el.style.transform=tr;var s=Math.sin(r*Math.PI);L.fi.style.opacity=r<.5?s:0;L.bi.style.opacity=r>=.5?s:0}
   });
-  if(front!==hub.front&&hub.shown&&u>.9)sfx.flick();
-  if(front!==hub.front||u>.9!==hub.shown){hub.front=front;hub.shown=u>.9;
-    var P=PAGES[front];
-    $("hcap").innerHTML=hub.shown?'<p class="pp">'+P.pp+'</p><b>'+P.t+'</b>'+(P.open?'<button class="go" id="hgo">'+P.go+' →</button>':'<p class="not">이 시안에서는 14~15쪽과 24~25쪽, 두 곳을 펼쳤습니다.</p>'):"";
-    var g=$("hgo");if(g)g.addEventListener("click",function(){openPage(front)});
+  var k=Math.round(f),settled=Math.abs(f-k)<.1&&k>=1;
+  var P=PAGES[k%N],can=settled&&!!P.open;
+  if(k!==hub.front&&k>0)sfx.flick();
+  if(k!==hub.front||settled!==hub.shown){
+    hub.front=k;hub.shown=settled;
+    $("hcap").innerHTML=!settled?"":'<p class="pp">'+P.pp+'</p><b>'+P.t+'</b>'+(P.open?'<button class="go" id="hgo">'+P.go+' →</button>':'');
+    var g=$("hgo");if(g)g.addEventListener("click",function(){openPage(k)});
+    $("pgno").textContent=(k===0||(settled&&P.open))?"":P.pp;
   }
-  $("hhint").textContent=u<.9?"내려가면 보고서가 펼쳐집니다":"옆으로 밀거나 내려서 넘겨 보세요";
-  return Math.abs(d)>.002;
+  $("glow").classList.toggle("on",can);
+  $("tapz").style.pointerEvents=can?"auto":"none";
+  $("hhint").textContent=f<.5?"내려가면 보고서가 펼쳐집니다":(can?"펼쳐진 지면을 눌러 보세요":(f>11.9?"":"계속 내리면 다음 장으로 넘어갑니다"));
+  return Math.abs(hub.ft-hub.f)>.0005;
 }
-s3d.addEventListener("pointerdown",function(e){hub.drag={x:e.clientX,u:hub.user,moved:false}});
-s3d.addEventListener("pointermove",function(e){if(!hub.drag)return;var dx=e.clientX-hub.drag.x;if(Math.abs(dx)>8)hub.drag.moved=true;if(hub.drag.moved)hub.user=hub.drag.u-Math.round(dx/(hub.cw*.45))});
-function hdEnd(){setTimeout(function(){hub.drag=null},0)}
-s3d.addEventListener("pointerup",hdEnd);s3d.addEventListener("pointercancel",hdEnd);s3d.addEventListener("pointerleave",hdEnd);
+$("tapz").addEventListener("click",function(e){var k=hub.front;if(PAGES[k]&&PAGES[k].open)openPage(k,e)});
 
 // 고른 쪽이 화면을 채우며 그 이야기가 된다
 var zoom=$("zoom");
 function openPage(i,ev){
-  var P=PAGES[i],r=P.el.getBoundingClientRect(),W=window.innerWidth,H=window.innerHeight;
+  var P=PAGES[i],r=book.getBoundingClientRect(),W=window.innerWidth,H=window.innerHeight;
   var vw=Math.min(W,480),lx=(W-vw)/2;
   // 누른 자리를 화면 좌표로 옮겨 둔다 (카드 안의 상대 위치 → 전체 화면)
   var tap=[.62,.55];
   if(ev&&ev.clientX!=null&&ev.clientX>0){tap=[clamp((ev.clientX-r.left)/r.width,0,1),clamp((ev.clientY-r.top)/r.height,0,1)]}
   zoom.style.backgroundImage="url("+(P.big||P.img)+")";
-  zoom.style.backgroundPosition=P.open==="sea"?"62% 50%":"center";
+  zoom.style.backgroundPosition="center";
   zoom.style.transition="none";
   zoom.style.cssText+=";left:"+r.left+"px;top:"+r.top+"px;width:"+r.width+"px;height:"+r.height+"px;opacity:1;border-radius:3px";
   void zoom.offsetWidth;
@@ -630,7 +655,7 @@ function openPage(i,ev){
     try{ov.currentTime=0;var pp=ov.play();if(pp&&pp.catch)pp.catch(function(){})}catch(_){}
     setTimeout(function(){
       Water.run(P.big,[(tap[0]-.5)*.35+.62,1-tap[1]],function(){
-        window.scrollTo(0,yAt("o1",0)+1);
+        jump(yAt("o1",0)+1);
       },function(){zoom.style.transition="none";zoom.style.opacity="0"});
     },ms+40);
   }else{
@@ -698,7 +723,7 @@ var Water=(function(){
       var cp=cover(img.width/img.height,sa,.62);gl.uniform2fv(U.sP,cp.s);gl.uniform2fv(U.oP,cp.o);
       var cw=cover(720/1280,sa,.5);gl.uniform2fv(U.sW,cw.s);gl.uniform2fv(U.oW,cw.o);
       gl.uniform2fv(U.c,c);gl.uniform1f(U.asp,sa);
-      document.body.classList.add("lock");sfx.dive();
+      lock(true);sfx.dive();
       var t0=performance.now(),D=2600,midDone=false,this_w=0;
       (function f(now){
         var k=Math.min(1,(now-t0)/D),pr=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
@@ -707,7 +732,7 @@ var Water=(function(){
         gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
         if(!midDone&&k>.05){midDone=true;done();mid()}
         if(k<1)requestAnimationFrame(f);
-        else{cv.style.transition="opacity .45s";cv.style.opacity="0";setTimeout(function(){cv.style.display="none";cv.style.opacity="1";cv.style.transition="";document.body.classList.remove("lock");req()},460)}
+        else{cv.style.transition="opacity .45s";cv.style.opacity="0";setTimeout(function(){cv.style.display="none";cv.style.opacity="1";cv.style.transition="";lock(false);req()},460)}
       })(t0);
     };
     if(img.complete)go();else{img.onload=go;img.onerror=function(){mid();done()}}
@@ -715,11 +740,13 @@ var Water=(function(){
   return {run:run};
 })();
 
+/* 글자 쪼개기 */
+[].forEach.call(document.querySelectorAll(".kin"),function(el){var s=el.textContent;el.setAttribute("aria-label",s);el.innerHTML=Array.from(s).map(function(c,i){return c===" "?'<span class="sp"></span>':'<span class="ch" aria-hidden="true" style="--i:'+i+'">'+c+'</span>'}).join("")});
 /* ═════ 바다 01 ═════ */
 var ov=$("ov");
 function o1Frame(p){
   var parts=[$("b1"),$("b2"),$("b3")];
-  parts.forEach(function(el,i){var t=eOut(seg(p,.04+i*.08,.18+i*.08)),o=seg(p,.5,.6);el.style.cssText="opacity:"+(t*(1-o))+";transform:translateY("+((1-t)*40-o*30)+"px)"});
+  parts.forEach(function(el,i){var o=seg(p,.5,.6);el.classList.toggle("on",p>.03+i*.07);el.style.cssText="opacity:"+(1-o)+";transform:translateY("+(-o*30)+"px)"});
   var b=seg(p,.55,.63)*(1-seg(p,.8,.86));$("o1b").style.cssText="opacity:"+b+";transform:translateY("+((1-seg(p,.55,.63))*16)+"px)";
   var w=ease(seg(p,.88,1));ov.style.transform="scale("+(1+w*.25)+")";$("o1w").style.opacity=w;
 }
@@ -795,6 +822,7 @@ function o3Frame(p){var tw=track.scrollWidth,W=Math.min(VW,480);track.style.tran
 var sts=[].slice.call($("steps").children);
 function o4Frame(p){
   var d=eOut(seg(p,0,.1)),dOut=seg(p,.24,.32);
+  $("kd").classList.toggle("on",d>.3);
   $("dbig").style.cssText="opacity:"+(d*(1-dOut))+";transform:translateY("+((1-d)*30-dOut*40)+"px) scale("+(1-dOut*.06)+")";
   $("sh").style.opacity=seg(p,.28,.34);
   var H=VH;
@@ -841,8 +869,8 @@ function setM(v){mon=clamp(v,10000,1000000);$("mv").textContent=fmt(mon);drawSpl
 qks.forEach(function(b){b.addEventListener("click",function(){setM(+b.dataset.v)})});
 drawSplit();
 $("mn").addEventListener("click",function(){setM(mon-10000)});$("pl").addEventListener("click",function(){setM(mon+10000)});
-function openRx(){rx.classList.add("open");rx.setAttribute("aria-hidden","false");document.body.classList.add("lock");rxs.scrollTop=0;$("rxx").focus({preventScroll:true})}
-function closeRx(){if(!rx.classList.contains("open"))return;rx.classList.remove("open");rx.setAttribute("aria-hidden","true");document.body.classList.remove("lock")}
+function openRx(){rx.classList.add("open");rx.setAttribute("aria-hidden","false");lock(true);rxs.scrollTop=0;$("rxx").focus({preventScroll:true})}
+function closeRx(){if(!rx.classList.contains("open"))return;rx.classList.remove("open");rx.setAttribute("aria-hidden","true");lock(false)}
 $("rxx").addEventListener("click",closeRx);
 [].forEach.call(document.querySelectorAll("[data-rx]"),function(b){b.addEventListener("click",openRx)});
 document.addEventListener("keydown",function(e){if(e.key==="Escape")closeRx()});
