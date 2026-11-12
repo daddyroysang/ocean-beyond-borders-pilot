@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#04121b">
+<title>나의 2025 그린피스 · 내 후원금 보기</title>
+<style>
+  :root{color-scheme:dark;--ink:#04121b;--panel:#0c2531;--line:#31505b;--text:#f0faf8;--soft:#b6cbd0;--mint:#82e8d8}
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(ellipse at 75% 0,#123942 0,transparent 36rem),var(--ink);color:var(--text);font:16px/1.6 system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;word-break:keep-all}
+  a{color:var(--mint);text-underline-offset:4px}
+  button,input{font:inherit}
+  :focus-visible{outline:2px solid var(--mint);outline-offset:4px}
+  .shell{width:min(100% - 40px,680px);margin-inline:auto}
+  nav{display:flex;gap:5px;width:max-content;max-width:100%;margin-top:calc(18px + env(safe-area-inset-top,0px));padding:4px;border:1px solid var(--line);border-radius:100px;background:#071b25}
+  nav a{padding:6px 13px;border-radius:100px;text-decoration:none;font-size:13px;font-weight:700;white-space:nowrap}
+  nav [aria-current]{background:var(--mint);color:var(--ink)}
+  main{padding:46px 0 64px}
+  h1,h2,p{margin:0}
+  h1{font-size:clamp(35px,9vw,63px);line-height:1.14;letter-spacing:-.06em}
+  h2{font-size:clamp(22px,5vw,31px);line-height:1.35;letter-spacing:-.04em}
+  .intro{margin:12px 0 28px;color:var(--soft)}
+  fieldset{border:0;margin:0;padding:0;min-width:0}
+  legend{padding:0;margin-bottom:10px;font-weight:750}
+  .choices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+  .choices button{min-height:44px;padding:5px 2px;border:1px solid var(--line);border-radius:9px;background:#102c38;color:var(--text);font-weight:700;cursor:pointer}
+  .choices [aria-pressed=true]{background:var(--mint);border-color:var(--mint);color:var(--ink)}
+  .custom{display:flex;align-items:center;gap:9px;margin-top:12px;color:var(--soft);font-size:14px}
+  .custom input{min-width:0;width:100%;border:1px solid var(--line);border-radius:9px;padding:8px 11px;background:#0a212c;color:var(--text);font-size:16px}
+  .panel{margin-top:30px;padding:clamp(17px,4.5vw,31px);border:1px solid var(--line);border-radius:19px;background:var(--panel)}
+  .amount{color:var(--mint);font-size:clamp(34px,9vw,59px);font-weight:780;line-height:1.2;letter-spacing:-.06em;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+  .label,.note{color:var(--soft);font-size:13px}
+  .allocation{list-style:none;margin:21px 0;padding:0}
+  .allocation li{margin-top:16px}
+  .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:14px}
+  .row strong{white-space:nowrap;font-variant-numeric:tabular-nums}
+  .track{height:6px;border-radius:6px;margin-top:6px;background:#264552;overflow:hidden}
+  .track span{display:block;height:100%;border-radius:inherit;background:var(--mint);transform:scaleX(0);transform-origin:left}
+  .ocean-link{display:inline-block;margin-top:7px;font-size:13px}
+  .share{margin-top:46px}
+  .card{margin:16px 0;padding:24px;border-radius:14px;background:#e9f8f2;color:#09222b}
+  .card p{margin-top:8px}
+  .card .amount{color:#0b665e}
+  .share label{display:flex;align-items:center;gap:8px;color:var(--soft);min-height:44px}
+  input[type=checkbox]{accent-color:var(--mint)}
+  .share button{width:100%;min-height:48px;border:0;border-radius:10px;background:var(--mint);color:var(--ink);font-weight:800;cursor:pointer}
+  #shareStatus{margin-top:8px}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header class="shell">
+  <nav aria-label="보고서 탐색">
+    <a href="./">국경 밖의 바다</a>
+    <a href="support.html" aria-current="page">내 후원금 보기</a>
+  </nav>
+</header>
+<main class="shell">
+  <h1>나의 2025 그린피스</h1>
+  <p class="intro">매달 보탠 마음이 어떤 활동을 뒷받침하는지 확인해 보세요.</p>
+  <fieldset>
+    <legend>월 후원금</legend>
+    <div class="choices">
+      <button type="button" data-amount="10000" aria-pressed="false">1만 원</button>
+      <button type="button" data-amount="20000" aria-pressed="false">2만 원</button>
+      <button type="button" data-amount="30000" aria-pressed="true">3만 원</button>
+      <button type="button" data-amount="50000" aria-pressed="false">5만 원</button>
+    </div>
+    <label class="custom">직접 입력 <input id="custom" type="text" inputmode="numeric" maxlength="12" placeholder="예: 40000" aria-describedby="amountHint"> 원</label>
+    <p class="note" id="amountHint">1원부터 1,000만 원까지 입력할 수 있어요.</p>
+  </fieldset>
+  <section class="panel" aria-labelledby="breakdownTitle">
+    <h2 id="breakdownTitle">내 후원금 배분 예시</h2>
+    <p class="label">같은 금액으로 12개월 후원한 경우</p>
+    <p class="amount" id="annual"></p>
+    <p class="sr-only" id="summary" aria-live="polite"></p>
+    <ul class="allocation" id="allocation"></ul>
+    <p class="note">2025 연차보고서 24쪽의 3만 원 예시에 입력 금액을 비례 적용했습니다. 금액은 브라우저 안에서만 계산됩니다. <a href="https://www.greenpeace.org/static/planet4-korea-stateless/2026/06/13b545a6-2025-%EA%B7%B8%EB%A6%B0%ED%94%BC%EC%8A%A4-%EC%97%B0%EC%B0%A8%EB%B3%B4%EA%B3%A0%EC%84%9C-%ED%99%94%EB%A9%B4%EC%9A%A9.pdf#page=26">보고서 원문</a></p>
+  </section>
+  <section class="share" aria-labelledby="shareTitle">
+    <h2 id="shareTitle">내가 함께한 이야기</h2>
+    <div class="card">
+      <strong>나의 2025 그린피스</strong>
+      <p class="amount" id="cardAmount" hidden></p>
+      <p>기후와 숲, 바다를 지키는 활동에 함께했습니다.</p>
+    </div>
+    <label><input type="checkbox" id="includeAmount"> 공유 카드에 연간 후원금 예시 넣기</label>
+    <button type="button" id="share">카드 공유하기</button>
+    <p class="note" id="shareStatus" role="status"></p>
+    <p class="note">그린피스 2025 연차보고서 기반 비공식 시연</p>
+  </section>
+</main>
+<script>
+  const categories = [
+    ['기후위기 대응', 9235],
+    ['해양 보호', 1517],
+    ['산림 보호', 2220],
+    ['플라스틱 / 건강한 삶', 315],
+    ['다분야 통합 캠페인', 1276],
+    ['캠페인 미디어 및 대중 홍보', 4746],
+    ['지역사회 교육, 비폭력 직접행동, 자원봉사', 4750],
+    ['정책, 비즈니스 및 과학 연구', 5941]
+  ];
+  const basis = 30000;
+  const currency = new Intl.NumberFormat('ko-KR');
+  const won = amount => currency.format(amount) + '원';
+  const custom = document.querySelector('#custom');
+  const annual = document.querySelector('#annual');
+  const summary = document.querySelector('#summary');
+  const include = document.querySelector('#includeAmount');
+  const cardAmount = document.querySelector('#cardAmount');
+  const status = document.querySelector('#shareStatus');
+  const allocation = document.querySelector('#allocation');
+  const buttons = [...document.querySelectorAll('[data-amount]')];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  let monthly = 30000;
+  const rows = categories.map(([name, weight], index) => {
+    const item = document.createElement('li');
+    item.innerHTML = '<div class="row"><span></span><strong></strong></div><div class="track" aria-hidden="true"><span></span></div>';
+    item.querySelector('.row span').textContent = name;
+    if (index === 1) {
+      const link = document.createElement('a');
+      link.className = 'ocean-link';
+      link.href = './';
+      link.textContent = '공해를 지키는 이야기 보기 →';
+      item.append(link);
+    }
+    allocation.append(item);
+    return { weight, amount: item.querySelector('strong'), bar: item.querySelector('.track span') };
+  });
+  function split(total) {
+    const allocations = rows.map(({weight}, index) => {
+      const numerator = total * weight;
+      return { index, value: Math.floor(numerator / basis), remainder: numerator % basis };
+    });
+    const missing = total - allocations.reduce((sum, row) => sum + row.value, 0);
+    [...allocations].sort((a, b) => b.remainder - a.remainder || a.index - b.index)
+      .slice(0, missing).forEach(row => row.value++);
+    return allocations;
+  }
+  function updateCard() {
+    cardAmount.hidden = !include.checked;
+    cardAmount.textContent = '12개월 기준 ' + won(monthly * 12);
+  }
+  function render(announce = true) {
+    const total = monthly * 12;
+    annual.textContent = won(total);
+    if (announce) summary.textContent = '월 ' + won(monthly) + ', 12개월 기준 ' + won(total);
+    split(total).forEach(({index, value}) => {
+      const {amount, bar} = rows[index];
+      amount.textContent = won(value);
+      const end = 'scaleX(' + (value / total) + ')';
+      bar.getAnimations().forEach(animation => animation.cancel());
+      bar.style.transform = end;
+      if (!reduce.matches) bar.animate([{transform:'scaleX(0)'}, {transform:end}], {duration:420, delay:index * 24, easing:'ease-out', fill:'backwards'});
+    });
+    updateCard();
+  }
+  buttons.forEach(button => button.addEventListener('click', () => {
+    monthly = Number(button.dataset.amount);
+    buttons.forEach(choice => choice.setAttribute('aria-pressed', String(choice === button)));
+    custom.value = '';
+    custom.removeAttribute('aria-invalid');
+    document.querySelector('#amountHint').textContent = '1원부터 1,000만 원까지 입력할 수 있어요.';
+    render();
+  }));
+  custom.addEventListener('input', () => {
+    const cleaned = custom.value.replace(/[,\s]/g,'');
+    const value = /^\d+$/.test(cleaned) ? Number(cleaned) : 0;
+    const valid = value >= 1 && value <= 10000000;
+    custom.setAttribute('aria-invalid', String(!valid && cleaned !== ''));
+    document.querySelector('#amountHint').textContent = valid || !cleaned
+      ? '1원부터 1,000만 원까지 입력할 수 있어요.' : '1원부터 1,000만 원 사이의 금액을 확인해 주세요.';
+    if (!valid) return;
+    monthly = value;
+    buttons.forEach(button => button.setAttribute('aria-pressed', 'false'));
+    render();
+  });
+  include.addEventListener('change', updateCard);
+  function cardImage() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1080;
+    canvas.height = 1080;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#04121b';
+    ctx.fillRect(0, 0, 1080, 1080);
+    ctx.fillStyle = '#e9f8f2';
+    ctx.fillRect(68, 68, 944, 944);
+    ctx.fillStyle = '#0b665e';
+    ctx.fillRect(128, 160, 90, 10);
+    const font = ' system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+    ctx.fillStyle = '#09222b';
+    ctx.font = '750 76px' + font;
+    ctx.fillText('나의 2025 그린피스', 128, 315, 824);
+    ctx.font = '650 55px' + font;
+    ctx.fillText('기후와 숲, 바다를', 128, 470, 824);
+    ctx.fillText('지키는 활동에 함께했습니다.', 128, 554, 824);
+    if (include.checked) {
+      ctx.fillStyle = '#0b665e';
+      ctx.font = '750 54px' + font;
+      ctx.fillText('12개월 기준 ' + won(monthly * 12), 128, 739, 824);
+    }
+    ctx.fillStyle = '#31505b';
+    ctx.font = '400 27px' + font;
+    ctx.fillText('그린피스 2025 연차보고서 기반 비공식 시연', 128, 918, 824);
+    const encoded = canvas.toDataURL('image/png').split(',')[1];
+    return new File([Uint8Array.from(atob(encoded), char => char.charCodeAt(0))], 'my-greenpeace-2025.png', {type:'image/png'});
+  }
+  document.querySelector('#share').addEventListener('click', async () => {
+    status.textContent = '';
+    const file = cardImage();
+    const data = {files:[file], title:'나의 2025 그린피스'};
+    try {
+      if (navigator.share && navigator.canShare?.(data)) {
+        await navigator.share(data);
+        return;
+      }
+    } catch (error) {
+      if (error.name === 'AbortError') return;
+    }
+    const url = URL.createObjectURL(file);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = file.name;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    status.textContent = '공유 카드 이미지를 저장했어요.';
+  });
+  render(false);
+</script>
+</body>
+</html>
