@@ -85,7 +85,7 @@
     .motion-toggle {display:block;margin:18px 0;color:var(--mint);background:none;border:0;padding:5px 0;text-decoration:underline;text-underline-offset:4px;font:inherit;cursor:pointer}
     .motion-toggle[hidden] {display:none}
     .chapter-three .next-inner {padding-bottom:clamp(30px,18svh,150px)}
-    .chapter-four {padding:clamp(72px,12vw,132px) max(24px,6vw) 100px;background:radial-gradient(ellipse at 70% 15%,#103e48,#04121b 72%)}
+    .chapter-four {min-height:135svh;padding:clamp(72px,12vw,132px) max(24px,6vw) 100px;background:radial-gradient(ellipse at 70% 15%,#103e48,#04121b 72%)}
     .goal-visual {display:grid;grid-template-columns:1fr minmax(90px,1fr);align-items:center;gap:clamp(16px,5vw,44px);margin:34px 0}
     .goal-visual .big-number {font-size:clamp(60px,16vw,130px);margin:8px 0}
     .goal-visual .goal-label {margin:0;color:var(--mint);font-weight:700}
@@ -239,7 +239,7 @@
           step.style.setProperty('--emphasis',`${Math.round(focus*100)}%`);
         });
         const goalTop=goalGrid.getBoundingClientRect().top;
-        const goalProgress=smooth(.25,.62,1-goalTop/height);
+        const goalProgress=smooth(.48,.82,1-goalTop/height);
         goalGrid.style.setProperty('--goal-fill',`${Math.round(goalProgress*100)}%`);
       }
       function update () {
