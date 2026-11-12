@@ -115,6 +115,12 @@
     .ending-play[hidden]{display:none}
     .ending-cta:focus-visible,.ending-back:focus-visible,.ending-play:focus-visible{outline:3px solid #fff;outline-offset:4px}
     .ending-status{display:block;min-height:18px;margin-top:14px;font-size:12px;color:#c7e7e5}
+    .report-nav{position:absolute;top:100%;left:max(22px,env(safe-area-inset-left,0px));margin-top:12px;display:flex;gap:3px;padding:3px;border:1px solid rgba(173,226,229,.35);background:#071b25;border-radius:100px;white-space:nowrap}
+    .report-nav a{padding:5px 11px;border-radius:100px;text-decoration:none;color:#e8f7f6;font-size:12px;font-weight:700}
+    .report-nav [aria-current]{background:var(--mint);color:#04121b}
+    .report-nav a:focus-visible,.ending-support:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
+    @media(min-width:700px){.report-nav{left:6vw}}
+    .ending-support{display:block;width:max-content;max-width:100%;margin:12px auto 0;padding:10px 15px;color:var(--mint);font-size:14px;font-weight:750;text-underline-offset:4px}
     .ending-back{display:block;width:max-content;margin:12px auto 0;padding:10px 15px;color:#d4e7e8;font-size:13px;text-decoration:underline;text-underline-offset:4px}
     .ending-note{position:absolute;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:16px;right:16px;color:rgba(242,247,249,.74);font-size:10px;line-height:1.6;text-align:center}
     @media(prefers-reduced-motion:reduce){.ending-media video{transition:none}.ending-scene{min-height:100svh}}
@@ -137,6 +143,7 @@
         <header class="topbar">
           <div class="mark"><strong>OCEAN PROJECT</strong><small>2025 IMPACT REPORT</small></div>
           <div class="pilot">MOBILE EXPERIENCE<br/>DESIGN PILOT</div>
+          <nav class="report-nav" aria-label="보고서 탐색"><a href="./" aria-current="page">국경 밖의 바다</a><a href="support.html">내 후원금 보기</a></nav>
         </header>
         <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
         <div class="copy-layer">
@@ -223,6 +230,7 @@
         <button class="ending-play" id="endingPlay" type="button" hidden>▶ 엔딩 영상 재생하기</button>
         <button class="ending-cta" id="endingShare" type="button">이 이야기 공유하기 <span aria-hidden="true">↗</span></button>
         <span class="ending-status" id="endingStatus" role="status" aria-live="polite"></span>
+        <a class="ending-support" href="support.html">내 후원금 보기 →</a>
         <a class="ending-back" href="#intro">처음부터 다시 보기</a>
       </div>
       <p class="ending-note">2025 그린피스 동아시아지부 연차보고서 기반 비공식 디자인 시연 · AI 생성 영상은 상징적 연출입니다.</p>
