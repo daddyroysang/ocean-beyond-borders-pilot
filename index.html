@@ -60,9 +60,9 @@
     .ocean-share-track span:nth-child(-n+6) {background:var(--mint)}
     .ocean-share figcaption {display:flex;justify-content:space-between;gap:12px;margin-top:10px;color:#dbeff0;font-size:12px}
     .ocean-share figcaption span:first-child {color:var(--mint);font-weight:700}
-    @keyframes reveal-share {from{background:#193c49}to{background:var(--mint)}}
     @media (prefers-reduced-motion:no-preference) {
-      .ocean-share.is-visible .ocean-share-track span:nth-child(-n+6) {animation:reveal-share .5s both;animation-delay:calc(var(--step) * 90ms)}
+      .ocean-share.has-scroll-motion .ocean-share-track span:nth-child(-n+6) {position:relative;background:#193c49;overflow:hidden}
+      .ocean-share.has-scroll-motion .ocean-share-track span:nth-child(-n+6)::before {content:'';position:absolute;inset:0;background:var(--mint);transform-origin:left;transform:scaleX(var(--fill,0))}
     }
     .next-inner p {font-size:15px;line-height:1.85;color:rgba(219,236,237,.82);word-break:keep-all}
     .fine-line {height:1px;background:linear-gradient(90deg,rgba(130,232,216,.4),transparent);margin:42px 0 25px}
@@ -80,10 +80,13 @@
     .treaty-steps li::before {content:counter(steps,decimal-leading-zero);color:var(--mint);font:600 13px/1.7 system-ui;letter-spacing:.09em}
     .treaty-steps h3 {margin:0 0 4px;font-size:clamp(18px,4vw,22px);letter-spacing:-.02em}
     .treaty-steps p {margin:0}
-    @keyframes reveal-treaty-step {from{opacity:.55;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .treaty-steps li {position:relative;isolation:isolate}
     @media (prefers-reduced-motion:no-preference) {
-      .treaty-steps.is-visible li {animation:reveal-treaty-step .55s both;animation-delay:calc(var(--step) * 110ms)}
+      .treaty-steps.has-scroll-motion li::after {content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(130,232,216,.16),transparent 85%);opacity:var(--focus,0);pointer-events:none}
+      .treaty-steps.has-scroll-motion li::before {transform:translateX(var(--shift,0px))}
+      .treaty-steps.has-scroll-motion h3 {color:color-mix(in srgb,var(--mint) var(--emphasis,0%),var(--white))}
     }
+    .chapter-three .next-inner {padding-bottom:clamp(30px,18svh,150px)}
     .video-play {position:absolute;z-index:32;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 145px);transform:translateX(-50%);white-space:nowrap;display:none;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.45);border-radius:24px;padding:10px 15px;background:rgba(1,14,20,.65);color:#fff;font-size:12px;cursor:pointer}
     .video-play.visible {display:flex}
     @media (min-width:700px) { .topbar {padding:38px 6vw 0} .mark strong{font-size:15px}.mark small{font-size:10px}.pilot{font-size:10px}.copy{left:12vw;top:44%;right:auto}.copy--two h2{max-width:670px}.chapter-mark{left:6vw}.progress{right:6vw}.scroll-hint{right:8vw}.chapter-two{padding:140px 10vw}.orb{right:-12%;top:-25%} }
@@ -137,8 +140,8 @@
         <div class="big-number" aria-hidden="true">60<span>%</span></div>
         <figure class="ocean-share" id="oceanShare">
           <div class="ocean-share-track" aria-hidden="true">
-            <span style="--step:0"></span><span style="--step:1"></span><span style="--step:2"></span>
-            <span style="--step:3"></span><span style="--step:4"></span><span style="--step:5"></span>
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
             <span></span><span></span><span></span><span></span>
           </div>
           <figcaption><span>공해 약 60%</span><span>국가 관할 해역 약 40%</span></figcaption>
@@ -156,9 +159,9 @@
         <h2 id="protectTitle">함께 쓰는 바다,<br/>어떻게 지킬까요?</h2>
         <p>2026년 1월 17일 발효된 유엔 공해협약(BBNJ)은 국가들이 공해에 해양보호구역을 만들 수 있는 절차를 마련했습니다.</p>
         <ol class="treaty-steps" id="treatySteps" aria-label="해양보호구역 지정 절차">
-          <li style="--step:0"><div><h3>보호가 필요한 곳을 제안합니다</h3><p>협약 당사국이 과학적 근거를 바탕으로 보호할 해역과 관리 방안을 제안합니다.</p></div></li>
-          <li style="--step:1"><div><h3>근거와 의견을 검토합니다</h3><p>과학기술기구가 제안서를 검토하고, 사무국은 관련 국가와 원주민, 지역 공동체 등의 의견을 모읍니다.</p></div></li>
-          <li style="--step:2"><div><h3>함께 결정하고 관리합니다</h3><p>당사국총회가 보호구역 지정과 관련 조치를 결정할 수 있습니다. 시행 후에는 효과를 점검합니다.</p></div></li>
+          <li><div><h3>보호가 필요한 곳을 제안합니다</h3><p>협약 당사국이 과학적 근거를 바탕으로 보호할 해역과 관리 방안을 제안합니다.</p></div></li>
+          <li><div><h3>근거와 의견을 검토합니다</h3><p>과학기술기구가 제안서를 검토하고, 사무국은 관련 국가와 원주민, 지역 공동체 등의 의견을 모읍니다.</p></div></li>
+          <li><div><h3>함께 결정하고 관리합니다</h3><p>당사국총회가 보호구역 지정과 관련 조치를 결정할 수 있습니다. 시행 후에는 효과를 점검합니다.</p></div></li>
         </ol>
         <p class="disclaimer"><a class="source-link" href="https://www.un.org/bbnjagreement/en">유엔 공해협약</a> · <a class="source-link" href="https://www.un.org/bbnjagreement/en/bbnj-agreement/text-bbnj-agreement">협약문 제19~26조</a></p>
         <button class="restart" type="button" id="restart">↺ 첫 장면 다시 체험하기</button>
@@ -177,11 +180,34 @@
       const button = document.getElementById('playVideo');
       const layers = [document.getElementById('lineOne'),document.getElementById('lineTwo'),document.getElementById('lineThree')];
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const oceanShare = document.getElementById('oceanShare');
+      const shareCells = oceanShare.querySelectorAll('.ocean-share-track span:nth-child(-n+6)');
+      const treatySteps = document.getElementById('treatySteps');
+      const steps = treatySteps.querySelectorAll('li');
       const dataSaver = navigator.connection && navigator.connection.saveData;
       const clamp = v => Math.max(0, Math.min(1, v));
       const smooth = (a,b,x) => {const t=clamp((x-a)/(b-a));return t*t*(3-2*t)};
       let ticking=false;
       let phase=-1;
+      if (!reduced) {
+        oceanShare.classList.add('has-scroll-motion');
+        treatySteps.classList.add('has-scroll-motion');
+      }
+      function updateChapters (height) {
+        const chartTop = oceanShare.getBoundingClientRect().top;
+        const share = smooth(.46,.78,1-chartTop/height);
+        shareCells.forEach((cell,index)=>{
+          cell.style.setProperty('--fill',clamp(share*shareCells.length-index).toFixed(3));
+        });
+        steps.forEach(step=>{
+          const box=step.getBoundingClientRect();
+          const center=(box.top+box.height/2)/height;
+          const focus=smooth(0,1,clamp(1-Math.abs(center-.56)/.32));
+          step.style.setProperty('--focus',focus.toFixed(3));
+          step.style.setProperty('--shift',`${(focus*8).toFixed(1)}px`);
+          step.style.setProperty('--emphasis',`${Math.round(focus*100)}%`);
+        });
+      }
       function update () {
         ticking=false;
         const box=stage.getBoundingClientRect();
@@ -200,6 +226,7 @@
         });
         if (!reduced) {
           ocean.style.transform=`translate3d(0,${(-2*p).toFixed(2)}%,0) scale(${(1.012+.09*p).toFixed(4)})`;
+          updateChapters(window.innerHeight);
         }
         diveShadow.style.opacity=(.02 + .75*smooth(.20,.95,p)).toFixed(3);
         progressFill.style.height=Math.round(p*100)+'%';
@@ -228,17 +255,6 @@
           const visible=entries[0]?.isIntersecting;
           if(!visible)video.pause();else if(!document.hidden)attemptPlay();
         },{threshold:.02}); observer.observe(stage);
-        if (!reduced) {
-          const reveal = new IntersectionObserver((entries) => {
-            for (const entry of entries) {
-              if (entry.intersectionRatio < .4) continue;
-              entry.target.classList.add('is-visible');
-              reveal.unobserve(entry.target);
-            }
-          }, {threshold:.4});
-          reveal.observe(document.getElementById('oceanShare'));
-          reveal.observe(document.getElementById('treatySteps'));
-        }
       }
       document.getElementById('restart').addEventListener('click',()=>window.scrollTo({top:0,behavior:reduced?'auto':'smooth'}));
     })();
