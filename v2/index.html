@@ -369,6 +369,30 @@ body.lock{overflow:hidden}
 #gp .hdots button{width:8px;height:8px;border-radius:4px;background:rgba(242,244,241,.3);transition:width .3s,background .3s}
 #gp .hdots button.on{width:22px;background:var(--green)}
 #gp .hcap{bottom:calc(12% + 40px)}
+#gp .voices{background:var(--sheet);color:var(--ink);padding:80px 22px 72px;overflow:hidden}
+#gp .voices .kind{color:#2E9E4A;font-size:15px;font-weight:700}
+#gp .vstage{position:relative;height:430px;margin-top:18px;touch-action:pan-y}
+#gp .ghost{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;user-select:none}
+#gp .ghost .gr{display:flex;justify-content:space-between;gap:8px}
+#gp .ghost span{display:block;overflow:hidden;padding-bottom:.12em;font-family:var(--serif);font-weight:900;font-size:min(13.5vw,64px);line-height:1;letter-spacing:-.04em;color:#D9DCD3;white-space:nowrap}
+#gp .ghost span i{display:inline-block;font-style:normal;transform:translateY(115%);opacity:0}
+#gp .ghost span.on i{transform:none;opacity:1;transition:transform .7s cubic-bezier(.16,1,.3,1),opacity .7s cubic-bezier(.16,1,.3,1)}
+#gp .ghost .gr:last-child span:first-child{color:var(--ink)}
+#gp .vcard{position:absolute;left:50%;top:50%;width:min(52vw,210px);aspect-ratio:3/4;margin:0;border-radius:18px;overflow:hidden;background:#cfd8d2;transform:translate(-50%,-50%) rotate(6deg);box-shadow:0 24px 50px rgba(11,22,34,.28);z-index:2}
+#gp .vcard img{width:100%;height:100%;object-fit:cover;transition:opacity .45s}
+#gp .vcard figcaption{position:absolute;left:10px;right:10px;bottom:10px;border-radius:10px;background:rgba(11,22,34,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff;padding:8px 11px;line-height:1.35}
+#gp .vcard figcaption b{display:block;font-size:14px}
+#gp .vcard figcaption span{display:block;font-size:11px;opacity:.85}
+#gp .vq{margin-top:26px;font-family:var(--serif);font-size:21px;font-weight:800;line-height:1.55;letter-spacing:-.02em;min-height:6.2em}
+#gp .vq w{display:inline-block;opacity:0;transform:translateY(14px)}
+#gp .vq w.on{opacity:1;transform:none;transition:opacity .52s cubic-bezier(.165,.84,.44,1),transform .52s cubic-bezier(.165,.84,.44,1)}
+#gp .vsrc{margin-top:10px;font-size:12.5px;color:var(--mute)}
+#gp .vctl{display:flex;align-items:center;justify-content:space-between;margin-top:26px}
+#gp .vctl>button{width:48px;height:48px;border-radius:50%;border:1px solid #D6D9D0;font-size:26px;line-height:1;color:var(--ink)}
+#gp .vctl>button.solid{background:var(--ink);border-color:var(--ink);color:#fff}
+#gp .vdots{display:flex;gap:8px}
+#gp .vdots button{width:7px;height:7px;border-radius:4px;background:#D6D9D0;transition:width .3s,background .3s}
+#gp .vdots button.on{width:22px;background:var(--ink)}
 #ocean .cta{padding:14vh 0 10vh;text-align:center}
 #ocean .cta .lead{margin:14px auto 0}
 #ocean .cta .row2{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:34px}
@@ -429,7 +453,7 @@ body.lock{overflow:hidden}
         <div class="rover">
           <div class="beat"><div class="kind">기후위기 대응</div><div class="huge num" data-a="0"><span>0</span><small>원</small></div><h3>3월, 가장 먼저<br>산불 현장으로 갔습니다</h3></div>
           <div class="beat mid"><div class="glass"><p>영남 초대형 산불 직후, 기후재난 대응팀이 피해 현황을 조사했습니다. 시민대응단은 이재민의 이야기를 기록했습니다.</p>
-            <blockquote class="quote">“고사리가 다 타버렸지만, 뿌리가 남아 있어서 괜찮다고 말씀하시더라고요.”<cite>기후재난 시민대응단 3기 문유빈 님 · 보고서 8~9쪽</cite></blockquote></div></div>
+            <blockquote class="quote">“고사리가 다 타버렸지만, 뿌리가 남아 있어서 괜찮다고 말씀하시더라고요.”<cite>기후재난 시민대응단 3기 문유빈 님 · 보고서 18~19쪽</cite></blockquote></div></div>
         </div>
       </section>
       <section class="rs">
@@ -447,10 +471,15 @@ body.lock{overflow:hidden}
           </div></div>
         </div>
       </section>
-      <section class="voice">
-        <div class="kind">같은 영수증을 받은 사람</div>
-        <blockquote class="quote">“저에게 바다는 <mark>‘회사’</mark>예요. 쓰레기 때문에 곤란할 때가 많아요. 그래도 <mark>제 회사니까</mark> 계속 치우고 있습니다.”</blockquote>
-        <div class="person"><img loading="lazy" src="assets/haenyeo.jpg" alt="마이크를 들고 이야기하는 이유정 해녀"><div><strong>이유정 님</strong>그린피스 후원자, 제주 이호테우 해변의 6년차 해녀 · 보고서 20~21쪽</div></div>
+      <section class="voices" id="voices">
+        <div class="kind">같은 영수증을 받은 사람들</div>
+        <div class="vstage" id="vstage">
+          <div class="ghost" id="vghost" aria-hidden="true"><div class="gr"><span></span><span></span></div><div class="gr"><span></span><span></span></div></div>
+          <figure class="vcard" id="vcard"><img id="vimg" alt=""><figcaption><b id="vname"></b><span id="vrole"></span></figcaption></figure>
+        </div>
+        <blockquote class="vq" id="vq"></blockquote>
+        <p class="vsrc" id="vsrc"></p>
+        <div class="vctl"><button id="vprev" aria-label="이전 사람">‹</button><div class="vdots" id="vdots"></div><button id="vnext" class="solid" aria-label="다음 사람">›</button></div>
       </section>
       <section class="rend">
         <div class="shot" style="background-image:url(assets/hill.jpg)"></div>
@@ -1110,6 +1139,36 @@ $("rsh").addEventListener("click",function(){
   else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(tx+"\n"+location.href).then(function(){ok("영수증 문구와 링크를 복사했습니다.")}).catch(function(){ok("복사하지 못했습니다. 화면을 캡처해 공유해 주세요.")});
   else ok("이 브라우저에서는 공유할 수 없습니다. 화면을 캡처해 공유해 주세요.");
 });
+
+/* 같은 영수증을 받은 사람들: 보고서에 실린 실제 발언만 사용 */
+(function(){
+var V=[
+ {img:"assets/voice-yoojung.jpg",name:"이유정 님",role:"그린피스 후원자 · 제주 6년차 해녀",ghost:["바다를","함께","지켜야 할","곳으로"],q:"바다를 단순히 아름다운 곳으로만 보지 말고, 함께 지켜야 할 곳으로 생각해 주셨으면 좋겠습니다.",src:"보고서 20쪽 · 그린피스 사람들"},
+ {img:"assets/voice-yubin.jpg",name:"문유빈 님",role:"기후재난 시민대응단 3기",ghost:["뿌리가","남아","있으면","다시"],q:"고사리가 다 타버렸지만, 뿌리가 남아 있어서 괜찮다고 말씀하시더라고요. 뿌리만 남아 있으면 다시 자랄 수 있다고요.",src:"보고서 19쪽 · 시민대응단 이야기"},
+ {img:"assets/voice-youngwoo.jpg",name:"윤영우 님",role:"그린피스 자원봉사자",ghost:["같은","관심사를","가진","사람들"],q:"그린피스 자원봉사 활동이 좋은 점은 저와 같은 관심사를 가진 사람들을 많이 만나 소통할 수 있다는 점이에요.",src:"보고서 20쪽 · 그린피스 사람들"},
+ {img:"assets/voice-sunhwa.jpg",name:"박선화 님",role:"유산기부 후원자",ghost:["현장에서","발로","뛰는","활동가들"],q:"환경을 위해, 현장에서 직접 발로 뛰는 활동가들을 지원하는 것이 큰 의미가 있다고 생각해요.",src:"보고서 27쪽 · 유산기부 이야기 (발췌)"}
+];
+V.forEach(function(v){var im=new Image();im.src=v.img});
+var vi=-1,gs=[].slice.call(document.querySelectorAll("#vghost span")),img=$("vimg"),vq=$("vq"),dots=$("vdots"),T=[];
+V.forEach(function(v,i){var d=document.createElement("button");d.setAttribute("aria-label",v.name);d.addEventListener("click",function(){show(i)});dots.appendChild(d)});
+function show(i){i=(i+V.length)%V.length;if(i===vi)return;vi=i;var v=V[i];T.forEach(clearTimeout);T=[];
+  // 두 단어가 한 줄에 들어가도록 글자 크기를 맞춘다 (한글 1자 ≈ 1em)
+  var len=function(t){return t.replace(/ /g,"").length+(t.indexOf(" ")>=0?.35:0)},rowMax=Math.max(len(v.ghost[0])+len(v.ghost[1]),len(v.ghost[2])+len(v.ghost[3]));
+  var fs=Math.min(64,innerWidth*.135,($("vstage").clientWidth-14)/(rowMax*1.0+.4));gs.forEach(function(s){s.style.fontSize=fs+"px"});
+  gs.forEach(function(s,k){s.classList.remove("on");s.innerHTML="<i>"+v.ghost[k]+"</i>";T.push(setTimeout(function(){s.classList.add("on")},40+k*90))});
+  img.style.opacity=0;T.push(setTimeout(function(){img.src=v.img;img.alt=v.name;img.style.opacity=1},200));
+  $("vname").textContent=v.name;$("vrole").textContent=v.role;$("vsrc").textContent=v.src;
+  vq.innerHTML="“"+v.q.split(" ").map(function(w){return "<w>"+w+"</w>"}).join(" ")+"”";
+  [].forEach.call(vq.children,function(w,k){T.push(setTimeout(function(){w.classList.add("on")},120+k*22))});
+  [].forEach.call(dots.children,function(d,k){d.classList.toggle("on",k===i)});
+}
+$("vprev").addEventListener("click",function(){show(vi-1)});$("vnext").addEventListener("click",function(){show(vi+1)});
+var st=$("vstage"),sx=null;
+st.addEventListener("pointerdown",function(e){sx={x:e.clientX,y:e.clientY}});
+st.addEventListener("pointerup",function(e){if(!sx)return;var dx=e.clientX-sx.x,dy=e.clientY-sx.y;sx=null;if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy))show(vi+(dx<0?1:-1))});
+// 화면에 처음 들어올 때 첫 사람 등장
+var io=new IntersectionObserver(function(es){if(es[0].isIntersecting){show(0);io.disconnect()}},{root:$("rxs"),threshold:.25});io.observe($("voices"));
+})();
 
 
 $("toBook").addEventListener("click",function(){goTo($("hub").offsetTop,1400)});
