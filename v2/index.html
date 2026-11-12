@@ -363,8 +363,6 @@ body.lock{overflow:hidden}
 #gp .wrap{max-width:480px;margin:0 auto;position:relative;overflow:clip}
 #hubWrap{background:radial-gradient(90% 60% at 50% 46%,#1A3044 0%,var(--ink) 70%)}
 #gp #hub{height:100svh}
-#gp .hbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.7}
-#gp .hshade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,22,34,.55) 0%,rgba(11,22,34,.15) 30%,rgba(11,22,34,.25) 60%,rgba(11,22,34,.85) 100%)}
 #gp .hnav{position:absolute;left:0;right:0;bottom:calc(4.5% + 26px);display:flex;align-items:center;justify-content:center;gap:18px}
 #gp .hnav>button{width:44px;height:44px;border-radius:50%;border:1px solid rgba(242,244,241,.35);color:#F2F4F1;font-size:24px;line-height:1}
 #gp .hdots{display:flex;gap:8px}
@@ -388,7 +386,6 @@ body.lock{overflow:hidden}
   <div id="hubWrap"><div class="wrap">
   <section id="hub">
     <div class="pin dark" id="hpin">
-      <video class="hbg" id="hbg" src="assets/ocean-top.mp4" poster="assets/ocean-top.jpg" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video><div class="hshade"></div>
       <div class="htop">
         <p class="k">그린피스 동아시아지부 · 2025 연차보고서</p>
         <h1>27쪽짜리 한 해를<br><em>펼쳐 봅니다.</em></h1>
@@ -1077,8 +1074,6 @@ function req(){if(!raf)raf=requestAnimationFrame(frame)}
 function layout(){VW=window.innerWidth;VH=window.innerHeight;hubLayout();req()}
 addEventListener("resize",layout);
 layout();go(0);
-// 배경 영상은 책 화면이 보일 때만 재생
-var hbg=$("hbg");new IntersectionObserver(function(es){if(es[0].isIntersecting){var x=hbg.play();if(x&&x.catch)x.catch(function(){})}else hbg.pause()}).observe(hbg);
 })();
 </script>
 </body>
