@@ -131,18 +131,19 @@ html.lenis,html.lenis body{height:auto}
 .o3n{position:absolute;left:24px;right:24px;bottom:4%;font-size:11.5px;color:var(--mute)}
 
 /* ── 바다 04: 발효와 세 단계 ── */
-#o4{height:440svh}
+#o4{height:230svh}
 .dbig{position:absolute;left:24px;right:16px;top:20%;color:#fff}
 .dbig .y{font-family:var(--serif);font-size:24px;font-weight:600;color:#9FB0B8}
 .dbig .d{font-family:var(--serif);font-weight:900;font-size:min(24vw,116px);letter-spacing:-.06em;line-height:.95;margin-top:4px}
 .dbig p{margin-top:20px;font-family:var(--serif);font-size:24px;font-weight:600;line-height:1.4;letter-spacing:-.03em}
 .dbig .sm{margin-top:12px;font-family:var(--sans);font-size:15px;color:#B9C6CC;font-weight:400;letter-spacing:0}
-.steps{position:absolute;left:20px;right:20px;top:13%;height:66%}
-.st{position:absolute;inset:0;background:var(--sheet);color:var(--ink);border-radius:4px;padding:26px 22px;display:flex;flex-direction:column;box-shadow:0 -10px 40px rgba(0,0,0,.35);will-change:transform}
-.st .n{font-family:var(--serif);font-size:96px;font-weight:900;line-height:.8;color:var(--green);letter-spacing:-.05em}
-.st .q{margin-top:auto;font-size:13px;font-weight:700;color:var(--mute)}
-.st h3{margin-top:6px;font-family:var(--serif);font-size:28px;font-weight:800;letter-spacing:-.04em;line-height:1.25}
-.st p{margin-top:12px;font-size:15px;line-height:1.6}
+.st1{position:absolute;left:20px;right:20px;top:14%;background:var(--sheet);color:var(--ink);border-radius:4px;padding:22px 22px 8px;box-shadow:0 -10px 40px rgba(0,0,0,.35);opacity:0;transform:translateY(40px)}
+.st1 .sr{display:flex;gap:16px;padding:14px 0;border-top:1px solid rgba(11,22,34,.1);opacity:0;transform:translateY(14px);transition:opacity .6s,transform .6s cubic-bezier(.2,.7,.2,1)}
+.st1 .sr:first-child{border-top:0;padding-top:0}
+.st1 .sr.on{opacity:1;transform:none}
+.st1 .sr b{flex:none;width:44px;font-family:var(--serif);font-size:48px;font-weight:900;line-height:.9;color:var(--green);letter-spacing:-.05em}
+.st1 h3{font-family:var(--serif);font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.25}
+.st1 p{margin-top:6px;font-size:14.5px;line-height:1.6}
 .sh{position:absolute;left:24px;right:24px;top:6%;color:#9FB0B8;font-size:13px;font-weight:500}
 .snote{position:absolute;left:24px;right:24px;bottom:5%;color:#fff}
 .snote p{font-size:15px;font-weight:700}
@@ -401,10 +402,10 @@ footer p+p{margin-top:8px}
     <div class="pin dark">
       <div class="dbig" id="dbig"><div class="y">2026년</div><div class="d num kin" id="kd">1월 17일</div><p>유엔 공해협약(BBNJ)이<br>발효됐습니다.</p><p class="sm">공해에 해양보호구역을 만들 수 있는 국제 절차가 생겼습니다. 보호구역은 이렇게 만들어집니다.</p></div>
       <p class="sh" id="sh">보호구역이 만들어지는 세 단계</p>
-      <div class="steps" id="steps">
-        <div class="st"><div class="n">1</div><div class="q">어디를 지켜야 할까요?</div><h3>보호가 필요한 곳을 제안합니다</h3><p>협약 당사국이 과학적 근거를 바탕으로 보호할 해역과 관리 방안을 제안합니다.</p></div>
-        <div class="st"><div class="n">2</div><div class="q">무엇을 근거로 정할까요?</div><h3>근거와 의견을 검토합니다</h3><p>과학기술기구가 제안서를 검토하고, 사무국은 관련 국가와 원주민, 지역 공동체 등의 의견을 모읍니다.</p></div>
-        <div class="st"><div class="n">3</div><div class="q">누가, 어떻게 지킬까요?</div><h3>함께 결정하고 관리합니다</h3><p>당사국총회가 보호구역 지정과 관련 조치를 결정할 수 있습니다. 시행 후에는 효과를 점검합니다.</p></div>
+      <div class="st1" id="st1">
+        <div class="sr"><b class="num">1</b><div><h3>제안</h3><p>당사국이 과학적 근거를 바탕으로 보호할 해역과 관리 방안을 제안합니다.</p></div></div>
+        <div class="sr"><b class="num">2</b><div><h3>검토</h3><p>과학기술기구가 검토하고, 관련 국가와 원주민, 지역 공동체의 의견을 모읍니다.</p></div></div>
+        <div class="sr"><b class="num">3</b><div><h3>결정과 관리</h3><p>당사국총회가 지정과 관련 조치를 결정하고, 시행 후 효과를 점검합니다.</p></div></div>
       </div>
       <div class="snote fade" id="snote"><p>조약이 발효됐다고 보호구역이 저절로 생기지는 않습니다.</p><p class="src" style="margin-top:6px"><a href="https://www.un.org/bbnjagreement/en" target="_blank" rel="noopener">유엔 공해협약</a> · <a href="https://www.un.org/bbnjagreement/en/bbnj-agreement/text-bbnj-agreement" target="_blank" rel="noopener">협약문 제19~26조</a></p></div>
     </div>
@@ -826,20 +827,15 @@ var track=$("track");
 function o3Frame(p){var tw=track.scrollWidth,W=Math.min(VW,480);track.style.transform="translate3d("+(-(tw-W)*ease(seg(p,.06,.94)))+"px,0,0)"}
 
 /* ═════ 바다 04 ═════ */
-var sts=[].slice.call($("steps").children);
+var srs=[].slice.call(document.querySelectorAll("#st1 .sr"));
 function o4Frame(p){
-  var d=eOut(seg(p,0,.1)),dOut=seg(p,.24,.32);
+  var d=eOut(seg(p,0,.16)),dOut=seg(p,.36,.46);
   $("kd").classList.toggle("on",d>.3);
   $("dbig").style.cssText="opacity:"+(d*(1-dOut))+";transform:translateY("+((1-d)*30-dOut*40)+"px) scale("+(1-dOut*.06)+")";
-  $("sh").style.opacity=seg(p,.28,.34);
-  var H=VH;
-  sts.forEach(function(s,i){
-    var a=.3+i*.2,t=eOut(seg(p,a,a+.14)),nx=i<2?eOut(seg(p,a+.2,a+.34)):0;
-    s.style.transform="translate3d(0,"+((1-t)*H*1.05)+"px,0) scale("+(1-nx*.06)+")";
-    s.style.filter=nx>0?"brightness("+(1-nx*.25)+")":"none";
-    s.style.zIndex=String(i+1);
-  });
-  $("snote").classList.toggle("on",p>.84);
+  $("sh").style.opacity=seg(p,.42,.5);
+  var t=eOut(seg(p,.44,.56));$("st1").style.cssText="opacity:"+t+";transform:translateY("+((1-t)*40)+"px)";
+  srs.forEach(function(r,i){r.classList.toggle("on",p>.52+i*.08)});
+  $("snote").classList.toggle("on",p>.78);
 }
 
 /* ═════ 바다 05 ═════ */
