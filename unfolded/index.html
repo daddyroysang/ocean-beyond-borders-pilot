@@ -71,28 +71,30 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 #o1{height:240svh}
 #o1 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform}
 #o1 .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,22,34,.15),rgba(11,22,34,.1) 45%,rgba(11,22,34,.7))}
-#o1 .white{position:absolute;inset:0;background:var(--paper);opacity:0}
+#o1 .white{position:absolute;inset:0;background:#0E2433;opacity:0}
 .big3{position:absolute;left:24px;right:16px;top:16%;font-family:var(--serif);font-weight:800;color:#fff;font-size:min(15.5vw,74px);letter-spacing:-.05em;line-height:1.08}
 .big3 span{display:block;will-change:transform,opacity}
 .o1b{position:absolute;left:24px;right:24px;bottom:12%;color:#fff;font-family:var(--serif);font-size:24px;font-weight:600;letter-spacing:-.03em;line-height:1.45;opacity:0}
 
 /* ── 바다 02: 지도 ── */
-#o2{height:320svh}
-#o2 .pin{background:var(--paper)}
+#o2{height:340svh}
+#o2 .pin{background:radial-gradient(90% 60% at 50% 35%,#16354A 0%,#0E2433 55%,#0B1622 100%);color:#F2F4F1}
+#o2 .surf{position:absolute;inset:0;background:var(--paper);opacity:0;pointer-events:none}
 #gs{position:absolute;inset:0;width:100%;height:100%}
 #gt{position:absolute;border-radius:50%;touch-action:none;cursor:grab}
 .o2cap{position:absolute;left:24px;right:24px}
 .o2cap .c{position:absolute;left:0;right:0;top:0}
 .o2cap h2{font-family:var(--serif);font-size:27px;font-weight:800;letter-spacing:-.04em;line-height:1.3}
-.o2cap p{margin-top:8px;font-size:15.5px;color:var(--mute)}
-.n60{font-family:var(--serif);font-weight:900;color:var(--blue);font-size:min(30vw,140px);letter-spacing:-.06em;line-height:.9}
+.o2cap p{margin-top:8px;font-size:15.5px;color:#AFC0C7}
+#o2 .src{color:#9FB0B8}
+.n60{font-family:var(--serif);font-weight:900;color:#6F8BFF;font-size:min(30vw,140px);letter-spacing:-.06em;line-height:.9}
 .n60 small{font-size:.4em;margin-left:.05em}
 #probe{position:absolute;left:0;right:0;text-align:center;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none}
-#probe span{display:inline-block;background:var(--ink);color:#fff;border-radius:999px;padding:6px 13px}
+#probe span{display:inline-block;background:rgba(242,244,241,.95);color:var(--ink);border-radius:999px;padding:6px 13px}
 #probe.on{opacity:1}
-.key{position:absolute;top:44px;left:24px;display:flex;gap:14px;font-size:11.5px;color:var(--mute)}
+.key{position:absolute;top:44px;left:24px;display:flex;gap:14px;font-size:11.5px;color:#AFC0C7}
 .key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
-.mnote{position:absolute;left:24px;right:24px;bottom:10px;font-size:10px;color:var(--mute);line-height:1.4}
+.mnote{position:absolute;left:24px;right:24px;bottom:10px;font-size:10px;color:#7F929A;line-height:1.4}
 
 /* ── 바다 03: 한국에서 (가로로 흐르는 기록) ── */
 #o3{height:420svh}
@@ -219,6 +221,20 @@ footer p+p{margin-top:8px}
 .tear.go{transform:translate(30px,-40px) rotate(-7deg);opacity:.0}
 
 
+
+.split{margin-top:22px}
+.split .strip{display:flex;height:16px;border-radius:999px;overflow:hidden;gap:2px;background:transparent}
+.split .strip i{display:block;height:100%;transition:flex-grow .5s}
+.split .lg{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:9px 14px;margin-top:16px}
+.split .lg li{display:flex;align-items:center;gap:7px;font-size:12.5px;line-height:1.3}
+.split .lg li i{flex:none;width:10px;height:10px;border-radius:3px}
+.split .lg li span{flex:1;min-width:0}
+.split .lg li b{font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums}
+.split .cap{margin-top:10px;font-size:11.5px;color:var(--mute)}
+.rx .top{background:radial-gradient(120% 60% at 100% 0%,rgba(120,190,67,.18) 0%,rgba(120,190,67,0) 55%),radial-gradient(110% 60% at 0% 30%,rgba(61,91,255,.14) 0%,rgba(61,91,255,0) 60%);padding-bottom:6px}
+.it .bar i{background:var(--c,var(--ink))}
+.qk button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+
 /* 영수증 아래 장면들 (첫 시안) */
 .rs{position:relative}
 .rpin{position:sticky;top:0;height:100svh;overflow:hidden}
@@ -309,16 +325,17 @@ footer p+p{margin-top:8px}
 
   <!-- 바다 02 -->
   <section id="o2" class="sea">
-    <div class="pin light" id="o2p">
+    <div class="pin" id="o2p">
       <canvas id="gs" aria-label="나라별 앞바다와 그 바깥의 공해를 보여주는 지구"></canvas>
       <div id="gt" aria-hidden="true"></div>
-      <div class="key fade" id="key"><span><i style="background:#C3CDCF;outline:1.5px solid #0B1622"></i>나라별 앞바다</span><span><i style="background:#2440D0"></i>공해</span></div>
+      <div class="key fade" id="key"><span><i style="background:#25506A;outline:1.5px solid #ECEEE9"></i>나라별 앞바다</span><span><i style="background:#3D5BFF"></i>공해</span></div>
       <div id="probe"><span id="probet">지구를 돌려 보세요. 바다를 누르면 알려 드립니다.</span></div>
       <div class="o2cap" id="o2c">
         <div class="c fade"><h2>나라마다<br>자기 앞바다가 있습니다.</h2><p>해안에서 바깥으로 이어지는 바다를 각 나라가 관리합니다.</p></div>
         <div class="c fade"><div class="n60 num"><span id="n60">0</span><small>%</small></div><h2 style="margin-top:6px">그 바깥은 어느 나라의<br>바다도 아닙니다.</h2></div>
         <div class="c fade"><h2>그래서 지키려면<br>여러 나라가 함께 정해야 합니다.</h2><p class="src" style="margin-top:12px">공해 약 60%: 면적 기준, <a href="https://es.greenpeace.org/es/wp-content/uploads/sites/3/2023/09/30x30-From-GOT-to-protection-at-sea-Full-report.pdf" target="_blank" rel="noopener">그린피스 국제본부 보고서</a>의 61%를 반올림</p></div>
       </div>
+      <div class="surf" id="surf"></div>
       <p class="mnote">이해를 돕기 위한 그림입니다. 앞바다는 해안에서 약 370km를 어림해 그렸고 실제 경계와 다릅니다.</p>
     </div>
   </section>
@@ -396,6 +413,7 @@ footer p+p{margin-top:8px}
       <p class="k">연차보고서 24~25쪽 · 후원금 사용 내역</p>
       <h2 id="rxh">보고서는 결국<br>영수증입니다.</h2>
       <div class="amt"><button id="mn" aria-label="1만 원 줄이기">−</button><div class="v num" aria-live="polite"><span id="mv">30,000</span>원<small>매달</small></div><button id="pl" aria-label="1만 원 늘리기">+</button></div>
+      <div class="split" aria-label="매달 후원금이 나뉘는 비율"><div class="strip" id="strip"></div><ul class="lg" id="lg"></ul><p class="cap">한 달 후원금이 이렇게 나뉩니다 · 보고서 24쪽 비율</p></div>
       <div class="qk" id="qk"><button data-v="10000" aria-pressed="false">1만</button><button data-v="20000" aria-pressed="false">2만</button><button data-v="30000" aria-pressed="true">3만</button><button data-v="50000" aria-pressed="false">5만</button><button data-v="100000" aria-pressed="false">10만</button></div>
       <button class="printb" id="pr">내 영수증 출력하기</button>
     </div>
@@ -560,7 +578,7 @@ function o1Frame(p){
   var parts=[$("b1"),$("b2"),$("b3")];
   parts.forEach(function(el,i){var t=eOut(seg(p,.04+i*.08,.18+i*.08)),o=seg(p,.5,.6);el.style.cssText="opacity:"+(t*(1-o))+";transform:translateY("+((1-t)*40-o*30)+"px)"});
   var b=seg(p,.55,.63)*(1-seg(p,.8,.86));$("o1b").style.cssText="opacity:"+b+";transform:translateY("+((1-seg(p,.55,.63))*16)+"px)";
-  var w=ease(seg(p,.84,1));ov.style.transform="scale("+(1+w*.3)+")";$("o1w").style.opacity=w;
+  var w=ease(seg(p,.78,1));ov.style.transform="scale("+(1+w*.25)+")";$("o1w").style.opacity=w;
 }
 
 /* ═════ 바다 02: 인쇄된 지도처럼 그린 지구 ═════ */
@@ -580,19 +598,21 @@ function drawGlobe(){
   proj.scale(R).translate([cx,cy]).rotate([-G.lon,-G.lat]);
   c.setTransform(DPR,0,0,DPR,0,0);c.clearRect(0,0,W,H);
   var sph={type:"Sphere"};
-  c.beginPath();path(sph);c.fillStyle="#DDE3E2";c.fill();
+  var sg=c.createRadialGradient(cx-R*.35,cy-R*.4,R*.05,cx,cy,R);sg.addColorStop(0,"#1E4A63");sg.addColorStop(1,"#0F2B3C");
+  c.beginPath();path(sph);c.fillStyle=sg;c.fill();
   c.save();c.beginPath();path(sph);c.clip();
-  if(G.high>.003){var rr=G.high*R*1.45;c.beginPath();c.arc(cx,cy,rr,0,7);c.fillStyle="#2440D0";c.fill()}
-  c.beginPath();path(OC.grat);c.lineWidth=.5;c.strokeStyle=G.high>.5?"rgba(255,255,255,.18)":"rgba(11,22,34,.12)";c.stroke();
+  if(G.high>.003){var rr=G.high*R*1.45,hg=c.createRadialGradient(cx-R*.3,cy-R*.35,R*.05,cx,cy,R);hg.addColorStop(0,"#5B79FF");hg.addColorStop(1,"#2440D0");c.beginPath();c.arc(cx,cy,rr,0,7);c.fillStyle=hg;c.fill()}
+  c.beginPath();path(OC.grat);c.lineWidth=.5;c.strokeStyle="rgba(236,238,233,.12)";c.stroke();
   if(G.band>.01){
     var bw=R*.058*2;c.lineJoin="round";c.lineCap="round";c.globalAlpha=G.band;
-    c.beginPath();path(OC.land110);c.lineWidth=bw+2;c.strokeStyle="#0B1622";c.stroke();c.lineWidth=bw;c.strokeStyle="#C3CDCF";c.stroke();
+    c.beginPath();path(OC.land110);c.lineWidth=bw+2;c.strokeStyle="#ECEEE9";c.stroke();c.lineWidth=bw;c.strokeStyle="#25506A";c.stroke();
     c.globalAlpha=1;
   }
-  c.beginPath();path(OC.land);c.fillStyle="#0B1622";c.fill();
+  c.beginPath();path(OC.land);c.fillStyle="#ECEEE9";c.fill();
   c.restore();
-  c.beginPath();path(sph);c.lineWidth=1.5;c.strokeStyle="#0B1622";c.stroke();
-  if(G.pin){var q=proj(G.pin);if(q&&OC.geoDistance(G.pin,[G.lon,G.lat])<1.45){c.beginPath();c.arc(q[0],q[1],6,0,7);c.fillStyle="#78BE43";c.fill();c.lineWidth=2;c.strokeStyle="#fff";c.stroke()}}
+  var halo=c.createRadialGradient(cx,cy,R*.97,cx,cy,R*1.25);halo.addColorStop(0,"rgba(111,139,255,"+(.10+.22*G.high)+")");halo.addColorStop(1,"rgba(111,139,255,0)");c.fillStyle=halo;c.beginPath();c.arc(cx,cy,R*1.25,0,7);c.arc(cx,cy,R,0,7,true);c.fill();
+  c.beginPath();path(sph);c.lineWidth=1;c.strokeStyle="rgba(236,238,233,.5)";c.stroke();
+  if(G.pin){var q=proj(G.pin);if(q&&OC.geoDistance(G.pin,[G.lon,G.lat])<1.45){c.beginPath();c.arc(q[0],q[1],6,0,7);c.fillStyle="#78BE43";c.fill();c.lineWidth=2;c.strokeStyle="#0B1622";c.stroke()}}
 }
 function o2Frame(p,now){
   G.zs=lerp(.82,1,eOut(seg(p,0,.15)));
@@ -604,7 +624,8 @@ function o2Frame(p,now){
   var s=p<.04?-1:p<.34?0:p<.7?1:2;
   if(s!==G.step){G.step=s;caps.forEach(function(c,i){c.classList.toggle("on",i===s)});if(s===1)countUp($("n60"),60,1300)}
   $("key").classList.toggle("on",p>.06);$("probe").classList.toggle("on",p>.12);
-  $("gt").style.pointerEvents=p>.12?"auto":"none";
+  $("gt").style.pointerEvents=p>.12&&p<.9?"auto":"none";
+  $("surf").style.opacity=ease(seg(p,.84,1));
 }
 function countUp(el,to,ms){if(calm){el.textContent=to;return}var t0=performance.now();(function f(t){var k=Math.min(1,(t-t0)/ms);el.textContent=Math.round(to*eOut(k));if(k<1)requestAnimationFrame(f)})(t0)}
 var gd=null,gt=$("gt");
@@ -668,10 +689,14 @@ function toHub(){goTo(yAt("hub",.6),1400)}
 $("tohub").addEventListener("click",toHub);$("home").addEventListener("click",function(){closeRx();toHub()});
 
 /* ═════ 영수증 ═════ */
-var PARTS=[["기후위기 대응",9235],["해양보호",1517,"sea"],["산림 보호",2220],["플라스틱 / 건강한 삶",315],["다분야 통합 캠페인",1276],["캠페인 미디어 및 대중 홍보",4746],["지역사회 교육, 비폭력 직접행동, 자원봉사",4750],["정책, 비즈니스 및 과학 연구",5941]];
+var PARTS=[["기후위기 대응",9235,0,"#78BE43"],["해양보호",1517,"sea","#3D5BFF"],["산림 보호",2220,0,"#1F7A4D"],["플라스틱 / 건강한 삶",315,0,"#F2B134"],["다분야 통합 캠페인",1276,0,"#9B7ED9"],["캠페인 미디어 및 대중 홍보",4746,0,"#F07C5A"],["지역사회 교육, 비폭력 직접행동, 자원봉사",4750,0,"#2FB1C4"],["정책, 비즈니스 및 과학 연구",5941,0,"#0B1622"]];
+var SHORT=["기후위기","해양","산림","플라스틱","통합 캠페인","미디어·홍보","교육·직접행동","정책·연구"];
+$("strip").innerHTML=PARTS.map(function(p){return '<i style="background:'+p[3]+';flex-grow:'+p[1]+'"></i>'}).join("");
+function drawSplit(){$("lg").innerHTML=PARTS.map(function(p,i){return '<li><i style="background:'+p[3]+'"></i><span>'+SHORT[i]+'</span><b>'+fmt(p[1]/30000*mon)+'</b></li>'}).join("")}
 var rx=$("rx"),rxs=$("rxs"),mon=30000,qks=[].slice.call($("qk").children);
-function setM(v){mon=clamp(v,10000,1000000);$("mv").textContent=fmt(mon);qks.forEach(function(b){b.setAttribute("aria-pressed",String(+b.dataset.v===mon))})}
+function setM(v){mon=clamp(v,10000,1000000);$("mv").textContent=fmt(mon);drawSplit();qks.forEach(function(b){b.setAttribute("aria-pressed",String(+b.dataset.v===mon))})}
 qks.forEach(function(b){b.addEventListener("click",function(){setM(+b.dataset.v)})});
+drawSplit();
 $("mn").addEventListener("click",function(){setM(mon-10000)});$("pl").addEventListener("click",function(){setM(mon+10000)});
 function openRx(){rx.classList.add("open");rx.setAttribute("aria-hidden","false");document.body.classList.add("lock");rxs.scrollTop=0;$("rxx").focus({preventScroll:true})}
 function closeRx(){if(!rx.classList.contains("open"))return;rx.classList.remove("open");rx.setAttribute("aria-hidden","true");document.body.classList.remove("lock")}
@@ -685,7 +710,7 @@ $("pr").addEventListener("click",function(){
   timers.forEach(clearTimeout);timers=[];
   var year=mon*12,max=PARTS[0][1];amts=PARTS.map(function(p){return p[1]/30000*year});
   $("pm").textContent=fmt(mon);$("tot").classList.toggle("long",fmt(year).length>9);$("tv").textContent=fmt(year);
-  $("items").innerHTML=PARTS.map(function(p,i){return '<div class="ln it'+(p[2]?" sea":"")+'"><div class="row"><span class="nm">'+p[0]+'</span><span class="dots"></span><b class="num">'+fmt(amts[i])+'</b></div><div class="bar"><i data-w="'+(p[1]/max*100).toFixed(1)+'"></i></div></div>'}).join("");
+  $("items").innerHTML=PARTS.map(function(p,i){return '<div class="ln it'+(p[2]?" sea":"")+'"><div class="row"><span class="nm">'+p[0]+'</span><span class="dots"></span><b class="num">'+fmt(amts[i])+'</b></div><div class="bar"><i style="--c:'+p[3]+'" data-w="'+(p[1]/max*100).toFixed(1)+'"></i></div></div>'}).join("");
   $("bc").innerHTML=barcode(year);
   [].forEach.call(document.querySelectorAll(".huge[data-a]"),function(h){var v=amts[+h.dataset.a];h.firstElementChild.textContent="0";h.dataset.seen="";h.classList.toggle("long",fmt(v).length>8)});
   $("ktot").textContent=fmt(year);
