@@ -61,7 +61,9 @@
     .ocean-share figcaption {display:flex;justify-content:space-between;gap:12px;margin-top:10px;color:#dbeff0;font-size:12px}
     .ocean-share figcaption span:first-child {color:var(--mint);font-weight:700}
     .ocean-share.has-scroll-motion .ocean-share-track span:nth-child(-n+6) {position:relative;background:#193c49;overflow:hidden}
-    .ocean-share.has-scroll-motion .ocean-share-track span:nth-child(-n+6)::before {content:'';position:absolute;inset:0;background:var(--mint);transform-origin:left;transform:scaleX(var(--fill,0))}
+    .ocean-share.has-scroll-motion .ocean-share-track span:nth-child(-n+6)::before {content:'';position:absolute;inset:0;background:var(--mint);transform-origin:left;transform:scaleX(0)}
+    .ocean-share.has-scroll-motion.is-filled .ocean-share-track span:nth-child(-n+6)::before {animation:fill-share .26s ease-out both;animation-delay:calc(var(--fill-order) * 85ms)}
+    @keyframes fill-share {to{transform:scaleX(1)}}
     .next-inner p {font-size:15px;line-height:1.85;color:rgba(219,236,237,.82);word-break:keep-all}
     .fine-line {height:1px;background:linear-gradient(90deg,rgba(130,232,216,.4),transparent);margin:42px 0 25px}
     .disclaimer {font-size:11px!important;color:rgba(214,232,231,.55)!important}
@@ -145,8 +147,8 @@
         <div class="big-number" aria-hidden="true">60<span>%</span></div>
         <figure class="ocean-share" id="oceanShare">
           <div class="ocean-share-track" aria-hidden="true">
-            <span></span><span></span><span></span>
-            <span></span><span></span><span></span>
+            <span style="--fill-order:0"></span><span style="--fill-order:1"></span><span style="--fill-order:2"></span>
+            <span style="--fill-order:3"></span><span style="--fill-order:4"></span><span style="--fill-order:5"></span>
             <span></span><span></span><span></span><span></span>
           </div>
           <figcaption><span>공해 약 60%</span><span>국가 관할 해역 약 40%</span></figcaption>
@@ -200,7 +202,7 @@
       const layers = [document.getElementById('lineOne'),document.getElementById('lineTwo'),document.getElementById('lineThree')];
       const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const oceanShare = document.getElementById('oceanShare');
-      const shareCells = oceanShare.querySelectorAll('.ocean-share-track span:nth-child(-n+6)');
+      const shareTrack = oceanShare.querySelector('.ocean-share-track');
       const treatySteps = document.getElementById('treatySteps');
       const steps = treatySteps.querySelectorAll('li');
       const motionToggle = document.getElementById('motionToggle');
@@ -224,12 +226,15 @@
         setChapterMotion();
       });
       setChapterMotion();
+      let shareFilled = false;
       function updateChapters (height) {
-        const chartTop = oceanShare.getBoundingClientRect().top;
-        const share = smooth(.46,.78,1-chartTop/height);
-        shareCells.forEach((cell,index)=>{
-          cell.style.setProperty('--fill',clamp(share*shareCells.length-index).toFixed(3));
-        });
+        if (!shareFilled) {
+          const track = shareTrack.getBoundingClientRect();
+          if (track.top >= 0 && track.bottom <= height) {
+            oceanShare.classList.add('is-filled');
+            shareFilled = true;
+          }
+        }
         steps.forEach(step=>{
           const box=step.getBoundingClientRect();
           const center=(box.top+box.height/2)/height;
