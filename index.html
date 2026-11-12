@@ -111,7 +111,9 @@
     .ending-content h2 strong{display:block;color:var(--mint);font-weight:730}
     .ending-description{margin:26px auto 32px;color:#e1eef1;font-size:clamp(14px,3.9vw,16px);line-height:1.9;word-break:keep-all;max-width:430px}
     .ending-cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:100px;background:var(--mint);color:#05202a;padding:17px 29px;min-height:54px;font-size:15px;font-weight:750;cursor:pointer;touch-action:manipulation}
-    .ending-cta:focus-visible,.ending-back:focus-visible{outline:3px solid #fff;outline-offset:4px}
+    .ending-play{display:block;margin:0 auto 16px;padding:11px 18px;border:1px solid #9cddd6;border-radius:100px;background:#05202a;color:#e1f8f6;font:inherit;cursor:pointer;touch-action:manipulation}
+    .ending-play[hidden]{display:none}
+    .ending-cta:focus-visible,.ending-back:focus-visible,.ending-play:focus-visible{outline:3px solid #fff;outline-offset:4px}
     .ending-status{display:block;min-height:18px;margin-top:14px;font-size:12px;color:#c7e7e5}
     .ending-back{display:block;width:max-content;margin:12px auto 0;padding:10px 15px;color:#d4e7e8;font-size:13px;text-decoration:underline;text-underline-offset:4px}
     .ending-note{position:absolute;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:16px;right:16px;color:rgba(242,247,249,.74);font-size:10px;line-height:1.6;text-align:center}
@@ -219,6 +221,7 @@
         <p class="eyebrow">05 / THE JOURNEY CONTINUES</p>
         <h2 id="endingTitle">약속을 현실로 만드는 일.<strong>이제부터가 시작입니다.</strong></h2>
         <p class="ending-description">조약이 발효됐다고 바다가 저절로 보호되는 것은 아닙니다. 세계가 함께 만든 약속이 실제 해양보호로 이어질 수 있도록, 우리의 관심은 계속되어야 합니다.</p>
+        <button class="ending-play" id="endingPlay" type="button" hidden>▶ 엔딩 영상 재생하기</button>
         <button class="ending-cta" id="endingShare" type="button">이 이야기 공유하기 <span aria-hidden="true">↗</span></button>
         <span class="ending-status" id="endingStatus" role="status" aria-live="polite"></span>
         <a class="ending-back" href="#intro">처음부터 다시 보기</a>
@@ -345,19 +348,42 @@
       const source=video.querySelector('source');
       const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const saver=!!(navigator.connection&&navigator.connection.saveData);
-      let loaded=false,visible=false;
+      const playButton=document.getElementById('endingPlay');
+      let visible=false;
+      let manualPlayback=false;
       function start(){
-        if(reduced||saver||document.hidden)return;
-        if(!loaded){source.src=source.dataset.src;video.load();loaded=true;}
+        if(!visible||document.hidden)return;
+        if((reduced||saver)&&!manualPlayback){
+          playButton.hidden=false;
+          return;
+        }
+        video.muted=true;
+        if(!video.getAttribute('src'))video.src=source.dataset.src;
+        else if(video.error)video.load();
         const promise=video.play();
-        if(promise&&promise.catch)promise.catch(()=>wrap.classList.remove('is-playing'));
+        if(promise&&promise.catch)promise.catch(()=>{
+          if(visible&&!document.hidden&&video.paused)playButton.hidden=false;
+        });
       }
-      video.addEventListener('playing',()=>wrap.classList.add('is-playing'));
-      video.addEventListener('error',()=>wrap.classList.remove('is-playing'));
+      playButton.addEventListener('click',()=>{
+        manualPlayback=true;
+        start();
+      });
+      video.addEventListener('playing',()=>{
+        wrap.classList.add('is-playing');
+        playButton.hidden=true;
+      });
+      video.addEventListener('error',()=>{
+        wrap.classList.remove('is-playing');
+        playButton.hidden=false;
+      });
       if('IntersectionObserver' in window){
-        new IntersectionObserver(es=>{visible=!!es[0].isIntersecting;if(visible)start();else video.pause()},{threshold:.01,rootMargin:'200px 0px'}).observe(scene);
+        new IntersectionObserver(([entry])=>{
+          visible=entry.isIntersecting;
+          if(visible)start();else video.pause();
+        },{threshold:.01}).observe(scene);
       }else{visible=true;start()}
-      document.addEventListener('visibilitychange',()=>{if(document.hidden)video.pause();else if(visible)start()});
+      document.addEventListener('visibilitychange',()=>{if(document.hidden)video.pause();else start()});
       document.getElementById('endingShare').addEventListener('click',async()=>{
         const data={title:'국경 밖의 바다 — Ocean Project',text:'바다를 위한 새로운 약속, 그리고 앞으로 남은 이야기.',url:location.href.split('#')[0]};
         if(navigator.share){try{await navigator.share(data);return}catch(e){if(e&&e.name==='AbortError')return}}
