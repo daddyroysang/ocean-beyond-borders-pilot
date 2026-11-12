@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#04121b" />
+  <meta name="description" content="바다에는 국경이 없습니다. 그린피스 2025 연차보고서를 모바일 시네마틱 경험으로 재해석한 비공식 쇼케이스." />
+  <title>하나의 지구, 이어지는 이야기들 · 2025</title>
+  <link rel="preload" as="image" href="ocean-poster.jpg" fetchpriority="high" />
+  <style>
+    :root {color-scheme: dark; --night:#04121b; --ink:#061b29; --mint:#82e8d8; --white:#f4f8f5; --p:0; }
+    * {box-sizing:border-box}
+    html {background:var(--night);scroll-behavior:auto;-webkit-text-size-adjust:100%}
+    body {margin:0;background:var(--night);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;overflow-x:hidden;overscroll-behavior-x:none}
+    .stage {height:295svh;min-height:1700px;position:relative}
+    .viewport {position:sticky;top:0;height:100vh;height:100svh;min-height:480px;isolation:isolate;overflow:hidden;background:#052330}
+    .ocean {position:absolute;inset:-2.5%;z-index:-4;transform:translate3d(0,0,0) scale(1.012);will-change:transform;overflow:hidden}
+    .ocean video, .ocean .poster {position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top}
+    .ocean .poster {background:#06212f url('ocean-poster.jpg') center top/cover no-repeat}
+    .ocean video {opacity:0;transition:opacity .7s ease}
+    .ocean.video-ready video {opacity:1}
+    .ocean.video-ready .poster {opacity:0;transition:opacity .8s ease}
+    .shadow {pointer-events:none;position:absolute;inset:0;z-index:-3;background:linear-gradient(to bottom,rgba(1,16,25,.23) 0%,transparent 22%,rgba(1,9,18,.28) 45%,rgba(0,7,14,.32) 60%,rgba(0,5,12,.65) 100%)}
+    .dive-shadow {pointer-events:none;position:absolute;inset:0;z-index:-2;background:#03121d;opacity:0;will-change:opacity}
+    .film-grain {pointer-events:none;position:absolute;z-index:-1;inset:0;background-image:url('data:image/svg+xml,%3Csvg viewBox=%220 0 160 160%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%22.6%22 numOctaves=%222%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%22.07%22/%3E%3C/svg%3E');opacity:.18;mix-blend-mode:soft-light}
+    .topbar {position:absolute;top:0;left:0;right:0;display:flex;align-items:start;justify-content:space-between;z-index:30;padding:calc(env(safe-area-inset-top,0px) + 22px) max(22px,env(safe-area-inset-right,0px)) 0 max(22px,env(safe-area-inset-left,0px));gap:12px}
+    .mark {display:flex;flex-direction:column;gap:4px}
+    .mark strong {font-family:system-ui,sans-serif;font-size:11px;line-height:1.1;letter-spacing:.24em;font-weight:800}
+    .mark small {font-family:system-ui,sans-serif;font-size:9px;line-height:1.25;letter-spacing:.1em;color:rgba(235,249,249,.68)}
+    .pilot {font-size:9px;letter-spacing:.15em;line-height:1.3;text-align:right;color:rgba(235,249,249,.82);padding-top:1px}
+    .chapter-mark {position:absolute;left:max(24px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 23px);font:600 10px/1.4 system-ui;letter-spacing:.18em;color:rgba(224,245,245,.72);pointer-events:none}
+    .progress {position:absolute;right:max(18px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);height:76px;width:2px;border-radius:5px;background:rgba(255,255,255,.22);z-index:20;pointer-events:none}
+    .progress-fill {height:0%;width:100%;border-radius:5px;background:var(--mint);box-shadow:0 0 10px rgba(130,232,216,.6)}
+    .copy-layer {position:absolute;z-index:10;inset:0;display:flex;align-items:center;justify-content:center;padding:10px 35px 10px 27px;pointer-events:none}
+    .copy {position:absolute;left:max(27px,env(safe-area-inset-left,0px));right:max(36px,env(safe-area-inset-right,0px));top:45%;transform:translate3d(0,0,0);will-change:opacity,transform;opacity:0;max-width:550px}
+    .eyebrow {margin:0 0 24px;font-size:10px;letter-spacing:.22em;font-weight:700;color:var(--mint)}
+    h1,h2,p {margin:0}
+    h1 {font-size:clamp(36px,11vw,64px);letter-spacing:-.052em;line-height:1.27;font-weight:730;word-break:keep-all;text-wrap:balance;text-shadow:0 2px 18px rgba(0,13,19,.2)}
+    .copy--one {opacity:1} /* fallback: first caption remains visible without JavaScript */
+    .copy--one h1 em {font-style:normal;color:#ffffff}
+    .copy--two h2 {font-size:clamp(35px,10.4vw,62px);letter-spacing:-.049em;line-height:1.3;font-weight:740;word-break:keep-all;text-wrap:balance}
+    .copy--two h2 span {color:var(--mint)}
+    .copy--two .under {margin-top:20px;font-size:13px;color:rgba(236,246,247,.74);line-height:1.8;letter-spacing:-.015em}
+    .copy--three {text-align:left;top:48%}
+    .copy--three p.main {font-size:clamp(28px,8vw,48px);letter-spacing:-.048em;font-weight:690;line-height:1.45;word-break:keep-all}
+    .copy--three p.sub {margin-top:19px;font-size:13px;color:rgba(210,230,231,.8);line-height:1.85}
+    .scroll-hint {position:absolute;z-index:21;bottom:calc(env(safe-area-inset-bottom,0px) + 68px);right:max(32px,env(safe-area-inset-right,0px));display:flex;align-items:center;gap:10px;color:#e8f7f6;font:600 9px/1.2 system-ui;letter-spacing:.16em;transition:opacity .2s ease}
+    .scroll-hint:after {content:'';height:33px;width:1px;display:inline-block;background:linear-gradient(var(--mint),transparent);animation:flow 2.6s ease-in-out infinite}
+    @keyframes flow {0%,100%{transform:translateY(-3px);opacity:.65}50%{transform:translateY(5px);opacity:1}}
+    .chapter-two {position:relative;background:radial-gradient(ellipse at 65% 5%,#113344 0%,#061b2a 46%,#04121b 85%);min-height:102svh;display:flex;align-items:center;padding:112px 30px 100px;overflow:hidden}
+    .orb {position:absolute;width:min(95vw,590px);aspect-ratio:1;border:1px solid rgba(130,232,216,.17);border-radius:50%;right:-48%;top:-5%;box-shadow:0 0 0 38px rgba(130,232,216,.025),0 0 0 86px rgba(130,232,216,.018);pointer-events:none}
+    .next-inner {position:relative;z-index:1;max-width:640px;margin:0 auto;width:100%}
+    .next-inner .eyebrow {margin-bottom:22px}
+    .next-inner h2 {font-size:clamp(28px,8vw,49px);font-weight:740;letter-spacing:-.048em;line-height:1.38;word-break:keep-all}
+    .big-number {font:700 clamp(90px,27vw,176px)/1 system-ui;letter-spacing:-.095em;color:var(--mint);margin:24px 0 16px;white-space:nowrap}
+    .big-number span {font-size:.37em;letter-spacing:-.05em;margin-left:.14em}
+    .ocean-share {margin:0 0 20px}
+    .ocean-share-track {display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px}
+    .ocean-share-track span {height:clamp(18px,5vw,32px);background:#193c49;border-radius:2px}
+    .ocean-share-track span:nth-child(-n+6) {background:var(--mint)}
+    .ocean-share figcaption {display:flex;justify-content:space-between;gap:12px;margin-top:10px;color:#dbeff0;font-size:12px}
+    .ocean-share figcaption span:first-child {color:var(--mint);font-weight:700}
+    .ocean-share.has-scroll-motion .ocean-share-track span:nth-child(-n+6) {position:relative;background:#193c49;overflow:hidden}
+    .ocean-share.has-scroll-motion .ocean-share-track span:nth-child(-n+6)::before {content:'';position:absolute;inset:0;background:var(--mint);transform-origin:left;transform:scaleX(0)}
+    .ocean-share.has-scroll-motion.is-filled .ocean-share-track span:nth-child(-n+6)::before {animation:fill-share .26s ease-out both;animation-delay:calc(var(--fill-order) * 85ms)}
+    @keyframes fill-share {to{transform:scaleX(1)}}
+    .next-inner p {font-size:15px;line-height:1.85;color:rgba(219,236,237,.82);word-break:keep-all}
+    .fine-line {height:1px;background:linear-gradient(90deg,rgba(130,232,216,.4),transparent);margin:42px 0 25px}
+    .disclaimer {font-size:11px!important;color:rgba(214,232,231,.55)!important}
+    .source-link {color:inherit;text-underline-offset:3px}
+    .restart {display:inline-flex;align-items:center;gap:9px;margin-top:18px;border:1px solid rgba(130,232,216,.5);border-radius:100px;background:transparent;color:#e8f7f6;font:600 12px/1.2 system-ui;padding:15px 20px;cursor:pointer;touch-action:manipulation}
+    .restart:focus-visible {outline:2px solid var(--mint);outline-offset:4px}
+    .chapter-next {text-decoration:none}
+    .chapter-three {position:relative;isolation:isolate;background:#04121b;overflow:hidden;padding:clamp(76px,14vw,140px) max(24px,6vw) 88px}
+    .chapter-three::before {content:'';position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,#04121b 0%,rgba(4,18,27,.8) 38%,#04121b 88%),url('ocean-poster.jpg') center 23%/cover no-repeat;opacity:.68}
+    .chapter-three .next-inner {max-width:760px}
+    .treaty-steps {list-style:none;counter-reset:steps;margin:34px 0 24px;padding:0}
+    .treaty-steps li {counter-increment:steps;display:grid;grid-template-columns:2.5rem minmax(0,1fr);gap:14px;padding:19px 0;border-top:1px solid rgba(130,232,216,.27)}
+    .treaty-steps li:last-child {border-bottom:1px solid rgba(130,232,216,.27)}
+    .treaty-steps li::before {content:counter(steps,decimal-leading-zero);color:var(--mint);font:600 13px/1.7 system-ui;letter-spacing:.09em}
+    .treaty-steps h3 {margin:0 0 4px;font-size:clamp(18px,4vw,22px);letter-spacing:-.02em}
+    .treaty-steps p {margin:0}
+    .treaty-steps li {position:relative;isolation:isolate}
+    .treaty-steps.has-scroll-motion li::after {content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(130,232,216,.16),transparent 85%);opacity:var(--focus,0);pointer-events:none}
+    .treaty-steps.has-scroll-motion li::before {transform:translateX(var(--shift,0px))}
+    .treaty-steps.has-scroll-motion h3 {color:color-mix(in srgb,var(--mint) var(--emphasis,0%),var(--white))}
+    .motion-toggle {display:block;margin:18px 0;color:var(--mint);background:none;border:0;padding:5px 0;text-decoration:underline;text-underline-offset:4px;font:inherit;cursor:pointer}
+    .motion-toggle[hidden] {display:none}
+    .chapter-three .next-inner {padding-bottom:clamp(30px,18svh,150px)}
+    .chapter-four {min-height:135svh;padding:clamp(72px,12vw,132px) max(24px,6vw) 100px;background:radial-gradient(ellipse at 70% 15%,#103e48,#04121b 72%)}
+    .goal-visual {display:grid;grid-template-columns:1fr minmax(90px,1fr);align-items:center;gap:clamp(16px,5vw,44px);margin:34px 0}
+    .goal-visual .big-number {font-size:clamp(60px,16vw,130px);margin:8px 0}
+    .goal-visual .goal-label {margin:0;color:var(--mint);font-weight:700}
+    .goal-grid {position:relative;aspect-ratio:1;max-width:270px;background-image:radial-gradient(circle,#3d616b 25%,transparent 30%);background-size:10% 10%}
+    .goal-grid::after {content:'';position:absolute;inset:0;background-image:radial-gradient(circle,var(--mint) 25%,transparent 30%);background-size:10% 10%;clip-path:inset(0 calc(100% - var(--goal-fill,100%)) 70% 0)}
+    .video-play {position:absolute;z-index:32;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 145px);transform:translateX(-50%);white-space:nowrap;display:none;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.45);border-radius:24px;padding:10px 15px;background:rgba(1,14,20,.65);color:#fff;font-size:12px;cursor:pointer}
+    .video-play.visible {display:flex}
+    @media (min-width:700px) { .topbar {padding:38px 6vw 0} .mark strong{font-size:15px}.mark small{font-size:10px}.pilot{font-size:10px}.copy{left:12vw;top:44%;right:auto}.copy--two h2{max-width:670px}.chapter-mark{left:6vw}.progress{right:6vw}.scroll-hint{right:8vw}.chapter-two{padding:140px 10vw}.orb{right:-12%;top:-25%} }
+    @media (max-height:700px){.copy{top:41%}.scroll-hint{bottom:calc(env(safe-area-inset-bottom,0px) + 52px)}.chapter-mark{bottom:calc(env(safe-area-inset-bottom,0px) + 19px)}}
+    @media (prefers-reduced-motion:reduce) {.ocean video{transition:none}.ocean{transform:none!important}.copy{transition:none}.scroll-hint:after{animation:none} }
+  
+    /* SCENE 05 — Mobile cinematic ending */
+    .ending-scene{position:relative;min-height:110vh;min-height:110svh;display:flex;align-items:center;justify-content:center;padding:90px 24px calc(95px + env(safe-area-inset-bottom,0px));isolation:isolate;overflow:hidden;background:#04121b}
+    .ending-media{position:absolute;inset:0;z-index:-3;background:#04121b url('https://d2ol7oe51mr4n9.cloudfront.net/user_3GGj4FFoSNBW4rsznlPtATizErk/39163965-eaa0-406c-b3ac-0aa17e910b21.jpg') center top/cover no-repeat}
+    .ending-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;opacity:0;transition:opacity .8s ease}
+    .ending-media.is-playing video{opacity:1}
+    .ending-shade{position:absolute;inset:0;z-index:-2;pointer-events:none;background:linear-gradient(to bottom,rgba(1,9,15,.08),rgba(1,10,17,.2) 30%,rgba(2,8,15,.53) 65%,rgba(1,7,13,.86))}
+    .ending-content{position:relative;max-width:590px;width:100%;text-align:center;padding-top:5svh}
+    .ending-content .eyebrow{margin-bottom:24px}
+    .ending-content h2{font-size:clamp(34px,9.4vw,58px);letter-spacing:-.055em;line-height:1.32;font-weight:730;word-break:keep-all;text-wrap:balance}
+    .ending-content h2 strong{display:block;color:var(--mint);font-weight:730}
+    .ending-description{margin:26px auto 32px;color:#e1eef1;font-size:clamp(14px,3.9vw,16px);line-height:1.9;word-break:keep-all;max-width:430px}
+    .ending-cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:100px;background:var(--mint);color:#05202a;padding:17px 29px;min-height:54px;font-size:15px;font-weight:750;cursor:pointer;touch-action:manipulation}
+    .ending-play{display:block;margin:0 auto 16px;padding:11px 18px;border:1px solid #9cddd6;border-radius:100px;background:#05202a;color:#e1f8f6;font:inherit;cursor:pointer;touch-action:manipulation}
+    .ending-play[hidden]{display:none}
+    .ending-cta:focus-visible,.ending-back:focus-visible,.ending-play:focus-visible{outline:3px solid #fff;outline-offset:4px}
+    .ending-status{display:block;min-height:18px;margin-top:14px;font-size:12px;color:#c7e7e5}
+    .report-nav{position:absolute;top:100%;left:max(22px,env(safe-area-inset-left,0px));margin-top:12px;display:flex;gap:3px;padding:3px;border:1px solid rgba(173,226,229,.35);background:#071b25;border-radius:100px;white-space:nowrap}
+    .report-nav a{padding:5px 11px;border-radius:100px;text-decoration:none;color:#e8f7f6;font-size:12px;font-weight:700}
+    .report-nav [aria-current]{background:var(--mint);color:#04121b}
+    .report-nav a:focus-visible,.ending-support:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
+    @media(min-width:700px){.report-nav{left:6vw}}
+    .ending-support{display:block;width:max-content;max-width:100%;margin:12px auto 0;padding:10px 15px;color:var(--mint);font-size:14px;font-weight:750;text-underline-offset:4px}
+    .ending-back{display:block;width:max-content;margin:12px auto 0;padding:10px 15px;color:#d4e7e8;font-size:13px;text-decoration:underline;text-underline-offset:4px}
+    .ending-note{position:absolute;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:16px;right:16px;color:rgba(242,247,249,.74);font-size:10px;line-height:1.6;text-align:center}
+    @media(prefers-reduced-motion:reduce){.ending-media video{transition:none}.ending-scene{min-height:100svh}}
+
+
+    [hidden]{display:none!important}
+    .atlas{min-height:100svh;position:relative;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 65% 40%,#163342,#081923 50%,#040f17 78%);padding:calc(22px + env(safe-area-inset-top,0px)) max(23px,env(safe-area-inset-left,0px)) calc(20px + env(safe-area-inset-bottom,0px))}
+    .atlas-inner{max-width:1130px;margin:auto;position:relative}
+    .atlas-mast{display:flex;justify-content:space-between;gap:10px;align-items:center;color:#bdd6dc;font-size:12px}
+    .atlas-mast strong{font-size:11px;letter-spacing:.11em;color:#f4f8f5}
+    .atlas-layout{display:grid;align-items:center;gap:12px;margin-top:clamp(26px,6vw,70px)}
+    .atlas h1{font-size:clamp(34px,8.7vw,83px);line-height:1.12;letter-spacing:-.065em;margin:0;word-break:keep-all}
+    .atlas h1 span{color:var(--mint)}
+    .atlas-lead{margin:12px 0 0;color:#c5dce0;font-size:clamp(14px,2.4vw,17px)}
+    .atlas-orbit{position:relative;display:grid;place-items:center;height:clamp(168px,49vw,265px);pointer-events:none}
+    .atlas-orbit::before,.atlas-orbit::after{content:'';position:absolute;border:1px solid #8adac82c;border-radius:50%;width:85%;height:69%;transform:rotate(-13deg);z-index:-1}
+    .atlas-orbit::after{width:97%;height:58%;transform:rotate(12deg);opacity:.65}
+    .atlas-globe{width:clamp(158px,47vw,255px);aspect-ratio:1;border-radius:50%;position:relative;overflow:hidden;background:radial-gradient(circle at 35% 30%,#79a9b0 0,#27657e 33%,#14384e 64%,#091b2b 82%);box-shadow:0 0 40px #4b9aa14d;transition:transform .63s cubic-bezier(.45,.05,.23,1);transform-origin:56% 50%}
+    .atlas-globe img{display:block;width:100%;height:100%;object-fit:cover;mix-blend-mode:screen}
+    .atlas-globe::after{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 31% 24%,transparent 34%,#04131b24 59%,#04131bd1 96%)}
+    .atlas-links{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+    .atlas-link{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px;border:1px solid #547680;border-radius:12px;padding:11px 12px;background:#102934;color:#edf9f8;text-decoration:none;font-size:13px;font-weight:700;transition:opacity .32s,transform .32s}
+    .atlas-story{grid-column:1/-1;min-height:92px;border-color:#8bdacc;background:linear-gradient(90deg,#07232f 25%,#09243177),url('ocean-poster.jpg') center 34%/cover;padding:14px 17px;font-size:clamp(22px,5.9vw,34px);letter-spacing:-.035em}
+    .atlas-story small{display:block;color:#a9ded8;font-size:11px;letter-spacing:.13em;margin-bottom:5px}
+    .atlas-link:focus-visible,.atlas-return:focus-visible{outline:2px solid var(--mint);outline-offset:4px}
+    .atlas-link:hover{border-color:var(--mint)}
+    .atlas-credit{margin:13px 0 0;color:#bbd0d5;font-size:10px;text-align:right}
+    .atlas-credit a{color:inherit}
+    .atlas.is-diving .atlas-globe{transform:scale(2.7)}
+    .atlas.is-diving .atlas-link:not(.atlas-story){opacity:.25;transform:scale(.95)}
+    .atlas.is-diving .atlas-story{transform:scale(1.025)}
+    .atlas-curtain{position:fixed;inset:0;z-index:100;background:#052634;opacity:0;pointer-events:none;transition:opacity .24s ease}
+    .atlas-curtain.is-covering{opacity:1}
+    .atlas-return{position:fixed;z-index:50;top:calc(env(safe-area-inset-top,0px) + 16px);right:max(15px,env(safe-area-inset-right,0px));min-height:44px;display:flex;align-items:center;border:1px solid #6da4a9;border-radius:100px;background:#071c29ef;color:#edf9f8;padding:0 13px;font-size:12px;font-weight:720;text-decoration:none}
+    @media(min-width:750px){.atlas{padding-inline:6vw}.atlas-layout{grid-template-columns:1fr 1fr;gap:24px}.atlas-orbit{height:clamp(250px,39vw,410px);grid-column:2;grid-row:1/span 2}.atlas-globe{width:clamp(250px,33vw,390px)}.atlas-links{grid-column:1}.atlas-credit{text-align:left}.atlas-return{right:6vw;top:28px}}
+    @media(prefers-reduced-motion:reduce){.atlas-globe,.atlas-link,.atlas-curtain{transition:none}}
+
+  </style>
+</head>
+<body>
+
+  <section class="atlas" id="atlas" aria-labelledby="atlasTitle">
+    <div class="atlas-inner">
+      <header class="atlas-mast"><strong>GREENPEACE · 2025</strong><span>비공식 연차보고서 시연</span></header>
+      <div class="atlas-layout">
+        <div>
+          <h1 id="atlasTitle" tabindex="-1">하나의 지구,<br><span>이어지는 이야기들.</span></h1>
+          <p class="atlas-lead">어디에서 시작하고 싶나요?</p>
+        </div>
+        <div class="atlas-orbit" aria-hidden="true"><div class="atlas-globe"><img src="https://d2pn8kiwq2w21t.cloudfront.net/original_images/jpegPIA18033.jpg" alt="" decoding="async"></div></div>
+        <nav class="atlas-links" aria-label="이야기와 자료 선택">
+          <a class="atlas-link atlas-story" id="enterOcean" href="./"><span><small>해양보호 이야기</small>바다를 지키는 약속</span><span aria-hidden="true">↗</span></a>
+          <a class="atlas-link" href="support.html">내 후원금 보기 <span aria-hidden="true">↗</span></a>
+          <a class="atlas-link" href="https://www.greenpeace.org/static/planet4-korea-stateless/2026/06/13b545a6-2025-%EA%B7%B8%EB%A6%B0%ED%94%BC%EC%8A%A4-%EC%97%B0%EC%B0%A8%EB%B3%B4%EA%B3%A0%EC%84%9C-%ED%99%94%EB%A9%B4%EC%9A%A9.pdf">보고서 원문 <span aria-hidden="true">↗</span></a>
+        </nav>
+      </div>
+      <p class="atlas-credit">지구 이미지 <a href="https://www.jpl.nasa.gov/images/pia18033-earth/">NASA</a></p>
+    </div>
+  </section>
+  <div class="atlas-curtain" aria-hidden="true"></div>
+  <main id="oceanStory" hidden>
+    <a class="atlas-return" href="#atlas" data-atlas-return>← 이야기 선택</a>
+    <section class="stage" id="intro" aria-label="첫 번째 장면: 바다에는 국경이 없습니다">
+      <div class="viewport" id="viewport">
+        <div class="ocean" id="ocean">
+          <div class="poster"></div>
+          <video id="heroVideo" muted loop playsinline webkit-playsinline preload="none" poster="ocean-poster.jpg" aria-hidden="true">
+            <source src="ocean.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <div class="shadow"></div>
+        <div class="dive-shadow" id="diveShadow"></div>
+        <div class="film-grain"></div>
+        <header class="topbar">
+          <div class="mark"><strong>OCEAN PROJECT</strong><small>2025 IMPACT REPORT</small></div>
+
+        </header>
+        <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="copy-layer">
+          <div class="copy copy--one" id="lineOne">
+            <p class="eyebrow">01 / INTO THE OCEAN</p>
+            <h1><em>바다에는</em><br/>국경이 없습니다.</h1>
+          </div>
+          <div class="copy copy--two" id="lineTwo">
+            <p class="eyebrow">BEYOND BORDERS</p>
+            <h2>하지만 모든 바다가<br/><span>보호받는 것은<br/>아닙니다.</span></h2>
+          </div>
+          <div class="copy copy--three" id="lineThree">
+            <p class="eyebrow">A STORY WORTH EXPLORING</p>
+            <p class="main">우리가 미처 알지 못했던<br/>바다의 이야기가 시작됩니다.</p>
+            <p class="sub">손끝을 따라, 조금 더 깊이 내려가 볼까요?</p>
+          </div>
+        </div>
+        <div class="chapter-mark" aria-hidden="true">CHAPTER 01 <span style="opacity:.55">— 05</span></div>
+        <div class="scroll-hint" id="scrollHint" aria-hidden="true">SCROLL TO DIVE</div>
+        <button class="video-play" id="playVideo" type="button">▶ 영상 재생하기</button>
+      </div>
+    </section>
+    <section class="chapter-two" id="next" aria-labelledby="highSeasTitle">
+      <div class="orb" aria-hidden="true"></div>
+      <div class="next-inner">
+        <p class="eyebrow">02 / THE UNSEEN OCEAN</p>
+        <h2 id="highSeasTitle">바다 열 칸 중<br/>여섯 칸은 공해입니다.</h2>
+        <button class="motion-toggle" id="motionToggle" type="button" hidden aria-pressed="false">스크롤 애니메이션</button>
+        <div class="big-number" aria-hidden="true">60<span>%</span></div>
+        <figure class="ocean-share" id="oceanShare">
+          <div class="ocean-share-track" aria-hidden="true">
+            <span style="--fill-order:0"></span><span style="--fill-order:1"></span><span style="--fill-order:2"></span>
+            <span style="--fill-order:3"></span><span style="--fill-order:4"></span><span style="--fill-order:5"></span>
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <figcaption><span>공해 약 60%</span><span>국가 관할 해역 약 40%</span></figcaption>
+        </figure>
+        <p>공해는 어느 한 국가의 관할권도 미치지 않는 해역입니다. 이 넓은 바다를 보호하려면 여러 나라가 함께 움직여야 합니다.</p>
+        <p class="disclaimer">면적 기준 · <a class="source-link" href="https://es.greenpeace.org/es/wp-content/uploads/sites/3/2023/09/30x30-From-GOT-to-protection-at-sea-Full-report.pdf">그린피스 국제본부 보고서</a>의 61%를 반올림</p>
+        <div class="fine-line"></div>
+        <p class="disclaimer">2025 그린피스 동아시아지부 연차보고서 기반 · 비공식 디자인 시연</p>
+        <a class="restart chapter-next" href="#protect">공해를 지키는 방법 ↓</a>
+      </div>
+    </section>
+    <section class="chapter-three" id="protect" aria-labelledby="protectTitle">
+      <div class="next-inner">
+        <p class="eyebrow">03 / PROTECTING THE HIGH SEAS</p>
+        <h2 id="protectTitle">함께 쓰는 바다,<br/>어떻게 지킬까요?</h2>
+        <p>2026년 1월 17일 발효된 유엔 공해협약(BBNJ)은 국가들이 공해에 해양보호구역을 만들 수 있는 절차를 마련했습니다.</p>
+        <ol class="treaty-steps" id="treatySteps" aria-label="해양보호구역 지정 절차">
+          <li><div><h3>보호가 필요한 곳을 제안합니다</h3><p>협약 당사국이 과학적 근거를 바탕으로 보호할 해역과 관리 방안을 제안합니다.</p></div></li>
+          <li><div><h3>근거와 의견을 검토합니다</h3><p>과학기술기구가 제안서를 검토하고, 사무국은 관련 국가와 원주민, 지역 공동체 등의 의견을 모읍니다.</p></div></li>
+          <li><div><h3>함께 결정하고 관리합니다</h3><p>당사국총회가 보호구역 지정과 관련 조치를 결정할 수 있습니다. 시행 후에는 효과를 점검합니다.</p></div></li>
+        </ol>
+        <p class="disclaimer"><a class="source-link" href="https://www.un.org/bbnjagreement/en">유엔 공해협약</a> · <a class="source-link" href="https://www.un.org/bbnjagreement/en/bbnj-agreement/text-bbnj-agreement">협약문 제19~26조</a></p>
+        <a class="restart chapter-next" href="#goal">2030년까지의 목표 ↓</a>
+      </div>
+    </section>
+    <section class="chapter-four" id="goal" aria-labelledby="goalTitle">
+      <div class="next-inner">
+        <p class="eyebrow">04 / 30 BY 30</p>
+        <h2 id="goalTitle">2030년까지,<br/>바다의 최소 30%를 지키다.</h2>
+        <div class="goal-visual" aria-hidden="true">
+          <div><p class="goal-label">2030년 보전 목표</p><div class="big-number">30<span>%</span></div></div>
+          <div class="goal-grid" id="goalGrid"></div>
+        </div>
+        <p>국제사회는 2030년까지 전 세계 해양과 연안의 최소 30%를 효과적으로 보전하고 관리하는 목표를 세웠습니다.</p>
+        <p>생물다양성이 풍부한 곳을 지키고, 보호되는 해역이 서로 이어지도록 관리하는 것도 목표에 포함됩니다.</p>
+        <p class="disclaimer">출처 · <a class="source-link" href="https://www.cbd.int/gbf/targets/3">쿤밍-몬트리올 글로벌 생물다양성 프레임워크 목표 3</a></p>
+        <button class="restart" type="button" id="restart">↺ 첫 장면 다시 체험하기</button>
+      </div>
+    </section>
+  
+    <section class="ending-scene" id="ending" aria-labelledby="endingTitle">
+      <div class="ending-media" id="endingMedia" aria-hidden="true">
+        <video id="endingOceanVideo" muted playsinline webkit-playsinline loop preload="none" src="ending-ascent.mp4" poster="https://d2ol7oe51mr4n9.cloudfront.net/user_3GGj4FFoSNBW4rsznlPtATizErk/39163965-eaa0-406c-b3ac-0aa17e910b21.jpg">
+        </video>
+      </div>
+      <div class="ending-shade" aria-hidden="true"></div>
+      <div class="ending-content">
+        <p class="eyebrow">05 / THE JOURNEY CONTINUES</p>
+        <h2 id="endingTitle">약속을 현실로 만드는 일.<strong>이제부터가 시작입니다.</strong></h2>
+        <p class="ending-description">조약이 발효됐다고 바다가 저절로 보호되는 것은 아닙니다. 세계가 함께 만든 약속이 실제 해양보호로 이어질 수 있도록, 우리의 관심은 계속되어야 합니다.</p>
+        <button class="ending-play" id="endingPlay" type="button" hidden>▶ 엔딩 영상 재생하기</button>
+        <button class="ending-cta" id="endingShare" type="button">이 이야기 공유하기 <span aria-hidden="true">↗</span></button>
+        <span class="ending-status" id="endingStatus" role="status" aria-live="polite"></span>
+        <a class="ending-support" href="support.html">내 후원금 보기 →</a>
+        <a class="ending-back" href="#atlas" data-atlas-return>다른 이야기 탐험하기 →</a>
+      </div>
+      <p class="ending-note">2025 그린피스 동아시아지부 연차보고서 기반 비공식 디자인 시연 · AI 생성 영상은 상징적 연출입니다.</p>
+    </section>
+
+  </main>
+  <script>
+    (function () {
+      'use strict';
+      const stage = document.getElementById('intro');
+      const ocean = document.getElementById('ocean');
+      const video = document.getElementById('heroVideo');
+      const diveShadow = document.getElementById('diveShadow');
+      const progressFill = document.getElementById('progressFill');
+      const scrollHint = document.getElementById('scrollHint');
+      const button = document.getElementById('playVideo');
+      const layers = [document.getElementById('lineOne'),document.getElementById('lineTwo'),document.getElementById('lineThree')];
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const oceanShare = document.getElementById('oceanShare');
+      const shareTrack = oceanShare.querySelector('.ocean-share-track');
+      const treatySteps = document.getElementById('treatySteps');
+      const steps = treatySteps.querySelectorAll('li');
+      const motionToggle = document.getElementById('motionToggle');
+      const goalGrid = document.getElementById('goalGrid');
+      const dataSaver = navigator.connection && navigator.connection.saveData;
+      const clamp = v => Math.max(0, Math.min(1, v));
+      const smooth = (a,b,x) => {const t=clamp((x-a)/(b-a));return t*t*(3-2*t)};
+      let ticking=false;
+      let phase=-1;
+      let chapterMotion = !reduced;
+      function setChapterMotion () {
+        oceanShare.classList.toggle('has-scroll-motion',chapterMotion);
+        treatySteps.classList.toggle('has-scroll-motion',chapterMotion);
+        motionToggle.setAttribute('aria-pressed',String(chapterMotion));
+        if (!chapterMotion) goalGrid.style.removeProperty('--goal-fill');
+        schedule();
+      }
+      motionToggle.hidden = !reduced;
+      motionToggle.addEventListener('click',()=>{
+        chapterMotion = !chapterMotion;
+        setChapterMotion();
+      });
+      setChapterMotion();
+      let shareFilled = false;
+      function updateChapters (height) {
+        if (!shareFilled) {
+          const track = shareTrack.getBoundingClientRect();
+          if (track.top >= 0 && track.bottom <= height) {
+            oceanShare.classList.add('is-filled');
+            shareFilled = true;
+          }
+        }
+        steps.forEach(step=>{
+          const box=step.getBoundingClientRect();
+          const center=(box.top+box.height/2)/height;
+          const focus=smooth(0,1,clamp(1-Math.abs(center-.56)/.32));
+          step.style.setProperty('--focus',focus.toFixed(3));
+          step.style.setProperty('--shift',`${(focus*8).toFixed(1)}px`);
+          step.style.setProperty('--emphasis',`${Math.round(focus*100)}%`);
+        });
+        const goalTop=goalGrid.getBoundingClientRect().top;
+        const goalProgress=smooth(.48,.82,1-goalTop/height);
+        goalGrid.style.setProperty('--goal-fill',`${Math.round(goalProgress*100)}%`);
+      }
+      function update () {
+        ticking=false;
+        const box=stage.getBoundingClientRect();
+        const distance=Math.max(1,box.height-window.innerHeight);
+        const p=clamp(-box.top/distance);
+        const a=1-smooth(.15,.32,p);
+        const b=smooth(.24,.41,p)*(1-smooth(.67,.82,p));
+        const c=smooth(.78,.93,p);
+        const vals=[a,b,c];
+        layers.forEach((layer,i)=>{
+          const alpha=vals[i];
+          layer.style.opacity=alpha.toFixed(3);
+          const dy=i===0 ? (1-alpha)*-15 : (1-alpha)*16;
+          layer.style.transform=`translate3d(0,${dy.toFixed(2)}px,0)`;
+          layer.setAttribute('aria-hidden', alpha < .1 ? 'true' : 'false');
+        });
+        if (!reduced) {
+          ocean.style.transform=`translate3d(0,${(-2*p).toFixed(2)}%,0) scale(${(1.012+.09*p).toFixed(4)})`;
+        }
+        if (chapterMotion) updateChapters(window.innerHeight);
+        diveShadow.style.opacity=(.02 + .75*smooth(.20,.95,p)).toFixed(3);
+        progressFill.style.height=Math.round(p*100)+'%';
+        scrollHint.style.opacity=(1-smooth(.04,.18,p)).toFixed(2);
+        if (p>.12 && phase!==1) {phase=1;scrollHint.style.pointerEvents='none'}
+      }
+      function schedule () {if(!ticking){ticking=true;requestAnimationFrame(update)}}
+      addEventListener('scroll',schedule,{passive:true});
+      addEventListener('resize',schedule,{passive:true});
+      addEventListener('pageshow',schedule);
+      schedule();
+      video.addEventListener('playing',()=>{ocean.classList.add('video-ready');button.classList.remove('visible')});
+      video.addEventListener('error',()=>{ocean.classList.remove('video-ready');button.classList.remove('visible')});
+      let manualPlayback = false;
+      addEventListener("atlasviewchange",schedule);
+      function attemptPlay () {
+        if (document.getElementById("oceanStory").hidden) return;
+        if ((reduced||dataSaver) && !manualPlayback) return;
+        const promise=video.play();
+        if(promise && typeof promise.catch==='function')promise.catch(()=>button.classList.add('visible'));
+      }
+      if (!reduced&&!dataSaver){attemptPlay();}
+      else {video.pause();button.classList.add('visible');}
+      button.addEventListener('click',()=>{manualPlayback=true;attemptPlay()});
+      document.addEventListener('visibilitychange',()=>{if(document.hidden)video.pause();else attemptPlay()});
+      if ('IntersectionObserver' in window) {
+        const observer=new IntersectionObserver((entries)=>{
+          const visible=entries[0]?.isIntersecting;
+          if(!visible)video.pause();else if(!document.hidden)attemptPlay();
+        },{threshold:.02}); observer.observe(stage);
+      }
+      document.getElementById('restart').addEventListener('click',()=>window.scrollTo({top:0,behavior:reduced?'auto':'smooth'}));
+    })();
+  </script>
+
+  <script>
+    (function(){
+      const scene=document.getElementById('ending');
+      const wrap=document.getElementById('endingMedia');
+      const video=document.getElementById('endingOceanVideo');
+      const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const saver=!!(navigator.connection&&navigator.connection.saveData);
+      const playButton=document.getElementById('endingPlay');
+      let visible=false;
+      let manualPlayback=false;
+
+      function start(fromButton=false){
+        if((!visible&&!fromButton)||document.hidden)return;
+        if(video.paused||!wrap.classList.contains('is-playing'))playButton.hidden=false;
+        if((reduced||saver)&&!manualPlayback)return;
+        video.muted=true;
+        if(fromButton&&video.error)video.load();
+        const promise=video.play();
+        if(promise&&promise.catch)promise.catch(()=>{
+          if(visible&&!document.hidden&&video.paused)playButton.hidden=false;
+        });
+      }
+      playButton.addEventListener('click',()=>{
+        manualPlayback=true;
+        start(true);
+      });
+      video.addEventListener('playing',()=>{
+        wrap.classList.add('is-playing');
+        playButton.hidden=true;
+      });
+      video.addEventListener('error',()=>{
+        wrap.classList.remove('is-playing');
+        playButton.hidden=false;
+      });
+      if('IntersectionObserver' in window){
+        new IntersectionObserver(([entry])=>{
+          visible=entry.isIntersecting;
+          if(visible)start();else video.pause();
+        },{threshold:.01}).observe(scene);
+      }else{visible=true;start()}
+      document.addEventListener('visibilitychange',()=>{if(document.hidden)video.pause();else start()});
+      document.getElementById('endingShare').addEventListener('click',async()=>{
+        const data={title:'국경 밖의 바다 — Ocean Project',text:'바다를 위한 새로운 약속, 그리고 앞으로 남은 이야기.',url:location.href.split('#')[0]};
+        if(navigator.share){try{await navigator.share(data);return}catch(e){if(e&&e.name==='AbortError')return}}
+        const status=document.getElementById('endingStatus');
+        try{await navigator.clipboard.writeText(data.url);status.textContent='공유 링크를 복사했어요.'}
+        catch(e){status.textContent='브라우저 주소를 복사해 공유해 주세요.'}
+      });
+    })();
+  </script>
+
+
+  <script>
+    (() => {
+      const atlas = document.getElementById('atlas');
+      const story = document.getElementById('oceanStory');
+      const enter = document.getElementById('enterOcean');
+      const curtain = document.querySelector('.atlas-curtain');
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+      const oceanChapters = new Set(['#intro','#next','#protect','#goal','#ending']);
+      let entering = false;
+      function showOcean(active) {
+        if (story.hidden === !active) return;
+        atlas.hidden = active;
+        story.hidden = !active;
+        if (!active) story.querySelectorAll('video').forEach(video => video.pause());
+        window.dispatchEvent(new Event('atlasviewchange'));
+      }
+      function syncLocation() {
+        const active = oceanChapters.has(location.hash);
+        showOcean(active);
+        if (active) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+      }
+      enter.addEventListener('click', event => {
+        if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        if (entering) return;
+        entering = true;
+        function arrive() {
+          history.pushState(null,'','#intro');
+          showOcean(true);
+          window.scrollTo(0,0);
+          document.querySelector('.atlas-return').focus({preventScroll:true});
+          atlas.classList.remove('is-diving');
+          curtain.classList.remove('is-covering');
+          entering = false;
+        }
+        if (reduced.matches) { arrive(); return; }
+        atlas.classList.add('is-diving');
+        setTimeout(() => curtain.classList.add('is-covering'),390);
+        setTimeout(arrive,650);
+      });
+      story.querySelectorAll('[data-atlas-return]').forEach(link => link.addEventListener('click',event => {
+        if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        history.pushState(null,'','#atlas');
+        showOcean(false);
+        window.scrollTo(0,0);
+        enter.focus({preventScroll:true});
+      }));
+      addEventListener('hashchange',syncLocation);
+      syncLocation();
+    })();
+  </script>
+</body>
+</html>
