@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preload" as="image" href="assets/page08.jpg">
+<meta name="theme-color" content="#0B1622">
+<title>2025 연차보고서, 펼쳐 보기 (비공식 시안)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@600;800;900&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#ECEEE9;   /* 보고서 종이를 닮은 밝은 바탕 */
+  --sheet:#FAFAF7;   /* 영수증 감열지 */
+  --ink:#0B1622;     /* 인쇄 잉크, 깊은 바다 */
+  --ink2:#15283A;
+  --mute:#5D6A70;
+  --green:#78BE43;   /* 연차보고서에 쓰인 초록 */
+  --blue:#2440D0;    /* 공해 */
+  --serif:"Hahmlet","AppleMyungjo","Noto Serif KR",serif;
+  --sans:"IBM Plex Sans KR",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--ink);color:var(--ink);font-family:var(--sans);line-height:1.6;word-break:keep-all;-webkit-tap-highlight-color:transparent}
+body.lock{overflow:hidden}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid var(--green);outline-offset:3px}
+.wrap{max-width:480px;margin:0 auto;position:relative;overflow:clip}
+.pin{position:sticky;top:0;height:100svh;min-height:560px;overflow:hidden}
+.serif{font-family:var(--serif)}
+.num{font-variant-numeric:tabular-nums}
+.dark{background:var(--ink);color:#F2F4F1}
+.light{background:var(--paper);color:var(--ink)}
+.fade{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+.fade.on{opacity:1;transform:none}
+.src{font-size:11.5px;line-height:1.55;color:var(--mute)}
+.dark .src{color:#8FA0A8}
+
+/* 고정 */
+#bar{position:fixed;top:0;left:0;height:2px;width:0;background:var(--green);z-index:60}
+#home{position:fixed;top:10px;left:10px;z-index:55;font-size:12.5px;font-weight:700;padding:8px 13px;border-radius:999px;background:rgba(11,22,34,.62);color:#fff;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .3s}
+#home.on{opacity:1;pointer-events:auto}
+.tag{position:fixed;top:12px;right:10px;z-index:55;font-size:10.5px;font-weight:500;color:#fff;background:rgba(11,22,34,.5);padding:4px 9px;border-radius:999px}
+@media(min-width:481px){.tag{right:calc(50% - 230px)}#home{left:calc(50% - 230px)}}
+
+/* ── 보고서: 펼침면 릴 ── */
+#hub{height:300svh}
+#hub .pin{background:radial-gradient(90% 60% at 50% 46%,#1A3044 0%,var(--ink) 70%)}
+.htop{position:absolute;left:24px;right:24px;top:9%;color:#F2F4F1}
+.htop .k{font-size:13px;font-weight:500;color:#9FB0B8}
+.htop h1{margin-top:8px;font-family:var(--serif);font-size:38px;font-weight:800;letter-spacing:-.04em;line-height:1.18}
+.htop h1 em{font-style:normal;color:var(--green)}
+.stage3d{position:absolute;left:0;right:0;top:34%;height:36%;perspective:760px;perspective-origin:50% 50%;touch-action:pan-y}
+.cyl{position:absolute;left:50%;top:50%;transform-style:preserve-3d;will-change:transform}
+.pg{position:absolute;left:0;top:0;transform-style:preserve-3d;-webkit-backface-visibility:hidden;backface-visibility:hidden;border-radius:3px;box-shadow:0 20px 40px rgba(0,0,0,.5);background:#fff;overflow:hidden;will-change:transform,opacity}
+.pg img{display:block;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.pg.open{box-shadow:0 20px 40px rgba(0,0,0,.5),0 0 0 2px var(--green)}
+.pg .tab{position:absolute;right:8px;top:8px;font-size:10.5px;font-weight:700;background:var(--green);color:var(--ink);border-radius:999px;padding:3px 8px}
+.hcap{position:absolute;left:24px;right:24px;bottom:12%;color:#F2F4F1;min-height:96px}
+.hcap .pp{font-size:12.5px;color:#9FB0B8}
+.hcap b{display:block;margin-top:4px;font-family:var(--serif);font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.3}
+.hcap .go{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:12px 18px;border-radius:999px;background:var(--green);color:var(--ink);font-size:14.5px;font-weight:700}
+.hcap .not{margin-top:12px;font-size:13px;color:#9FB0B8}
+.hhint{position:absolute;left:0;right:0;bottom:4.5%;text-align:center;font-size:12px;color:#9FB0B8}
+.zoom{position:fixed;z-index:65;pointer-events:none;background:#fff center/cover no-repeat;border-radius:3px;opacity:0}
+
+/* ── 바다 01: 영상 ── */
+#o1{height:240svh}
+#o1 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform}
+#o1 .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,22,34,.15),rgba(11,22,34,.1) 45%,rgba(11,22,34,.7))}
+#o1 .white{position:absolute;inset:0;background:var(--paper);opacity:0}
+.big3{position:absolute;left:24px;right:16px;top:16%;font-family:var(--serif);font-weight:800;color:#fff;font-size:min(15.5vw,74px);letter-spacing:-.05em;line-height:1.08}
+.big3 span{display:block;will-change:transform,opacity}
+.o1b{position:absolute;left:24px;right:24px;bottom:12%;color:#fff;font-family:var(--serif);font-size:24px;font-weight:600;letter-spacing:-.03em;line-height:1.45;opacity:0}
+
+/* ── 바다 02: 지도 ── */
+#o2{height:320svh}
+#o2 .pin{background:var(--paper)}
+#gs{position:absolute;inset:0;width:100%;height:100%}
+#gt{position:absolute;border-radius:50%;touch-action:none;cursor:grab}
+.o2cap{position:absolute;left:24px;right:24px}
+.o2cap .c{position:absolute;left:0;right:0;top:0}
+.o2cap h2{font-family:var(--serif);font-size:27px;font-weight:800;letter-spacing:-.04em;line-height:1.3}
+.o2cap p{margin-top:8px;font-size:15.5px;color:var(--mute)}
+.n60{font-family:var(--serif);font-weight:900;color:var(--blue);font-size:min(30vw,140px);letter-spacing:-.06em;line-height:.9}
+.n60 small{font-size:.4em;margin-left:.05em}
+#probe{position:absolute;left:0;right:0;text-align:center;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none}
+#probe span{display:inline-block;background:var(--ink);color:#fff;border-radius:999px;padding:6px 13px}
+#probe.on{opacity:1}
+.key{position:absolute;top:44px;left:24px;display:flex;gap:14px;font-size:11.5px;color:var(--mute)}
+.key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.mnote{position:absolute;left:24px;right:24px;bottom:10px;font-size:10px;color:var(--mute);line-height:1.4}
+
+/* ── 바다 03: 한국에서 (가로로 흐르는 기록) ── */
+#o3{height:420svh}
+#o3 .pin{background:var(--paper)}
+.o3h{position:absolute;left:24px;right:24px;top:8%}
+.o3h .k{font-size:13px;font-weight:500;color:var(--mute)}
+.o3h h2{margin-top:6px;font-family:var(--serif);font-size:30px;font-weight:800;letter-spacing:-.04em;line-height:1.25}
+.track{position:absolute;left:0;top:30%;height:58%;display:flex;gap:16px;padding:0 24px;will-change:transform}
+.rec{flex:none;width:76vw;max-width:350px;height:100%;background:var(--sheet);border-radius:2px;box-shadow:0 14px 30px rgba(11,22,34,.16);padding:22px 20px;display:flex;flex-direction:column;position:relative}
+.rec:nth-child(odd){transform:rotate(-1.2deg)}.rec:nth-child(even){transform:rotate(1deg) translateY(10px)}
+.rec time{font-size:13px;font-weight:700;color:var(--mute)}
+.rec .v{margin-top:auto;font-family:var(--serif);font-weight:900;font-size:min(22vw,96px);letter-spacing:-.06em;line-height:.95;color:var(--ink)}
+.rec .v small{font-size:.32em;letter-spacing:-.02em;margin-left:.08em}
+.rec p{margin-top:12px;font-size:15px;line-height:1.55}
+.rec img{display:block;width:100%;height:46%;object-fit:cover;margin:10px 0 0;border-radius:1px}
+.rec .cr{font-size:10px;color:var(--mute);margin-top:4px}
+.rec.g .v{color:var(--green)}
+.o3n{position:absolute;left:24px;right:24px;bottom:4%;font-size:11.5px;color:var(--mute)}
+
+/* ── 바다 04: 발효와 세 단계 ── */
+#o4{height:440svh}
+.dbig{position:absolute;left:24px;right:16px;top:20%;color:#fff}
+.dbig .y{font-family:var(--serif);font-size:24px;font-weight:600;color:#9FB0B8}
+.dbig .d{font-family:var(--serif);font-weight:900;font-size:min(30vw,140px);letter-spacing:-.06em;line-height:.95;margin-top:4px}
+.dbig p{margin-top:20px;font-family:var(--serif);font-size:24px;font-weight:600;line-height:1.4;letter-spacing:-.03em}
+.dbig .sm{margin-top:12px;font-family:var(--sans);font-size:15px;color:#B9C6CC;font-weight:400;letter-spacing:0}
+.steps{position:absolute;left:20px;right:20px;top:13%;height:66%}
+.st{position:absolute;inset:0;background:var(--sheet);color:var(--ink);border-radius:4px;padding:26px 22px;display:flex;flex-direction:column;box-shadow:0 -10px 40px rgba(0,0,0,.35);will-change:transform}
+.st .n{font-family:var(--serif);font-size:96px;font-weight:900;line-height:.8;color:var(--green);letter-spacing:-.05em}
+.st .q{margin-top:auto;font-size:13px;font-weight:700;color:var(--mute)}
+.st h3{margin-top:6px;font-family:var(--serif);font-size:28px;font-weight:800;letter-spacing:-.04em;line-height:1.25}
+.st p{margin-top:12px;font-size:15px;line-height:1.6}
+.sh{position:absolute;left:24px;right:24px;top:6%;color:#9FB0B8;font-size:13px;font-weight:500}
+.snote{position:absolute;left:24px;right:24px;bottom:5%;color:#fff}
+.snote p{font-size:15px;font-weight:700}
+
+/* ── 바다 05: 30% ── */
+#o5{height:300svh}
+#o5 .pin{background:var(--paper)}
+.o5h{position:absolute;left:24px;right:24px;top:8%}
+.o5h .k{font-size:13px;font-weight:500;color:var(--mute)}
+.o5h h2{margin-top:6px;font-family:var(--serif);font-size:30px;font-weight:800;letter-spacing:-.04em;line-height:1.25}
+.lbl{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.lbl span{font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;border:1.5px solid var(--ink)}
+.grid{position:absolute;left:24px;display:grid;grid-template-columns:repeat(10,1fr);gap:3px}
+.grid i{aspect-ratio:1;background:rgba(11,22,34,.08);border-radius:2px;transition:background .35s,transform .35s}
+.grid i.on{background:var(--green);transform:scale(1.06)}
+.n30{position:absolute;right:20px;font-family:var(--serif);font-weight:900;color:var(--green);font-size:min(26vw,120px);letter-spacing:-.06em;line-height:.9;text-align:right}
+.n30 small{font-size:.4em}
+.o5t{position:absolute;left:24px;right:24px;bottom:6%}
+.o5t p{font-size:15.5px;line-height:1.6}
+.o5t .src{margin-top:8px}
+
+/* ── 바다 06: 엔딩 ── */
+#o6{height:220svh}
+#o6 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#o6 .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,22,34,.55),rgba(11,22,34,.05) 40%,rgba(11,22,34,.85))}
+.eb{position:absolute;left:24px;right:24px;top:14%;color:#fff;font-family:var(--serif);font-weight:800;font-size:min(12vw,56px);letter-spacing:-.045em;line-height:1.15}
+.eb span{display:block}
+.eb span:last-child{color:var(--green)}
+.ee{position:absolute;left:24px;right:24px;bottom:5%;color:#fff}
+.ee p{font-size:15px;line-height:1.65;color:#DCE4E7}
+.btn{display:block;width:100%;margin-top:16px;padding:17px;border-radius:999px;background:var(--green);color:var(--ink);font-size:16.5px;font-weight:700;text-align:center}
+.btn2{display:flex;gap:8px;margin-top:10px}
+.btn2 button{flex:1;padding:13px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.4);font-size:14px;font-weight:700;color:#fff}
+#est{min-height:20px;margin-top:6px;text-align:center;font-size:13px}
+
+footer{background:var(--ink);color:#8FA0A8;padding:28px 24px 44px;font-size:11.5px;line-height:1.65}
+footer p+p{margin-top:8px}
+
+/* ── 영수증 ── */
+.rx{position:fixed;inset:0;z-index:70;visibility:hidden}
+.rx.open{visibility:visible}
+.rx .scr{position:absolute;inset:0;max-width:480px;margin:0 auto;overflow:auto;-webkit-overflow-scrolling:touch;background:var(--paper);opacity:0;transition:opacity .35s}
+.rx.open .scr{opacity:1}
+.rx .x{position:sticky;top:10px;float:right;margin:10px 10px 0 0;z-index:5;width:40px;height:40px;border-radius:50%;background:var(--ink);color:#fff;font-size:21px}
+.rx .top{padding:58px 24px 0;clear:both}
+.rx .top .k{font-size:13px;font-weight:500;color:var(--mute)}
+.rx .top h2{margin-top:6px;font-family:var(--serif);font-size:32px;font-weight:800;letter-spacing:-.04em;line-height:1.22}
+.amt{margin-top:26px;display:flex;align-items:center;gap:10px}
+.amt .v{flex:1;font-family:var(--serif);font-weight:900;font-size:46px;letter-spacing:-.05em;line-height:1}
+.amt .v small{font-family:var(--sans);font-size:15px;font-weight:500;letter-spacing:0;color:var(--mute);margin-left:4px}
+.amt button{width:48px;height:48px;border-radius:50%;border:1.5px solid var(--ink);font-size:24px;line-height:1}
+.qk{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap}
+.qk button{padding:8px 14px;border-radius:999px;border:1px solid rgba(11,22,34,.25);font-size:13.5px;font-weight:500}
+.qk button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.printb{display:block;width:100%;margin-top:22px;padding:17px;border-radius:999px;background:var(--ink);color:#fff;font-size:16.5px;font-weight:700}
+.printer{margin:36px 14px 0;position:relative}
+.slot{height:18px;border-radius:10px;background:var(--ink);position:relative;z-index:3;box-shadow:0 6px 12px rgba(11,22,34,.3)}
+.slot::after{content:"";position:absolute;left:14px;right:14px;top:8px;height:2px;background:#000;border-radius:1px}
+.feed{overflow:hidden;margin-top:-9px;padding:0 10px 30px}
+.paper{background:var(--sheet);padding:30px 20px 34px;position:relative;transform:translateY(-101%);will-change:transform;box-shadow:0 10px 24px rgba(11,22,34,.14)}
+.paper::after{content:"";position:absolute;left:0;right:0;bottom:-10px;height:10px;background:radial-gradient(circle at 8px 0,var(--sheet) 7px,transparent 7.5px) 0 0/16px 10px repeat-x}
+.paper .ln{opacity:0}
+.paper .ln.on{opacity:1}
+.ph{text-align:center}
+.ph b{display:block;font-family:var(--serif);font-size:19px;font-weight:800;letter-spacing:-.02em}
+.ph span{font-size:12px;color:var(--mute)}
+.dash{border:0;border-top:1.5px dashed #B7B9B0;margin:16px 0}
+.r2{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;color:var(--mute)}
+.tot{font-family:var(--serif);font-weight:900;font-size:50px;letter-spacing:-.05em;line-height:1.1;margin-top:2px}
+.tot.long{font-size:40px}
+.tot small{font-family:var(--sans);font-size:17px;font-weight:700;letter-spacing:0;margin-left:4px}
+.it{padding:9px 0}
+.it .row{display:flex;align-items:baseline;gap:6px;font-size:14.5px}
+.it .row .nm{flex:none;max-width:62%}
+.it .row .dots{flex:1;border-bottom:1.5px dotted #B7B9B0;transform:translateY(-4px)}
+.it .row b{flex:none;font-weight:700}
+.it .bar{height:4px;margin-top:6px;background:#E6E7E1}
+.it .bar i{display:block;height:100%;width:0;background:var(--ink);transition:width .9s cubic-bezier(.2,.7,.2,1)}
+.it.sea .bar i{background:var(--blue)}
+.it .lnk{display:inline-block;margin-top:6px;font-size:12.5px;font-weight:700;color:var(--blue);text-decoration:underline;text-underline-offset:3px}
+.bc{display:flex;gap:2px;height:36px;margin:6px auto 4px;width:72%}
+.bc i{flex:1;background:var(--ink)}
+.fn{font-size:11.5px;line-height:1.55;color:var(--mute);text-align:center}
+.after{padding:6px 24px 48px;opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s}
+.after.on{opacity:1;transform:none}
+.after h3{font-family:var(--serif);font-size:26px;font-weight:800;letter-spacing:-.04em;line-height:1.3}
+.after p{margin-top:8px;font-size:14.5px;color:var(--mute)}
+.after .btn{background:var(--ink);color:#fff}
+.after .again{display:block;width:100%;margin-top:10px;padding:12px;font-size:14px;font-weight:600;text-decoration:underline;text-underline-offset:4px}
+#rst{min-height:20px;margin-top:6px;text-align:center;font-size:13px}
+.tear{transition:transform .9s cubic-bezier(.3,.6,.2,1),opacity .9s}
+.tear.go{transform:translate(30px,-40px) rotate(-7deg);opacity:.0}
+
+
+/* 영수증 아래 장면들 (첫 시안) */
+.rs{position:relative}
+.rpin{position:sticky;top:0;height:100svh;overflow:hidden}
+.rpin::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,26,25,.25) 0%,rgba(7,26,25,.1) 30%,rgba(7,26,25,.85) 100%)}
+.shot{position:absolute;inset:0;background-size:cover;background-position:center}
+.credit{position:absolute;right:12px;bottom:10px;font-size:10px;color:rgba(255,255,255,.65);z-index:2}
+.rover{position:relative;margin-top:-100svh;z-index:2;color:#fff}
+.beat{min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 24px 56px}
+.beat.mid{justify-content:center;padding-bottom:0}
+.kind{font-size:15px;font-weight:700}
+.huge{font-family:var(--sans);font-weight:700;font-size:min(20vw,92px);letter-spacing:-.05em;line-height:1.02;color:#F6E84B;white-space:nowrap}
+.huge.long{font-size:min(14.5vw,68px)}
+.huge small{font-size:26px;margin-left:6px;letter-spacing:0}
+.beat h3{margin-top:14px;font-size:32px;font-weight:700;letter-spacing:-.04em;line-height:1.2}
+.glass{background:rgba(7,26,25,.74);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-radius:16px;padding:24px 20px}
+.glass p{font-size:16px;line-height:1.65;color:#E9F2EE}
+.quote{font-family:var(--serif);font-size:21px;line-height:1.6;font-weight:800}
+.glass .quote{margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.2)}
+.quote cite{display:block;margin-top:12px;font-family:var(--sans);font-style:normal;font-size:12.5px;font-weight:500;color:#C9DDD6}
+.tl{list-style:none;border-left:2px solid rgba(255,255,255,.3);margin-left:6px}
+.tl li{position:relative;padding:0 0 20px 20px}
+.tl li:last-child{padding-bottom:0}
+.tl li::before{content:"";position:absolute;left:-8px;top:6px;width:14px;height:14px;border-radius:50%;background:#F6E84B}
+.tl time{display:block;font-size:13px;font-weight:700;color:#C9DDD6}
+.tl span{font-size:17px;font-weight:700;line-height:1.4}
+.glass .aft{margin-top:20px;padding-top:18px;border-top:1px solid rgba(255,255,255,.2);font-size:14.5px;color:#C9DDD6}
+.toSea{margin-top:16px;font-size:14px;font-weight:700;color:#F6E84B;text-decoration:underline;text-underline-offset:4px}
+.voice{background:var(--sheet);color:var(--ink);padding:96px 24px}
+.voice .kind{color:#2E9E4A}
+.voice .quote{font-size:28px;line-height:1.45;margin-top:16px;letter-spacing:-.02em}
+.voice mark{background:linear-gradient(transparent 55%,#F6E84B 55%);color:inherit}
+.person{display:flex;gap:16px;align-items:center;margin-top:30px}
+.person img{width:84px;height:84px;object-fit:cover;object-position:50% 10%;border-radius:50%;border:2px solid var(--ink);flex:none;background:#fff}
+.person div{font-size:13.5px;color:var(--mute)}
+.person strong{display:block;font-size:18px;color:var(--ink)}
+.rend{position:relative;padding:120px 22px 56px;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;color:#fff}
+.rend::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,26,25,.1),rgba(7,26,25,.55) 45%,rgba(7,26,25,.92))}
+.rend>*:not(.shot):not(.credit){position:relative;z-index:2}
+.rend .credit{top:12px;bottom:auto;z-index:3}
+.rend h3{font-size:36px;font-weight:700;letter-spacing:-.04em;line-height:1.15}
+.kard{margin-top:24px;background:var(--sheet);color:var(--ink);border-radius:4px;padding:24px 20px 20px;transform:rotate(-2deg);box-shadow:0 24px 50px rgba(0,0,0,.5)}
+.kard .t{font-size:13px;font-weight:700;color:var(--mute)}
+.kard .big{font-family:var(--sans);font-weight:700;font-size:46px;letter-spacing:-.05em;line-height:1.1;margin-top:2px}
+.kard .big small{font-size:20px;margin-left:4px;letter-spacing:0}
+.kard ul{list-style:none;margin-top:10px}
+.kard li{display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:7px 0;border-top:1px dashed #B9B5A3}
+.kard li b{white-space:nowrap}
+.kard .of{margin-top:12px;font-family:var(--serif);font-size:15.5px;font-weight:800;line-height:1.5}
+.rend .btn{background:#F6E84B;color:#14201B;margin-top:28px}
+.rend .again{display:block;width:100%;margin-top:10px;padding:12px;font-size:14px;font-weight:600;color:#fff;text-decoration:underline;text-underline-offset:4px}
+#rst{min-height:20px;margin-top:6px;text-align:center;font-size:13px}
+
+@media (prefers-reduced-motion:reduce){
+  .fade,.rx .scr,.it .bar i,.tear,.grid i{transition:none}
+}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div class="tag">비공식 시안</div>
+<button id="home">← 보고서</button>
+
+<div class="wrap">
+
+  <!-- 보고서 전체가 메뉴: 27쪽이 펼쳐지고, 두 쪽이 이야기가 된다 -->
+  <section id="hub">
+    <div class="pin dark" id="hpin">
+      <div class="htop">
+        <p class="k">그린피스 동아시아지부 · 2025 연차보고서</p>
+        <h1>27쪽짜리 한 해를<br><em>펼쳐 봅니다.</em></h1>
+      </div>
+      <div class="stage3d" id="s3d"><div class="cyl" id="cyl"></div></div>
+      <div class="hcap" id="hcap"></div>
+      <p class="hhint" id="hhint">내려가면 보고서가 펼쳐집니다</p>
+    </div>
+  </section>
+
+  <!-- 바다 01 -->
+  <section id="o1" class="sea">
+    <div class="pin dark">
+      <video id="ov" muted loop playsinline preload="auto" poster="assets/ocean-top.jpg" src="assets/ocean-top.mp4"></video>
+      <div class="veil"></div>
+      <div class="big3"><span id="b1">바다에는</span><span id="b2">국경이</span><span id="b3">보이지 않습니다.</span></div>
+      <p class="o1b" id="o1b">그래도 선은 있습니다.<br>문제는 그 선의 바깥입니다.</p>
+      <div class="white" id="o1w"></div>
+    </div>
+  </section>
+
+  <!-- 바다 02 -->
+  <section id="o2" class="sea">
+    <div class="pin light" id="o2p">
+      <canvas id="gs" aria-label="나라별 앞바다와 그 바깥의 공해를 보여주는 지구"></canvas>
+      <div id="gt" aria-hidden="true"></div>
+      <div class="key fade" id="key"><span><i style="background:#C3CDCF;outline:1.5px solid #0B1622"></i>나라별 앞바다</span><span><i style="background:#2440D0"></i>공해</span></div>
+      <div id="probe"><span id="probet">지구를 돌려 보세요. 바다를 누르면 알려 드립니다.</span></div>
+      <div class="o2cap" id="o2c">
+        <div class="c fade"><h2>나라마다<br>자기 앞바다가 있습니다.</h2><p>해안에서 바깥으로 이어지는 바다를 각 나라가 관리합니다.</p></div>
+        <div class="c fade"><div class="n60 num"><span id="n60">0</span><small>%</small></div><h2 style="margin-top:6px">그 바깥은 어느 나라의<br>바다도 아닙니다.</h2></div>
+        <div class="c fade"><h2>그래서 지키려면<br>여러 나라가 함께 정해야 합니다.</h2><p class="src" style="margin-top:12px">공해 약 60%: 면적 기준, <a href="https://es.greenpeace.org/es/wp-content/uploads/sites/3/2023/09/30x30-From-GOT-to-protection-at-sea-Full-report.pdf" target="_blank" rel="noopener">그린피스 국제본부 보고서</a>의 61%를 반올림</p></div>
+      </div>
+      <p class="mnote">이해를 돕기 위한 그림입니다. 앞바다는 해안에서 약 370km를 어림해 그렸고 실제 경계와 다릅니다.</p>
+    </div>
+  </section>
+
+  <!-- 바다 03: 보고서에만 있는 기록 -->
+  <section id="o3" class="sea">
+    <div class="pin light">
+      <div class="o3h"><p class="k">연차보고서 14~15쪽에서</p><h2>2025년,<br>한국의 기록</h2></div>
+      <div class="track" id="track">
+        <div class="rec g"><time>2025년 3월</time><div class="v num">21<small>번째</small></div><p>한국이 글로벌 해양조약을 비준했습니다. 동아시아에서 처음, 유엔 회원국 중 21번째입니다.</p></div>
+        <div class="rec"><time>2025년 2월</time><img loading="lazy" src="assets/press.jpg" alt="국회 앞에서 열린 기자회견"><p>국회에서 비준을 촉구하는 기자회견을 열고, 외교부·의원실과 만났습니다.</p><span class="cr">© Greenpeace</span></div>
+        <div class="rec"><time>2025년 4월 · 부산</time><img loading="lazy" src="assets/busan.jpg" alt="야외 극장에서 불빛을 든 시민들"><p>시민 600여 명이 바다 다큐멘터리를 함께 봤습니다.</p><span class="cr">© Greenpeace</span></div>
+        <div class="rec g"><time>다큐멘터리 〈씨그널〉</time><div class="v num">3,000<small>명</small></div><p>시민 3,000여 명의 후원으로 만들어졌습니다. 국회와 대전, 대구, 광주에서도 상영됐습니다.</p></div>
+        <div class="rec"><time>2025년 9월 19일</time><div class="v num">60<small>개국</small></div><p>비준한 나라가 60개국이 되면서, 조약이 효력을 가질 조건이 채워졌습니다.</p></div>
+      </div>
+      <p class="o3n">비준과 발효는 각 나라 정부와 유엔의 결정입니다. 시민과 그린피스의 활동은 같은 시기에 이어진 기록입니다.</p>
+    </div>
+  </section>
+
+  <!-- 바다 04 -->
+  <section id="o4" class="sea">
+    <div class="pin dark">
+      <div class="dbig" id="dbig"><div class="y">2026년</div><div class="d num">1월 17일</div><p>유엔 공해협약(BBNJ)이<br>발효됐습니다.</p><p class="sm">공해에 해양보호구역을 만들 수 있는 국제 절차가 생겼습니다. 보호구역은 이렇게 만들어집니다.</p></div>
+      <p class="sh" id="sh">보호구역이 만들어지는 세 단계</p>
+      <div class="steps" id="steps">
+        <div class="st"><div class="n">1</div><div class="q">어디를 지켜야 할까요?</div><h3>보호가 필요한 곳을 제안합니다</h3><p>협약 당사국이 과학적 근거를 바탕으로 보호할 해역과 관리 방안을 제안합니다.</p></div>
+        <div class="st"><div class="n">2</div><div class="q">무엇을 근거로 정할까요?</div><h3>근거와 의견을 검토합니다</h3><p>과학기술기구가 제안서를 검토하고, 사무국은 관련 국가와 원주민, 지역 공동체 등의 의견을 모읍니다.</p></div>
+        <div class="st"><div class="n">3</div><div class="q">누가, 어떻게 지킬까요?</div><h3>함께 결정하고 관리합니다</h3><p>당사국총회가 보호구역 지정과 관련 조치를 결정할 수 있습니다. 시행 후에는 효과를 점검합니다.</p></div>
+      </div>
+      <div class="snote fade" id="snote"><p>조약이 발효됐다고 보호구역이 저절로 생기지는 않습니다.</p><p class="src" style="margin-top:6px"><a href="https://www.un.org/bbnjagreement/en" target="_blank" rel="noopener">유엔 공해협약</a> · <a href="https://www.un.org/bbnjagreement/en/bbnj-agreement/text-bbnj-agreement" target="_blank" rel="noopener">협약문 제19~26조</a></p></div>
+    </div>
+  </section>
+
+  <!-- 바다 05 -->
+  <section id="o5" class="sea">
+    <div class="pin light">
+      <div class="o5h" id="o5h"><p class="k">다음 약속</p><h2>2030년까지,<br>바다의 최소 30%</h2><div class="lbl"><span>목표</span><span>전 세계 해양과 연안</span><span>아직 성과가 아님</span></div></div>
+      <div class="grid" id="grid"></div>
+      <div class="n30 num" id="n30w"><span id="n30">0</span><small>%</small></div>
+      <div class="o5t">
+        <p class="fade" id="o5a">국제사회는 2030년까지 전 세계 해양과 연안의 최소 30%를 효과적으로 보전하고 관리하기로 했습니다. 보호되는 해역이 서로 이어지도록 하는 것도 목표에 들어 있습니다.</p>
+        <p class="src fade" id="o5b">출처 · <a href="https://www.cbd.int/gbf/targets/3" target="_blank" rel="noopener">쿤밍-몬트리올 글로벌 생물다양성 프레임워크 목표 3</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 바다 06 -->
+  <section id="o6" class="sea">
+    <div class="pin dark">
+      <video id="ev" muted loop playsinline preload="metadata" poster="assets/ocean-end.jpg" src="assets/ocean-end.mp4"></video>
+      <div class="veil"></div>
+      <div class="eb"><span class="fade" id="e1">약속을 현실로</span><span class="fade" id="e2">만드는 일은</span><span class="fade" id="e3">이제부터입니다.</span></div>
+      <div class="ee fade" id="ee">
+        <p>조약이 생겼다고 바다가 저절로 보호되지는 않습니다. 이 약속이 실제 보호구역으로 이어지는지, 함께 지켜봐 주세요.</p>
+        <button class="btn" id="share">이 이야기 공유하기</button>
+        <div class="btn2"><button data-rx>내 영수증 뽑기</button><button id="tohub">보고서로 돌아가기</button></div>
+        <div id="est" role="status"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>그린피스 동아시아지부 2025 연차보고서를 바탕으로 만든 비공식 디자인 시안입니다. 그린피스 공식 제작물이 아닙니다.</p>
+    <p>수중 영상은 AI로 만든 상징적 연출이며 실제 현장 기록이 아닙니다. 사진과 보고서 지면 © Greenpeace.</p>
+  </footer>
+</div>
+
+<div class="zoom" id="zoom"></div>
+
+<!-- 영수증: 24~25쪽 -->
+<div class="rx" id="rx" aria-hidden="true">
+  <div class="scr" id="rxs" role="dialog" aria-modal="true" aria-labelledby="rxh">
+    <button class="x" id="rxx" aria-label="닫기">×</button>
+    <div class="top">
+      <p class="k">연차보고서 24~25쪽 · 후원금 사용 내역</p>
+      <h2 id="rxh">보고서는 결국<br>영수증입니다.</h2>
+      <div class="amt"><button id="mn" aria-label="1만 원 줄이기">−</button><div class="v num" aria-live="polite"><span id="mv">30,000</span>원<small>매달</small></div><button id="pl" aria-label="1만 원 늘리기">+</button></div>
+      <div class="qk" id="qk"><button data-v="10000" aria-pressed="false">1만</button><button data-v="20000" aria-pressed="false">2만</button><button data-v="30000" aria-pressed="true">3만</button><button data-v="50000" aria-pressed="false">5만</button><button data-v="100000" aria-pressed="false">10만</button></div>
+      <button class="printb" id="pr">내 영수증 출력하기</button>
+    </div>
+    <div class="printer" id="ptr" hidden>
+      <div class="slot"></div>
+      <div class="feed"><div class="tear" id="tear"><div class="paper" id="paper">
+        <div class="ln ph"><b>그린피스 2025</b><span>후원 영수증 · 후원자님 앞</span></div>
+        <hr class="ln dash">
+        <div class="ln r2"><span>월 <span id="pm"></span>원 × 12개월</span><span>합계</span></div>
+        <div class="ln tot num" id="tot"><span id="tv">0</span><small>원</small></div>
+        <hr class="ln dash">
+        <div id="items"></div>
+        <hr class="ln dash">
+        <div class="ln bc" id="bc" aria-hidden="true"></div>
+        <p class="ln fn">보고서 24쪽 ‘3만 원의 후원금은 이렇게 사용됩니다’의 비율을<br>내 금액에 비례 적용한 시뮬레이션입니다.<br>실제 개인별 집행 내역이 아니며, 금액은 저장되지 않습니다.</p>
+      </div></div></div>
+    </div>
+    <div id="rscenes" hidden>
+      <section class="rs">
+        <div class="rpin"><div class="shot" style="background-image:url(assets/fire.jpg);background-position:62% center"></div><span class="credit">© Jung-geun Augustine Park / Greenpeace</span></div>
+        <div class="rover">
+          <div class="beat"><div class="kind">기후위기 대응</div><div class="huge num" data-a="0"><span>0</span><small>원</small></div><h3>3월, 가장 먼저<br>산불 현장으로 갔습니다</h3></div>
+          <div class="beat mid"><div class="glass"><p>영남 초대형 산불 직후, 기후재난 대응팀이 피해 현황을 조사했습니다. 시민대응단은 이재민의 이야기를 기록했습니다.</p>
+            <blockquote class="quote">“고사리가 다 타버렸지만, 뿌리가 남아 있어서 괜찮다고 말씀하시더라고요.”<cite>기후재난 시민대응단 3기 문유빈 님 · 보고서 8~9쪽</cite></blockquote></div></div>
+        </div>
+      </section>
+      <section class="rs">
+        <div class="rpin"><div class="shot" style="background-image:url(assets/fjord.jpg)"></div><span class="credit">© Christian Åslund / Greenpeace</span></div>
+        <div class="rover">
+          <div class="beat"><div class="kind">해양보호</div><div class="huge num" data-a="1"><span>0</span><small>원</small></div><h3>20년을 기다린<br>바다의 법이 생겼습니다</h3></div>
+          <div class="beat mid"><div class="glass">
+            <ol class="tl">
+              <li><time>2025년 3월</time><span>한국, 동아시아 최초로 글로벌 해양조약 비준</span></li>
+              <li><time>2025년 9월</time><span>비준국 60개국, 발효 조건 충족</span></li>
+              <li><time>2026년 1월</time><span>조약 발효. 공해 보호구역을 지정할 국제 절차가 생겼습니다</span></li>
+            </ol>
+            <p class="aft">시민 3,000여 명의 후원으로 만든 다큐 〈씨그널〉이 국회와 전국 상영회에서 비준을 요구하는 목소리를 전했습니다.</p>
+            <button class="toSea" data-tosea>이 바다 이야기 펼쳐 보기 →</button>
+          </div></div>
+        </div>
+      </section>
+      <section class="voice">
+        <div class="kind">같은 영수증을 받은 사람</div>
+        <blockquote class="quote">“저에게 바다는 <mark>‘회사’</mark>예요. 쓰레기 때문에 곤란할 때가 많아요. 그래도 <mark>제 회사니까</mark> 계속 치우고 있습니다.”</blockquote>
+        <div class="person"><img loading="lazy" src="assets/haenyeo.jpg" alt="마이크를 들고 이야기하는 이유정 해녀"><div><strong>이유정 님</strong>그린피스 후원자, 제주 이호테우 해변의 6년차 해녀 · 보고서 20~21쪽</div></div>
+      </section>
+      <section class="rend">
+        <div class="shot" style="background-image:url(assets/hill.jpg)"></div>
+        <h3>이건 자랑해도 되는<br>영수증입니다</h3>
+        <div class="kard"><div class="t">나의 2025 그린피스</div><div class="big num"><span id="ktot"></span><small>원</small></div><ul id="ktop"></ul>
+          <div class="of">기후와 숲, 바다를 지키는 활동에 함께했습니다.</div></div>
+        <button class="btn" id="rsh">영수증 공유하기</button>
+        <div id="rst" role="status"></div>
+        <button class="again" id="ag">금액 바꿔서 다시 출력하기</button>
+        <span class="credit">© Pedro Armestre / Greenpeace</span>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script src="assets/globe-data.js"></script>
+<script>
+(function(){
+"use strict";
+var calm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+var $=function(id){return document.getElementById(id)};
+var clamp=function(v,a,b){return v<a?a:v>b?b:v},lerp=function(a,b,t){return a+(b-a)*t};
+var seg=function(p,a,b){return clamp((p-a)/(b-a),0,1)},ease=function(t){return t*t*(3-2*t)},eOut=function(t){return 1-Math.pow(1-t,3)};
+var DPR=Math.min(window.devicePixelRatio||1,2),VW=0,VH=0;
+var fmt=function(n){return Math.round(n).toLocaleString("ko-KR")};
+function prog(el){var r=el.getBoundingClientRect();return {p:clamp(-r.top/(r.height-VH),0,1),vis:r.top<VH&&r.bottom>0}}
+function goTo(y,ms){if(calm){window.scrollTo(0,y);return}var y0=window.scrollY,t0=performance.now();ms=ms||1200;(function f(t){var k=Math.min(1,(t-t0)/ms);k=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;window.scrollTo(0,y0+(y-y0)*k);if(k<1)requestAnimationFrame(f)})(t0)}
+function yAt(id,p){var e=$(id);return e.offsetTop+(e.offsetHeight-VH)*(p||0)}
+
+/* ═════ 보고서 릴 ═════ */
+var PAGES=[
+ {img:"assets/page01.jpg",pp:"표지",t:"그린피스 동아시아지부 2025 연차보고서"},
+ {img:"assets/page02.jpg",pp:"2~3쪽",t:"우리의 지구, 글로벌 해양 보호의 새로운 전환점"},
+ {img:"assets/page03.jpg",pp:"4~5쪽",t:"첫인상, 낯선 곳이 집으로 변하는 과정"},
+ {img:"assets/page04.jpg",pp:"6~7쪽",t:"인간과 지구, 조화의 삶"},
+ {img:"assets/page05.jpg",pp:"8~9쪽",t:"기후위기 시대, 사람과 지구 곁을 지키다"},
+ {img:"assets/page06.jpg",pp:"10~11쪽",t:"기후위기와 교통"},
+ {img:"assets/page07.jpg",pp:"12~13쪽",t:"플라스틱 오염, 위기를 넘어 변화로"},
+ {img:"assets/page08.jpg",big:"assets/page08-big.jpg",pp:"14~15쪽",t:"글로벌 해양조약, 드디어 현실로!",open:"sea",go:"바다 이야기 보기"},
+ {img:"assets/page09.jpg",pp:"16~17쪽",t:"숲과 생명을 되살리는 변화"},
+ {img:"assets/page10.jpg",pp:"18~19쪽",t:"시민들이 주인공이 되는 캠페인"},
+ {img:"assets/page11.jpg",pp:"20~21쪽",t:"그린피스 사람들"},
+ {img:"assets/page12.jpg",pp:"22~23쪽",t:"후원자님과 함께 만들어갈 캠페인 로드맵"},
+ {img:"assets/page13.jpg",big:"assets/page13-big.jpg",pp:"24~25쪽",t:"후원금 사용 내역 보고",open:"rx",go:"내 영수증 뽑기"},
+ {img:"assets/page14.jpg",pp:"26~27쪽",t:"2025 서울사무소 수입 및 지출 내역"}
+];
+var N=PAGES.length,TH=360/N,cyl=$("cyl"),s3d=$("s3d"),hub={k:7,kt:7,user:0,cw:0,ch:0,r:0,front:-1,unf:0};
+PAGES.forEach(function(p,i){
+  var b=document.createElement("button");b.className="pg"+(p.open?" open":"");b.type="button";
+  b.innerHTML='<img src="'+p.img+'" alt="">'+(p.open?'<span class="tab">펼치기</span>':'');
+  b.setAttribute("aria-label",p.pp+" "+p.t+(p.open?", 펼쳐 보기":""));
+  b.addEventListener("click",function(){if(hub.drag&&hub.drag.moved)return;if(i===hub.front&&p.open)openPage(i);else{hub.user+=i-Math.round(hub.k)}});
+  cyl.appendChild(b);p.el=b;
+});
+function hubLayout(){
+  var W=Math.min(VW,480),hh=s3d.clientHeight;
+  hub.cw=Math.min(W*.66,300);hub.ch=Math.min(hub.cw/1.52,hh*.9);hub.cw=hub.ch*1.52;
+  hub.r=hub.cw/(2*Math.tan(TH/2*Math.PI/180))*1.08;
+  PAGES.forEach(function(p){p.el.style.width=hub.cw+"px";p.el.style.height=hub.ch+"px";p.el.style.marginLeft=(-hub.cw/2)+"px";p.el.style.marginTop=(-hub.ch/2)+"px"});
+}
+function hubFrame(p){
+  hub.unf=ease(seg(p,.04,.4));
+  var u=hub.unf;
+  // 스크롤로 해양 쪽(7)에서 출발해 영수증 쪽(12)까지 넘어간다
+  var auto=lerp(7,12,ease(seg(p,.45,.9)));
+  hub.kt=Math.round(auto)+hub.user;hub.kt=((hub.kt%N)+N)%N;
+  var d=hub.kt-hub.k;if(d>N/2)d-=N;if(d<-N/2)d+=N;
+  hub.k+=d*(calm?1:.12);hub.k=((hub.k%N)+N)%N;
+  var front=((Math.round(hub.k)%N)+N)%N;
+  PAGES.forEach(function(pg,i){
+    var rel=i-hub.k;if(rel>N/2)rel-=N;if(rel<-N/2)rel+=N;
+    var ang=rel*TH*u, a=Math.abs(ang);
+    // 펼치기 전: 한 권으로 겹쳐진 보고서
+    var stackY=(i-7)*-1.2*(1-u), stackR=(i-7)*.6*(1-u);
+    var z=-hub.r*Math.cos(ang*Math.PI/180)*u+hub.r*.82*u;
+    var x=hub.r*Math.sin(ang*Math.PI/180)*u;
+    pg.el.style.transform="translate3d("+x+"px,"+stackY+"px,"+z+"px) rotateY("+(-ang)+"deg) rotate("+stackR+"deg)";
+    pg.el.style.opacity=a>80?0:String(clamp(1-(a-50)/30,0,1)*(u<.05&&i!==7?(i>7?0:1):1));
+    pg.el.style.zIndex=String(100-Math.round(a));
+    pg.el.style.pointerEvents=u>.9&&a<60?"auto":"none";
+  });
+  if(front!==hub.front||u>.9!==hub.shown){hub.front=front;hub.shown=u>.9;
+    var P=PAGES[front];
+    $("hcap").innerHTML=hub.shown?'<p class="pp">'+P.pp+'</p><b>'+P.t+'</b>'+(P.open?'<button class="go" id="hgo">'+P.go+' →</button>':'<p class="not">이 시안에서는 14~15쪽과 24~25쪽, 두 곳을 펼쳤습니다.</p>'):"";
+    var g=$("hgo");if(g)g.addEventListener("click",function(){openPage(front)});
+  }
+  $("hhint").textContent=u<.9?"내려가면 보고서가 펼쳐집니다":"옆으로 밀거나 내려서 넘겨 보세요";
+  return Math.abs(d)>.002;
+}
+s3d.addEventListener("pointerdown",function(e){hub.drag={x:e.clientX,u:hub.user,moved:false}});
+s3d.addEventListener("pointermove",function(e){if(!hub.drag)return;var dx=e.clientX-hub.drag.x;if(Math.abs(dx)>8)hub.drag.moved=true;if(hub.drag.moved)hub.user=hub.drag.u-Math.round(dx/(hub.cw*.45))});
+function hdEnd(){setTimeout(function(){hub.drag=null},0)}
+s3d.addEventListener("pointerup",hdEnd);s3d.addEventListener("pointercancel",hdEnd);s3d.addEventListener("pointerleave",hdEnd);
+
+// 고른 쪽이 화면을 채우며 그 이야기가 된다
+var zoom=$("zoom");
+function openPage(i){
+  var P=PAGES[i],r=P.el.getBoundingClientRect(),W=window.innerWidth,H=window.innerHeight;
+  zoom.style.backgroundImage="url("+(P.big||P.img)+")";
+  zoom.style.transition="none";
+  zoom.style.cssText+=";left:"+r.left+"px;top:"+r.top+"px;width:"+r.width+"px;height:"+r.height+"px;opacity:1;border-radius:3px";
+  void zoom.offsetWidth;
+  var ms=calm?0:700;
+  zoom.style.transition="all "+ms+"ms cubic-bezier(.6,0,.2,1)";
+  var vw=Math.min(W,480),lx=(W-vw)/2;
+  zoom.style.left=lx+"px";zoom.style.top="0px";zoom.style.width=vw+"px";zoom.style.height=H+"px";zoom.style.borderRadius="0";
+  setTimeout(function(){
+    if(P.open==="sea"){window.scrollTo(0,yAt("o1",0)+1);}
+    else openRx();
+    zoom.style.transition="opacity "+(calm?0:500)+"ms";zoom.style.opacity="0";
+  },ms+(calm?0:250));
+}
+
+/* ═════ 바다 01 ═════ */
+var ov=$("ov");
+function o1Frame(p){
+  var parts=[$("b1"),$("b2"),$("b3")];
+  parts.forEach(function(el,i){var t=eOut(seg(p,.04+i*.08,.18+i*.08)),o=seg(p,.5,.6);el.style.cssText="opacity:"+(t*(1-o))+";transform:translateY("+((1-t)*40-o*30)+"px)"});
+  var b=seg(p,.55,.63)*(1-seg(p,.8,.86));$("o1b").style.cssText="opacity:"+b+";transform:translateY("+((1-seg(p,.55,.63))*16)+"px)";
+  var w=ease(seg(p,.84,1));ov.style.transform="scale("+(1+w*.3)+")";$("o1w").style.opacity=w;
+}
+
+/* ═════ 바다 02: 인쇄된 지도처럼 그린 지구 ═════ */
+var gc=$("gs"),gx=gc.getContext("2d"),proj=OC.geoOrthographic().clipAngle(90).precision(.5),path=OC.geoPath(proj,gx);
+var G={W:0,H:0,R:0,cx:0,cy:0,uLon:0,uLat:0,lon:0,lat:0,band:0,high:0,pin:null,key:"",step:-1};
+var caps=[].slice.call($("o2c").children);
+var hc=document.createElement("canvas"),hx=hc.getContext("2d",{willReadFrequently:true}),hpj=OC.geoOrthographic().clipAngle(90),hp=OC.geoPath(hpj,hx);
+function o2Layout(){
+  var r=gc.getBoundingClientRect();G.W=r.width;G.H=r.height;gc.width=Math.round(G.W*DPR);gc.height=Math.round(G.H*DPR);
+  G.R=Math.min(G.W*.4,G.H*.23);G.cx=G.W/2;G.cy=Math.max(G.H*.32,G.R+76);
+  $("gt").style.cssText="left:"+(G.cx-G.R)+"px;top:"+(G.cy-G.R)+"px;width:"+2*G.R+"px;height:"+2*G.R+"px";
+  $("probe").style.top=(G.cy+G.R+12)+"px";$("o2c").style.top=(G.cy+G.R+54)+"px";
+  hc.width=Math.round(G.W);hc.height=Math.round(G.H);G.key="";
+}
+function drawGlobe(){
+  var c=gx,R=G.R*G.zs,cx=G.cx,cy=G.cy,W=G.W,H=G.H;
+  proj.scale(R).translate([cx,cy]).rotate([-G.lon,-G.lat]);
+  c.setTransform(DPR,0,0,DPR,0,0);c.clearRect(0,0,W,H);
+  var sph={type:"Sphere"};
+  c.beginPath();path(sph);c.fillStyle="#DDE3E2";c.fill();
+  c.save();c.beginPath();path(sph);c.clip();
+  if(G.high>.003){var rr=G.high*R*1.45;c.beginPath();c.arc(cx,cy,rr,0,7);c.fillStyle="#2440D0";c.fill()}
+  c.beginPath();path(OC.grat);c.lineWidth=.5;c.strokeStyle=G.high>.5?"rgba(255,255,255,.18)":"rgba(11,22,34,.12)";c.stroke();
+  if(G.band>.01){
+    var bw=R*.058*2;c.lineJoin="round";c.lineCap="round";c.globalAlpha=G.band;
+    c.beginPath();path(OC.land110);c.lineWidth=bw+2;c.strokeStyle="#0B1622";c.stroke();c.lineWidth=bw;c.strokeStyle="#C3CDCF";c.stroke();
+    c.globalAlpha=1;
+  }
+  c.beginPath();path(OC.land);c.fillStyle="#0B1622";c.fill();
+  c.restore();
+  c.beginPath();path(sph);c.lineWidth=1.5;c.strokeStyle="#0B1622";c.stroke();
+  if(G.pin){var q=proj(G.pin);if(q&&OC.geoDistance(G.pin,[G.lon,G.lat])<1.45){c.beginPath();c.arc(q[0],q[1],6,0,7);c.fillStyle="#78BE43";c.fill();c.lineWidth=2;c.strokeStyle="#fff";c.stroke()}}
+}
+function o2Frame(p,now){
+  G.zs=lerp(.82,1,eOut(seg(p,0,.15)));
+  G.band=ease(seg(p,.06,.18));G.high=ease(seg(p,.36,.5));
+  var drift=0;
+  G.lon=lerp(150,205,ease(seg(p,.1,.4)))+drift+G.uLon;G.lat=clamp(lerp(20,-5,ease(seg(p,.1,.4)))+G.uLat,-70,70);
+  var key=[G.zs.toFixed(3),G.band.toFixed(3),G.high.toFixed(3),G.lon.toFixed(2),G.lat.toFixed(2),!!G.pin,G.W].join();
+  if(key!==G.key){G.key=key;drawGlobe()}
+  var s=p<.04?-1:p<.34?0:p<.7?1:2;
+  if(s!==G.step){G.step=s;caps.forEach(function(c,i){c.classList.toggle("on",i===s)});if(s===1)countUp($("n60"),60,1300)}
+  $("key").classList.toggle("on",p>.06);$("probe").classList.toggle("on",p>.12);
+  $("gt").style.pointerEvents=p>.12?"auto":"none";
+}
+function countUp(el,to,ms){if(calm){el.textContent=to;return}var t0=performance.now();(function f(t){var k=Math.min(1,(t-t0)/ms);el.textContent=Math.round(to*eOut(k));if(k<1)requestAnimationFrame(f)})(t0)}
+var gd=null,gt=$("gt");
+gt.addEventListener("pointerdown",function(e){gd={x:e.clientX,y:e.clientY,t:performance.now(),lo:G.uLon,la:G.uLat,m:false};try{gt.setPointerCapture(e.pointerId)}catch(_){}});
+gt.addEventListener("pointermove",function(e){if(!gd)return;var dx=e.clientX-gd.x,dy=e.clientY-gd.y;if(Math.abs(dx)+Math.abs(dy)>6)gd.m=true;if(gd.m){G.uLon=gd.lo-dx/G.R*57.3;G.uLat=gd.la+dy/G.R*57.3}});
+gt.addEventListener("pointerup",function(e){if(!gd)return;var d=gd;gd=null;if(!d.m&&performance.now()-d.t<600){var r=gc.getBoundingClientRect();probe(e.clientX-r.left,e.clientY-r.top)}});
+gt.addEventListener("pointercancel",function(){gd=null});
+function probe(x,y){
+  var R=G.R*G.zs;hpj.scale(R).translate([G.cx,G.cy]).rotate([-G.lon,-G.lat]);
+  hx.setTransform(1,0,0,1,0,0);hx.clearRect(0,0,hc.width,hc.height);
+  hx.beginPath();hp({type:"Sphere"});hx.fillStyle="#0000ff";hx.fill();
+  hx.save();hx.beginPath();hp({type:"Sphere"});hx.clip();hx.beginPath();hp(OC.land110);hx.lineJoin="round";hx.lineWidth=R*.058*2;hx.strokeStyle="#00ff00";hx.stroke();hx.beginPath();hp(OC.land);hx.fillStyle="#ff0000";hx.fill();hx.restore();
+  var d=hx.getImageData(Math.round(x),Math.round(y),1,1).data,geo=hpj.invert([x,y]),m;
+  if(d[3]<128||!geo)return;
+  m=d[0]>128?"누른 곳은 육지입니다. 바다를 눌러 보세요.":d[1]>128?"해안 가까운 바다입니다. 가까운 나라가 관리합니다.":"공해입니다. 어느 한 나라의 바다가 아닙니다.";
+  G.pin=d[0]>128?null:geo;$("probet").textContent=m;req();
+}
+
+/* ═════ 바다 03: 가로로 흐르는 기록 ═════ */
+var track=$("track");
+function o3Frame(p){var tw=track.scrollWidth,W=Math.min(VW,480);track.style.transform="translate3d("+(-(tw-W)*ease(seg(p,.06,.94)))+"px,0,0)"}
+
+/* ═════ 바다 04 ═════ */
+var sts=[].slice.call($("steps").children);
+function o4Frame(p){
+  var d=eOut(seg(p,0,.1)),dOut=seg(p,.24,.32);
+  $("dbig").style.cssText="opacity:"+(d*(1-dOut))+";transform:translateY("+((1-d)*30-dOut*40)+"px) scale("+(1-dOut*.06)+")";
+  $("sh").style.opacity=seg(p,.28,.34);
+  var H=VH;
+  sts.forEach(function(s,i){
+    var a=.3+i*.2,t=eOut(seg(p,a,a+.14)),nx=i<2?eOut(seg(p,a+.2,a+.34)):0;
+    s.style.transform="translate3d(0,"+((1-t)*H*1.05)+"px,0) scale("+(1-nx*.06)+")";
+    s.style.filter=nx>0?"brightness("+(1-nx*.25)+")":"none";
+    s.style.zIndex=String(i+1);
+  });
+  $("snote").classList.toggle("on",p>.84);
+}
+
+/* ═════ 바다 05 ═════ */
+var grid=$("grid");for(var i=0;i<100;i++)grid.appendChild(document.createElement("i"));
+var gcs=[].slice.call(grid.children);
+var ORDER=(function(){var seen={},q=[[3,4]],out=[],dirs=[[1,0],[0,1],[-1,0],[0,-1],[1,1]],s=5;function r(){s=(s*16807)%2147483647;return s/2147483647}
+  while(out.length<30&&q.length){var c=q.splice(Math.floor(r()*Math.min(q.length,3)),1)[0],k=c[0]+","+c[1];if(seen[k]||c[0]<0||c[0]>9||c[1]<0||c[1]>9)continue;seen[k]=1;out.push(c[1]*10+c[0]);dirs.forEach(function(d){q.push([c[0]+d[0],c[1]+d[1]])})}return out})();
+function o5Layout(){var W=Math.min(VW,480),top=$("o5h").offsetTop+$("o5h").offsetHeight+22,gw=(W-48)*.62;grid.style.top=top+"px";grid.style.width=gw+"px";$("n30w").style.top=(top+gw-108)+"px"}
+function o5Frame(p){
+  var lit=Math.floor(seg(p,.12,.6)*30.99);ORDER.forEach(function(ix,i){gcs[ix].classList.toggle("on",i<lit)});
+  $("n30").textContent=lit;
+  $("o5a").classList.toggle("on",p>.62);$("o5b").classList.toggle("on",p>.62);
+}
+
+/* ═════ 바다 06 ═════ */
+var ev=$("ev");
+function o6Frame(p){$("e1").classList.toggle("on",p>.06);$("e2").classList.toggle("on",p>.16);$("e3").classList.toggle("on",p>.26);$("ee").classList.toggle("on",p>.45)}
+$("share").addEventListener("click",function(){
+  var t="2025 연차보고서 14~15쪽을 펼쳐 봤습니다.\n바다의 약 60%는 어느 나라의 바다도 아닙니다. 2026년 1월 17일, 이 바다를 함께 지킬 유엔 공해협약이 발효됐습니다.",ok=function(m){$("est").textContent=m};
+  if(navigator.share)navigator.share({text:t,url:location.href}).then(function(){ok("공유했습니다.")}).catch(function(){});
+  else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t+"\n"+location.href).then(function(){ok("문구와 링크를 복사했습니다.")}).catch(function(){ok("복사하지 못했습니다.")});
+  else ok("이 브라우저에서는 공유할 수 없습니다.");
+});
+function toHub(){goTo(yAt("hub",.6),1400)}
+$("tohub").addEventListener("click",toHub);$("home").addEventListener("click",function(){closeRx();toHub()});
+
+/* ═════ 영수증 ═════ */
+var PARTS=[["기후위기 대응",9235],["해양보호",1517,"sea"],["산림 보호",2220],["플라스틱 / 건강한 삶",315],["다분야 통합 캠페인",1276],["캠페인 미디어 및 대중 홍보",4746],["지역사회 교육, 비폭력 직접행동, 자원봉사",4750],["정책, 비즈니스 및 과학 연구",5941]];
+var rx=$("rx"),rxs=$("rxs"),mon=30000,qks=[].slice.call($("qk").children);
+function setM(v){mon=clamp(v,10000,1000000);$("mv").textContent=fmt(mon);qks.forEach(function(b){b.setAttribute("aria-pressed",String(+b.dataset.v===mon))})}
+qks.forEach(function(b){b.addEventListener("click",function(){setM(+b.dataset.v)})});
+$("mn").addEventListener("click",function(){setM(mon-10000)});$("pl").addEventListener("click",function(){setM(mon+10000)});
+function openRx(){rx.classList.add("open");rx.setAttribute("aria-hidden","false");document.body.classList.add("lock");rxs.scrollTop=0;$("rxx").focus({preventScroll:true})}
+function closeRx(){if(!rx.classList.contains("open"))return;rx.classList.remove("open");rx.setAttribute("aria-hidden","true");document.body.classList.remove("lock")}
+$("rxx").addEventListener("click",closeRx);
+[].forEach.call(document.querySelectorAll("[data-rx]"),function(b){b.addEventListener("click",openRx)});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closeRx()});
+// 바코드: 장식이지만 2025를 흉내 내지 않고 금액에 따라 굵기가 바뀐다
+function barcode(n){var s=String(n),h="";for(var i=0;i<34;i++){var d=+s[i%s.length]||((i*7)%10);h+='<i style="flex:'+(1+(d+i)%3)+';opacity:'+(i%4===3?0:1)+'"></i>'}return h}
+var timers=[],amts=[];
+$("pr").addEventListener("click",function(){
+  timers.forEach(clearTimeout);timers=[];
+  var year=mon*12,max=PARTS[0][1];amts=PARTS.map(function(p){return p[1]/30000*year});
+  $("pm").textContent=fmt(mon);$("tot").classList.toggle("long",fmt(year).length>9);$("tv").textContent=fmt(year);
+  $("items").innerHTML=PARTS.map(function(p,i){return '<div class="ln it'+(p[2]?" sea":"")+'"><div class="row"><span class="nm">'+p[0]+'</span><span class="dots"></span><b class="num">'+fmt(amts[i])+'</b></div><div class="bar"><i data-w="'+(p[1]/max*100).toFixed(1)+'"></i></div></div>'}).join("");
+  $("bc").innerHTML=barcode(year);
+  [].forEach.call(document.querySelectorAll(".huge[data-a]"),function(h){var v=amts[+h.dataset.a];h.firstElementChild.textContent="0";h.dataset.seen="";h.classList.toggle("long",fmt(v).length>8)});
+  $("ktot").textContent=fmt(year);
+  $("ktop").innerHTML=PARTS.map(function(p,i){return [p[0],amts[i]]}).sort(function(x,y){return y[1]-x[1]}).slice(0,3).map(function(x){return '<li><span>'+x[0]+'</span><b class="num">'+fmt(x[1])+'원</b></li>'}).join("");
+  $("ptr").hidden=false;$("rscenes").hidden=false;
+  var paper=$("paper"),lns=[].slice.call(paper.querySelectorAll(".ln"));
+  lns.forEach(function(l){l.classList.remove("on")});
+  paper.style.transition="none";paper.style.transform="translateY(-101%)";void paper.offsetWidth;
+  rxs.scrollTo({top:$("ptr").offsetTop-70,behavior:calm?"auto":"smooth"});
+  var step=calm?0:110,start=calm?0:500;
+  paper.style.transition="transform "+(calm?0:(lns.length*step+600))+"ms linear";
+  timers.push(setTimeout(function(){paper.style.transform="none"},start));
+  lns.forEach(function(l,i){timers.push(setTimeout(function(){l.classList.add("on");var b=l.querySelector(".bar i");if(b)b.style.width=b.dataset.w+"%"},start+i*step))});
+});
+// 장면 속 금액은 화면에 들어올 때 올라간다
+if("IntersectionObserver" in window){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){var h=e.target;if(e.isIntersecting&&!h.dataset.seen&&amts.length){h.dataset.seen="1";var to=amts[+h.dataset.a],el=h.firstElementChild;if(calm){el.textContent=fmt(to);return}var t0=performance.now();(function f(t){var k=Math.min(1,(t-t0)/1300);el.textContent=fmt(to*eOut(k));if(k<1)requestAnimationFrame(f)})(t0)}})},{root:rxs,threshold:.6});
+  [].forEach.call(document.querySelectorAll(".huge[data-a]"),function(h){io.observe(h)});
+}
+[].forEach.call(document.querySelectorAll("[data-tosea]"),function(b){b.addEventListener("click",function(){closeRx();goTo(yAt("o1",0)+1,900)})});
+$("ag").addEventListener("click",function(){rxs.scrollTo({top:0,behavior:calm?"auto":"smooth"});$("rst").textContent=""});
+$("rsh").addEventListener("click",function(){
+  var year=mon*12,tx="나의 2025 그린피스 영수증\n합계 "+fmt(year)+"원\n· 기후위기 대응 "+fmt(amts[0])+"원\n· 해양보호 "+fmt(amts[1])+"원\n(연차보고서 24쪽 배분 예시를 비례 적용)",ok=function(m){$("rst").textContent=m};
+  if(navigator.share)navigator.share({text:tx,url:location.href}).then(function(){ok("공유했습니다.")}).catch(function(){});
+  else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(tx+"\n"+location.href).then(function(){ok("영수증 문구와 링크를 복사했습니다.")}).catch(function(){ok("복사하지 못했습니다. 화면을 캡처해 공유해 주세요.")});
+  else ok("이 브라우저에서는 공유할 수 없습니다. 화면을 캡처해 공유해 주세요.");
+});
+
+/* ═════ 루프: 스크롤·터치가 있을 때만 그린다 ═════ */
+function vid(v,on){if(calm)return;if(on){if(v.paused){var x=v.play();if(x&&x.catch)x.catch(function(){})}}else if(!v.paused)v.pause()}
+var S={hub:$("hub"),o1:$("o1"),o2:$("o2"),o3:$("o3"),o4:$("o4"),o5:$("o5"),o6:$("o6")},raf=0,lastHome=null;
+function req(){if(!raf)raf=requestAnimationFrame(tick)}
+function layout(){VW=window.innerWidth;VH=window.innerHeight;hubLayout();o2Layout();o5Layout();req()}
+function tick(now){
+  raf=0;var o,more=false;
+  o=prog(S.hub);if(o.vis)more=hubFrame(o.p)||more;
+  o=prog(S.o1);if(o.vis)o1Frame(o.p);vid(ov,o.vis&&!rx.classList.contains("open"));
+  o=prog(S.o2);if(o.vis)o2Frame(o.p,now);
+  o=prog(S.o3);if(o.vis)o3Frame(o.p);
+  o=prog(S.o4);if(o.vis)o4Frame(o.p);
+  o=prog(S.o5);if(o.vis)o5Frame(o.p);
+  o=prog(S.o6);if(o.vis)o6Frame(o.p);vid(ev,o.vis&&!rx.classList.contains("open"));
+  var max=document.documentElement.scrollHeight-VH;$("bar").style.width=(max>0?window.scrollY/max*100:0)+"%";
+  var h=window.scrollY>S.o1.offsetTop-10;if(h!==lastHome){lastHome=h;$("home").classList.toggle("on",h)}
+  if(more)req();
+}
+window.addEventListener("scroll",req,{passive:true});
+window.addEventListener("resize",layout);
+["pointermove","pointerup","pointerdown"].forEach(function(ev){document.addEventListener(ev,req,{passive:true})});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(layout);
+layout();
+})();
+</script>
+</body>
+</html>
