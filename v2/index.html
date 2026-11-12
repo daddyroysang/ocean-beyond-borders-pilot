@@ -19,7 +19,7 @@
 html{scroll-behavior:smooth}
 body{background:var(--abyss);color:var(--foam);font-family:var(--sans);font-weight:400;line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 #ocean img{display:block;max-width:100%}
-.demo-tag{position:fixed;top:12px;left:12px;z-index:50;font-size:11px;letter-spacing:.04em;padding:5px 10px;border-radius:99px;background:rgba(1,10,20,.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);color:var(--muted)}
+.demo-tag{position:fixed;top:12px;right:12px;z-index:50;font-size:10.5px;letter-spacing:.04em;padding:5px 10px;border-radius:99px;background:rgba(1,10,20,.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);color:var(--muted)}
 #ocean .depth{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:8px;pointer-events:none;opacity:0;transition:opacity .6s}
 #ocean .depth.on{opacity:1}
 #ocean .depth .bar{width:2px;height:140px;background:rgba(255,255,255,.12);position:relative;border-radius:2px;overflow:hidden}
@@ -50,7 +50,7 @@ body{background:var(--abyss);color:var(--foam);font-family:var(--sans);font-weig
 #ocean .d2{transition-delay:.24s}
 #ocean .d3{transition-delay:.36s}
 #ocean .pin{height:260vh}
-#ocean .s60bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.35;-webkit-mask-image:linear-gradient(transparent,#000 15%,#000 85%,transparent);mask-image:linear-gradient(transparent,#000 15%,#000 85%,transparent)}
+#ocean .s60bg-unused{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.35;-webkit-mask-image:linear-gradient(transparent,#000 15%,#000 85%,transparent);mask-image:linear-gradient(transparent,#000 15%,#000 85%,transparent)}
 #ocean #s60 .stage{z-index:1}
 #ocean .pin .stage{position:sticky;top:0;height:100vh;height:100svh;display:flex;align-items:center;overflow:hidden}
 #ocean .grid100{display:grid;grid-template-columns:repeat(10,1fr);gap:clamp(5px,1.2vw,10px);width:min(80vw,380px);aspect-ratio:1}
@@ -165,6 +165,24 @@ body{background:var(--abyss);color:var(--foam);font-family:var(--sans);font-weig
 #ocean .links a{color:var(--cyan);text-decoration:none;border-bottom:1px solid rgba(95,212,255,.4)}
 #ocean footer{padding:60px 24px 80px;text-align:center;font-size:12px;color:#6c8ca1;line-height:1.9;border-top:1px solid rgba(255,255,255,.06)}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
+#ocean .gstage{background:radial-gradient(90% 60% at 50% 32%,#16354A 0%,#0E2433 55%,var(--abyss) 100%)}
+#ocean .gcol{position:relative;width:100%;max-width:480px;height:100%;margin:0 auto}
+#ocean #gs{position:absolute;inset:0;width:100%;height:100%}
+#ocean #gt{position:absolute;border-radius:50%;touch-action:pan-y;cursor:grab}
+#ocean .gkey{position:absolute;top:58px;left:24px;display:flex;gap:14px;font-size:11.5px;color:#AFC0C7}
+#ocean .gkey i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+#ocean #probe{position:absolute;left:0;right:0;text-align:center;font-size:13px;font-weight:500;padding:0 16px}
+#ocean #probe span{display:inline-block;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;background:rgba(242,244,241,.95);color:#0B1622;border-radius:999px;padding:6px 13px}
+#ocean .gcap{position:absolute;left:24px;right:24px}
+#ocean .gcap .c{position:absolute;left:0;right:0;top:0;opacity:0;transform:translateY(14px);transition:opacity .35s,transform .35s}
+#ocean .gcap .c.on{opacity:1;transform:none;transition:opacity .6s .15s,transform .6s .15s}
+#ocean .gcap h2{font-family:var(--serif);font-size:clamp(24px,6.6vw,30px);font-weight:900;letter-spacing:-.03em;line-height:1.3}
+#ocean .gcap p{margin-top:8px;font-size:15px;color:#AFC0C7;line-height:1.6}
+#ocean .gcap .gsrc{font-size:11.5px;color:#7F929A}
+#ocean .gcap .gsrc a{color:inherit}
+#ocean .gnum{font-family:var(--serif);font-weight:900;color:#6F8BFF;font-size:min(26vw,120px);letter-spacing:-.05em;line-height:.9;font-variant-numeric:tabular-nums}
+#ocean .gnum small{font-size:.4em;margin-left:.05em}
+#ocean .mnote{position:absolute;left:24px;right:24px;bottom:12px;font-size:10px;color:#7F929A;line-height:1.4}
 body.lock{overflow:hidden}
 #gp a{color:inherit}
 #gp button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
@@ -461,17 +479,19 @@ body.lock{overflow:hidden}
   <div class="hint">아래로 잠수하기<i></i></div>
 </header>
 
-<!-- 1. 60% -->
-<section class="pin" id="s60"><div class="s60bg" style="background-image:url('assets/surface.jpg')"></div>
-  <div class="stage"><div class="wrap scene">
-    <div>
-      <div class="kicker">01 · 공해</div>
-      <div class="big stat"><span id="n60">0</span><small>%</small></div>
-      <h2 class="h2" style="font-size:clamp(24px,4.4vw,40px);margin:12px 0 16px">전 세계 바다의 60%는<br>어느 나라의 바다도 아닙니다</h2>
-      <p class="lead">공해(公海)라 불리는 이 바다는 누구의 관할도 아니기에, 남획과 개발의 위협에 그대로 놓여 있습니다.</p>
-      <div class="legend"><span><i style="background:#2a7fb0"></i>공해</span><span><i style="background:rgba(255,255,255,.15)"></i>각국 관할 바다</span></div>
+<!-- 1. 60% : 지구본 -->
+<section class="pin" id="s60" style="height:250vh">
+  <div class="stage gstage"><div class="gcol">
+    <canvas id="gs" aria-label="나라별 앞바다와 그 바깥의 공해를 보여주는 지구"></canvas>
+    <div id="gt" aria-hidden="true"></div>
+    <div class="gkey"><span><i style="background:#25506A;outline:1.5px solid #ECEEE9"></i>나라별 앞바다</span><span><i style="background:#3D5BFF"></i>공해</span></div>
+    <div id="probe"><span id="probet">옆으로 밀어 돌리고, 바다를 눌러 보세요</span></div>
+    <div class="gcap" id="gcap">
+      <div class="c"><div class="kicker">01 · 공해</div><h2>나라마다<br>자기 앞바다가 있습니다</h2><p>해안에서 바깥으로 이어지는 바다는 가까운 나라가 관리합니다.</p></div>
+      <div class="c"><div class="gnum"><span id="n60">0</span><small>%</small></div><h2>그 바깥은 어느 나라의<br>바다도 아닙니다</h2></div>
+      <div class="c"><h2>그래서 지키려면<br>여러 나라가 함께 정해야 합니다</h2><p>공해는 누구의 관할도 아니기에, 남획과 개발의 위협에 그대로 놓여 있습니다.</p><p class="gsrc">공해 약 60%: 면적 기준, <a href="https://es.greenpeace.org/es/wp-content/uploads/sites/3/2023/09/30x30-From-GOT-to-protection-at-sea-Full-report.pdf" target="_blank" rel="noopener">그린피스 국제본부 보고서</a>의 61%를 반올림</p></div>
     </div>
-    <div class="grid100" id="g60"></div>
+    <p class="mnote">이해를 돕기 위한 그림입니다. 앞바다는 해안에서 약 370km를 어림해 그렸고 실제 경계와 다릅니다.</p>
   </div></div>
 </section>
 
@@ -617,6 +637,7 @@ body.lock{overflow:hidden}
 
 
 </div>
+<script src="assets/globe-data.js"></script>
 <script>
 (()=>{
 const $=s=>document.querySelector(s);
@@ -704,9 +725,7 @@ function drawDiss(){if(!Dg||dissReady<2||!dissVisible)return;const[w,h]=fit(dc,1
  gl.uniform2f(u('R'),w,h);gl.uniform2f(u('SA'),...sizes.A);gl.uniform2f(u('SB'),...sizes.B);gl.uniform1f(u('P'),dissP);gl.uniform1f(u('T'),performance.now()/1000);gl.drawArrays(gl.TRIANGLE_STRIP,0,4)}
 
 /* ---------- dot grids ---------- */
-const g60=$('#g60');for(let i=0;i<100;i++)g60.appendChild(document.createElement('b'));
 // spread the 60 high-seas dots so it reads as "open ocean", deterministic shuffle
-const order=[...Array(100).keys()].sort((a,b)=>((a*37)%101)-((b*37)%101));
 const g1=$('#g1');for(let i=0;i<100;i++){const b=document.createElement('b');b.className='hs';g1.appendChild(b)}
 const g60b=$('#g60b');for(let i=0;i<60;i++){const b=document.createElement('b');if(i===20)b.className='kr';g60b.appendChild(b)}
 
@@ -728,7 +747,7 @@ $('#gbtn').addEventListener('click',()=>{
 /* ---------- scroll engine ---------- */
 const prog=el=>{const r=el.getBoundingClientRect();const tot=r.height-innerHeight;return clamp(-r.top/tot,0,1)};
 const s60=$('#s60'),sd=$('#sdiss'),sc=$('#scnt'),tl=$('#tlList'),line=$('#tlLine'),whale=$('#whale'),climax=$('#climax');
-const n60=$('#n60'),cnt=$('#cntNum'),krl=$('#krLabel'),dt1=$('#dt1'),dt2=$('#dt2');
+const cnt=$('#cntNum'),krl=$('#krLabel'),dt1=$('#dt1'),dt2=$('#dt2');
 const depth=$('#depth'),dFill=$('#depthFill'),dVal=$('#depthVal');
 let lastN=-1,lastC=-1;
 function onScroll(){
@@ -738,8 +757,6 @@ function onScroll(){
   dVal.textContent='수심 '+Math.round(k*4000).toLocaleString()+'m';
   depthK=clamp(y/innerHeight,0,1);
   // 60%
-  const p1=ease(clamp(prog(s60)*1.4,0,1));const n=Math.round(p1*60);
-  if(n!==lastN){lastN=n;n60.textContent=n;const ds=g60.children;for(let i=0;i<100;i++)ds[order[i]].classList.toggle('hs',i<n)}
   // dissolve
   const pd=prog(sd);dissP=clamp((pd-.15)/.6,0,1);dt1.style.opacity=pd<.35?1:0;dt2.style.opacity=pd>.7?1:0;document.getElementById('dcap').style.opacity=pd>.6?1:0;
   // timeline line
@@ -775,6 +792,87 @@ $('#replay').addEventListener('click',rise);
 
 /* ---------- loop ---------- */
 (function loop(){drawHero();drawDiss();requestAnimationFrame(loop)})();
+})();
+
+/* ---------- 지구본: 필요할 때만 그린다 ---------- */
+(function(){
+if(!window.OC)return;
+const $=id=>document.getElementById(id),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const eOut=t=>1-Math.pow(1-t,3),ease=t=>t*t*(3-2*t);
+const calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sec=$('s60'),gc=$('gs'),gx=gc.getContext('2d'),gt=$('gt'),caps=[...$('gcap').children];
+const proj=OC.geoOrthographic().clipAngle(90).precision(.6),path=OC.geoPath(proj,gx);
+const hc=document.createElement('canvas'),hx=hc.getContext('2d',{willReadFrequently:true}),hpj=OC.geoOrthographic().clipAngle(90),hp=OC.geoPath(hpj,hx);
+const G={W:0,H:0,R:0,cx:0,cy:0,dpr:1,lon:150,lat:14,band:0,high:0,pin:null};
+const tw={band:[0,0,0,0],high:[0,0,0,0],lon:[150,150,0,0]}; // [from,to,start,dur]
+let raf=0,fast=false,fastT=0,vis=false,step=-1,spun=false;
+function layout(){
+  const r=gc.getBoundingClientRect();G.W=r.width;G.H=r.height;G.dpr=Math.min(devicePixelRatio||1,1.75);
+  gc.width=Math.round(G.W*G.dpr);gc.height=Math.round(G.H*G.dpr);
+  G.R=Math.min(G.W*.38,G.H*.22);G.cx=G.W/2;G.cy=Math.max(G.H*.33,G.R+92);
+  gt.style.cssText=`left:${G.cx-G.R}px;top:${G.cy-G.R}px;width:${2*G.R}px;height:${2*G.R}px`;
+  $('probe').style.top=(G.cy+G.R+14)+'px';$('gcap').style.top=(G.cy+G.R+58)+'px';
+  hc.width=Math.round(G.W);hc.height=Math.round(G.H);draw();
+}
+function draw(){
+  const c=gx,R=G.R,cx=G.cx,cy=G.cy;
+  proj.scale(R).translate([cx,cy]).rotate([-G.lon,-G.lat]);
+  c.setTransform(G.dpr,0,0,G.dpr,0,0);c.clearRect(0,0,G.W,G.H);
+  const sph={type:'Sphere'};
+  const sg=c.createRadialGradient(cx-R*.35,cy-R*.4,R*.05,cx,cy,R);sg.addColorStop(0,'#1E4A63');sg.addColorStop(1,'#0F2B3C');
+  c.beginPath();path(sph);c.fillStyle=sg;c.fill();
+  c.save();c.beginPath();path(sph);c.clip();
+  if(G.high>.003){const hg=c.createRadialGradient(cx-R*.3,cy-R*.35,R*.05,cx,cy,R);hg.addColorStop(0,'#5B79FF');hg.addColorStop(1,'#2440D0');c.beginPath();c.arc(cx,cy,G.high*R*1.45,0,Math.PI*2);c.fillStyle=hg;c.fill()}
+  c.beginPath();path(OC.grat);c.lineWidth=.5;c.strokeStyle='rgba(236,238,233,.12)';c.stroke();
+  if(G.band>.01){const bw=R*.058*2;c.lineJoin='round';c.lineCap='round';c.globalAlpha=G.band;
+    c.beginPath();path(OC.land110);c.lineWidth=bw+2;c.strokeStyle='#ECEEE9';c.stroke();c.lineWidth=bw;c.strokeStyle='#25506A';c.stroke();c.globalAlpha=1}
+  c.beginPath();path(fast?OC.land110:OC.land);c.fillStyle='#ECEEE9';c.fill();
+  c.restore();
+  const halo=c.createRadialGradient(cx,cy,R*.97,cx,cy,R*1.25);halo.addColorStop(0,`rgba(111,139,255,${.10+.22*G.high})`);halo.addColorStop(1,'rgba(111,139,255,0)');
+  c.fillStyle=halo;c.beginPath();c.arc(cx,cy,R*1.25,0,Math.PI*2);c.moveTo(cx+R,cy);c.arc(cx,cy,R,0,Math.PI*2,true);c.fill();
+  c.beginPath();path(sph);c.lineWidth=1;c.strokeStyle='rgba(236,238,233,.5)';c.stroke();
+  if(G.pin){const q=proj(G.pin);if(q&&OC.geoDistance(G.pin,[G.lon,G.lat])<1.45){c.beginPath();c.arc(q[0],q[1],6,0,7);c.fillStyle='#78BE43';c.fill();c.lineWidth=2;c.strokeStyle='#0B1622';c.stroke()}}
+}
+function to(k,v,ms){const t=tw[k];t[0]=G[k];t[1]=v;t[2]=performance.now();t[3]=calm?0:ms;req()}
+function req(){if(!raf)raf=requestAnimationFrame(tick)}
+function tick(now){
+  raf=0;let busy=false;
+  for(const k in tw){const t=tw[k];if(t[3]===0&&G[k]!==t[1]){G[k]=t[1];continue}if(!t[3])continue;
+    const p=clamp((now-t[2])/t[3],0,1);G[k]=t[0]+(t[1]-t[0])*(k==='lon'?ease(p):eOut(p));if(p<1)busy=true;else t[3]=0}
+  fast=busy||drag!=null;draw();
+  if(busy)req();else if(fast===false&&fastT){fastT=0}
+  if(!busy&&drag==null){clearTimeout(fastT);fastT=setTimeout(()=>{fast=false;draw()},120)}
+}
+function setStep(s){if(s===step)return;step=s;caps.forEach((c,i)=>c.classList.toggle('on',i===s));
+  to('band',s>=0?1:0,700);to('high',s>=1?1:0,900);
+  if(s===1)countUp($('n60'),60,1300)}
+function countUp(el,n,ms){if(calm){el.textContent=n;return}const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/ms);el.textContent=Math.round(n*eOut(k));if(k<1)requestAnimationFrame(f)})(t0)}
+function onScroll(){if(!vis)return;const r=sec.getBoundingClientRect(),p=clamp(-r.top/(r.height-innerHeight),0,1);
+  setStep(p<.3?0:p<.65?1:2);
+  if(!spun&&r.top<innerHeight*.3){spun=true;to('lon',205,1800)}}
+new IntersectionObserver(es=>{vis=es[0].isIntersecting;if(vis){onScroll();req()}},{rootMargin:'100px 0px'}).observe(sec);
+addEventListener('scroll',onScroll,{passive:true});
+let rz=0;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(layout,150)});
+// 옆으로만 돌린다. 위아래 움직임은 페이지 스크롤에 맡긴다(touch-action:pan-y)
+let drag=null;
+gt.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,t:performance.now(),lon:G.lon,m:false,id:e.pointerId}});
+gt.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+  if(!drag.m){if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(dy)){drag.m=true;try{gt.setPointerCapture(drag.id)}catch(_){}}else if(Math.abs(dy)>8){drag=null;return}}
+  if(drag.m){tw.lon[3]=0;tw.lon[1]=G.lon=drag.lon-dx/G.R*57.3;req()}});
+const end=e=>{if(!drag)return;const d=drag;drag=null;
+  if(!d.m&&performance.now()-d.t<500&&e.type==='pointerup'){const r=gc.getBoundingClientRect();probe(e.clientX-r.left,e.clientY-r.top)}req()};
+gt.addEventListener('pointerup',end);gt.addEventListener('pointercancel',end);
+function probe(x,y){
+  const R=G.R;hpj.scale(R).translate([G.cx,G.cy]).rotate([-G.lon,-G.lat]);
+  hx.setTransform(1,0,0,1,0,0);hx.clearRect(0,0,hc.width,hc.height);
+  hx.beginPath();hp({type:'Sphere'});hx.fillStyle='#0000ff';hx.fill();
+  hx.save();hx.beginPath();hp({type:'Sphere'});hx.clip();hx.beginPath();hp(OC.land110);hx.lineJoin='round';hx.lineWidth=R*.058*2;hx.strokeStyle='#00ff00';hx.stroke();hx.beginPath();hp(OC.land);hx.fillStyle='#ff0000';hx.fill();hx.restore();
+  const d=hx.getImageData(Math.round(x),Math.round(y),1,1).data,geo=hpj.invert([x,y]);
+  if(d[3]<128||!geo)return;
+  $('probet').textContent=d[0]>128?'육지예요. 바다를 눌러 보세요':d[1]>128?'앞바다예요. 가까운 나라가 관리합니다':'공해예요. 어느 나라의 바다도 아닙니다';
+  G.pin=d[0]>128?null:geo;req();
+}
+layout();
 })();
 </script>
 <script>
