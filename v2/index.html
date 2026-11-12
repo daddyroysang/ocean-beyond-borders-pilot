@@ -183,6 +183,12 @@ body{background:var(--abyss);color:var(--foam);font-family:var(--sans);font-weig
 #ocean .gnum{font-family:var(--serif);font-weight:900;color:#6F8BFF;font-size:min(26vw,120px);letter-spacing:-.05em;line-height:.9;font-variant-numeric:tabular-nums}
 #ocean .gnum small{font-size:.4em;margin-left:.05em}
 #ocean .mnote{position:absolute;left:24px;right:24px;bottom:12px;font-size:10px;color:#7F929A;line-height:1.4}
+#ocean .mq{overflow:hidden;border-top:1px solid rgba(255,255,255,.1);border-bottom:1px solid rgba(255,255,255,.1);padding:22px 0;background:linear-gradient(90deg,var(--abyss),#04192d 50%,var(--abyss))}
+#ocean .mqt{display:flex;align-items:center;width:max-content;animation:mq 28s linear infinite}
+#ocean .mqt span{font-family:var(--serif);font-weight:900;font-size:clamp(22px,5.4vw,40px);letter-spacing:-.02em;white-space:nowrap;color:var(--foam)}
+#ocean .mqt i{display:block;width:9px;height:9px;border-radius:50%;background:var(--lime);margin:0 26px;flex:none}
+@keyframes mq{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){#ocean .mqt{animation:none}}
 body.lock{overflow:hidden}
 #gp a{color:inherit}
 #gp button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
@@ -393,7 +399,13 @@ body.lock{overflow:hidden}
 #gp .vdots{display:flex;gap:8px}
 #gp .vdots button{width:7px;height:7px;border-radius:4px;background:#D6D9D0;transition:width .3s,background .3s}
 #gp .vdots button.on{width:22px;background:var(--ink)}
-#ocean .cta{padding:14vh 0 10vh;text-align:center}
+#ocean .cta{position:relative;z-index:3;margin-top:-36px;padding:14vh 0 12vh;text-align:center;background:#F3F1EA;color:#0B1622;border-radius:32px 32px 0 0;box-shadow:0 -18px 50px rgba(0,0,0,.35)}
+#ocean .cta .kicker{color:#3d7a14}
+#ocean .cta .lead{color:#4a5560}
+#ocean .cta .btn{background:#0B1622;color:#fff}
+#ocean .cta .btn.ghost{background:transparent;color:#0B1622;border:1px solid rgba(11,22,34,.3)}
+#ocean footer{position:relative;z-index:4;margin-top:-32px;background:var(--abyss);border-radius:32px 32px 0 0;border-top:0}
+#ocean .goal{padding-bottom:calc(20vh + 36px)}
 #ocean .cta .lead{margin:14px auto 0}
 #ocean .cta .row2{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:34px}
 #ocean .duo{display:grid;grid-template-columns:.8fr 1.2fr;gap:12px;margin-top:22px;max-width:620px}
@@ -615,6 +627,9 @@ body.lock{overflow:hidden}
     </div>
   </div>
 </div></section>
+
+<!-- 숫자 띠 (보고서 사실만) -->
+<section class="mq" aria-label="2025년 해양조약 캠페인 숫자"><div class="mqt"><span>비준국 60개국</span><i></i><span>동아시아 최초</span><i></i><span>유엔 회원국 중 21번째</span><i></i><span>3,000여 명이 후원한 다큐 〈씨그널〉</span><i></i><span>부산 상영회 600여 명</span><i></i><span>2026년 1월 발효</span><i></i><span aria-hidden="true">비준국 60개국</span><i></i><span aria-hidden="true">동아시아 최초</span><i></i><span aria-hidden="true">유엔 회원국 중 21번째</span><i></i><span aria-hidden="true">3,000여 명이 후원한 다큐 〈씨그널〉</span><i></i><span aria-hidden="true">부산 상영회 600여 명</span><i></i><span aria-hidden="true">2026년 1월 발효</span><i></i></div></section>
 
 <!-- 5. COUNTER -->
 <section class="pin" id="scnt" style="height:230vh">
