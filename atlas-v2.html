@@ -125,7 +125,7 @@ let drag=false,lastX=0,rot=2,zoom=0,aimZoom=0,prev=0,slow=0,frames=0,low=false;
 globeAPI={zoom:n=>aimZoom=n};host.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX;host.setPointerCapture(e.pointerId)});host.addEventListener('pointermove',e=>{if(!drag||quiet)return;rot+=(e.clientX-lastX)*.006;lastX=e.clientX});['pointerup','pointercancel','lostpointercapture'].forEach(n=>host.addEventListener(n,()=>drag=false));
 renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();host.classList.remove('ready');renderer.setAnimationLoop(null)});
 renderer.setAnimationLoop(t=>{let dt=Math.min((t-prev)/1000,.05);prev=t;if(document.hidden||!window.atlasVisible||quiet)return;frames++;if(dt>.04)slow++;if(frames===150&&slow>55){low=true;renderer.setPixelRatio(1);host.dataset.quality='low'}if(low&&frames%2)return;
-if(!drag)rot+=dt*.045*(low?2:1);earth.rotation.y=rot+(window.atlasProgress||0)*.65;earth.rotation.x=.08+(window.atlasProgress||0)*.14;zoom+=(aimZoom-zoom)*.07;camera.position.z=3.5-zoom*1.9;camera.position.x=(window.atlasProgress||0)*.3;camera.lookAt(0,0,0);renderer.render(scene,camera)});
+if(!drag)rot+=dt*.045*(low?2:1);zoom+=(aimZoom-zoom)*.07;const baseRot=rot+(window.atlasProgress||0)*.65;const oceanTurn=Math.atan2(Math.sin(1.05-baseRot),Math.cos(1.05-baseRot));earth.rotation.y=baseRot+oceanTurn*zoom;earth.rotation.x=(.08+(window.atlasProgress||0)*.14)*(1-zoom);camera.position.z=3.5-zoom*1.9;camera.position.x=(window.atlasProgress||0)*.3;camera.lookAt(0,0,0);renderer.render(scene,camera)});
 }catch(e){$('#globe').dataset.fallback='true';console.warn('Globe fallback:',e.message)}finally{starting=false}}
 setQuiet(quiet);setupGlobe();
 })();
