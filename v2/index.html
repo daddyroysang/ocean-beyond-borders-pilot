@@ -362,7 +362,13 @@ body.lock{overflow:hidden}
 #gp #hub{color:#F2F4F1}
 #gp .wrap{max-width:480px;margin:0 auto;position:relative;overflow:clip}
 #hubWrap{background:radial-gradient(90% 60% at 50% 46%,#1A3044 0%,var(--ink) 70%)}
-#gp #hub{height:520svh}
+#gp #hub{height:100svh}
+#gp .hnav{position:absolute;left:0;right:0;bottom:calc(4.5% + 26px);display:flex;align-items:center;justify-content:center;gap:18px}
+#gp .hnav>button{width:44px;height:44px;border-radius:50%;border:1px solid rgba(242,244,241,.35);color:#F2F4F1;font-size:24px;line-height:1}
+#gp .hdots{display:flex;gap:8px}
+#gp .hdots button{width:8px;height:8px;border-radius:4px;background:rgba(242,244,241,.3);transition:width .3s,background .3s}
+#gp .hdots button.on{width:22px;background:var(--green)}
+#gp .hcap{bottom:calc(12% + 40px)}
 #ocean .cta{padding:14vh 0 10vh;text-align:center}
 #ocean .cta .lead{margin:14px auto 0}
 #ocean .cta .row2{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:34px}
@@ -386,7 +392,8 @@ body.lock{overflow:hidden}
       </div>
       <div class="bookstage" id="bst"><div class="book" id="book"><div class="shadow"></div><div class="glowring" id="glow"></div><div class="base" id="baseL"></div><div class="base" id="baseR"></div><div class="pgno" id="pgno"></div><button class="tapzone" id="tapz" aria-label="펼쳐진 지면 열기"></button></div></div>
       <div class="hcap" id="hcap"></div>
-      <p class="hhint" id="hhint">내려가면 보고서가 펼쳐집니다</p>
+      <div class="hnav"><button id="hprev" aria-label="이전 장">‹</button><div class="hdots" id="hdots"></div><button id="hnext" aria-label="다음 장">›</button></div>
+      <p class="hhint" id="hhint">책을 눌러 넘겨 보세요 · 준비된 장 2개</p>
     </div>
   </section>
   </div></div>
@@ -932,7 +939,7 @@ function hubLayout(){
 var STOPS=[[0,0],[.06,0],[.36,7],[.52,7],[.74,12],[1,12]];
 function flipsAt(p){for(var i=1;i<STOPS.length;i++){var a=STOPS[i-1],b=STOPS[i];if(p<=b[0]){var k=(p-a[0])/(b[0]-a[0]);k=k*k*(3-2*k);return a[1]+(b[1]-a[1])*k}}return 12}
 function hubFrame(p){
-  hub.ft=flipsAt(p);
+  
   var d=hub.ft-hub.f;hub.f+=d*(calm?1:.14);if(Math.abs(hub.ft-hub.f)<.0005)hub.f=hub.ft;
   var f=hub.f,open=ease(clamp(f,0,1));
   var tilt=lerp(30,10,open),shift=-hub.pw/2*(1-open),sc=lerp(1.12,1,open);
@@ -953,11 +960,27 @@ function hubFrame(p){
     $("pgno").textContent=(k===0||(settled&&P.open))?"":P.pp;
   }
   $("glow").classList.toggle("on",can);
-  $("tapz").style.pointerEvents=can?"auto":"none";
-  $("hhint").textContent=f<.5?"내려가면 보고서가 펼쳐집니다":(can?"펼쳐진 지면을 눌러 보세요":(f>11.9?"":"계속 내리면 다음 장으로 넘어갑니다"));
-  return Math.abs(hub.ft-hub.f)>.0005;
+  
+    return Math.abs(hub.ft-hub.f)>.0005;
 }
-$("tapz").addEventListener("click",function(e){var k=hub.front;if(PAGES[k]&&PAGES[k].open)openPage(k,e)});
+
+/* 준비된 장만 오간다: 표지 → 14~15쪽 → 24~25쪽. 누르거나 옆으로 밀어서 넘긴다. NAVOK */
+var STOPI=[0,7,12],si=0,dots=$("hdots");
+STOPI.forEach(function(_,i){var d=document.createElement("button");d.setAttribute("aria-label",["표지","14~15쪽 바다","24~25쪽 후원금"][i]);d.addEventListener("click",function(){go(i)});dots.appendChild(d)});
+function go(i){si=(i+STOPI.length)%STOPI.length;hub.ft=STOPI[si];
+  [].forEach.call(dots.children,function(d,j){d.classList.toggle("on",j===si)});
+  $("hhint").textContent=si===0?"책을 눌러 넘겨 보세요 · 준비된 장 2개":"펼쳐진 지면을 누르면 열립니다 · "+(si+1)+" / "+STOPI.length;
+  req()}
+$("hnext").addEventListener("click",function(){go(si+1)});$("hprev").addEventListener("click",function(){go(si-1)});
+$("tapz").style.pointerEvents="auto";
+$("tapz").addEventListener("click",function(e){var k=hub.front,settled=Math.abs(hub.f-hub.ft)<.1;if(settled&&PAGES[k]&&PAGES[k].open)openPage(k,e);else go(si+1)});
+// 옆으로 밀어 넘기기 (위아래는 페이지 스크롤)
+var sw=null,bst=$("bst");bst.style.touchAction="pan-y";
+bst.addEventListener("pointerdown",function(e){sw={x:e.clientX,y:e.clientY}});
+bst.addEventListener("pointerup",function(e){if(!sw)return;var dx=e.clientX-sw.x,dy=e.clientY-sw.y;sw=null;if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)){go(si+(dx<0?1:-1));bst.dataset.swiped="1";setTimeout(function(){bst.dataset.swiped=""},50)}});
+bst.addEventListener("pointercancel",function(){sw=null});
+bst.addEventListener("click",function(e){if(bst.dataset.swiped){e.stopPropagation();e.preventDefault()}},true);
+
 
 // 고른 쪽이 화면을 채우며 그 이야기가 된다
 
@@ -1042,15 +1065,15 @@ $("rsh").addEventListener("click",function(){
 });
 
 
-$("toBook").addEventListener("click",function(){goTo($("hub").offsetTop+($("hub").offsetHeight-VH)*.45,1400)});
+$("toBook").addEventListener("click",function(){goTo($("hub").offsetTop,1400)});
 
 // 책은 스크롤에 맞춰 부드럽게 따라온다(목표값으로 보간). 필요할 때만 그린다.
 var hubEl=$("hub"),raf=0;
-function frame(){raf=0;var o=prog(hubEl);if(o.vis&&hubFrame(o.p))req()}
+function frame(){raf=0;if(hubFrame(0))req()}
 function req(){if(!raf)raf=requestAnimationFrame(frame)}
 function layout(){VW=window.innerWidth;VH=window.innerHeight;hubLayout();req()}
-addEventListener("scroll",req,{passive:true});addEventListener("resize",layout);
-layout();
+addEventListener("resize",layout);
+layout();go(0);
 })();
 </script>
 </body>
