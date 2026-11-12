@@ -236,6 +236,18 @@ footer p+p{margin-top:8px}
 .it .bar i{background:var(--c,var(--ink))}
 .qk button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
 
+
+/* 종이가 바다가 되는 순간 */
+#water{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:100%;z-index:66;display:none;pointer-events:none}
+/* 소리 */
+#snd{position:fixed;right:12px;bottom:14px;z-index:58;display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;padding:9px 13px;border-radius:999px;background:rgba(11,22,34,.62);color:#fff;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#snd i{display:flex;align-items:flex-end;gap:2px;height:12px}
+#snd i b{width:2px;background:#78BE43;height:3px;border-radius:1px;transition:height .2s}
+#snd.on i b{animation:eq 1s ease-in-out infinite}
+#snd.on i b:nth-child(2){animation-delay:.2s}#snd.on i b:nth-child(3){animation-delay:.4s}
+@keyframes eq{0%,100%{height:3px}50%{height:12px}}
+@media(min-width:481px){#snd{right:calc(50% - 228px)}}
+
 /* 영수증 아래 장면들 (첫 시안) */
 .rs{position:relative}
 .rpin{position:sticky;top:0;height:100svh;overflow:hidden}
@@ -405,6 +417,8 @@ footer p+p{margin-top:8px}
 </div>
 
 <div class="zoom" id="zoom"></div>
+<canvas id="water" aria-hidden="true"></canvas>
+<button id="snd" aria-pressed="false"><i><b></b><b></b><b></b></i><span>소리 켜기</span></button>
 
 <!-- 영수증: 24~25쪽 -->
 <div class="rx" id="rx" aria-hidden="true">
@@ -489,6 +503,47 @@ function prog(el){var r=el.getBoundingClientRect();return {p:clamp(-r.top/(r.hei
 function goTo(y,ms){if(calm){window.scrollTo(0,y);return}var y0=window.scrollY,t0=performance.now();ms=ms||1200;(function f(t){var k=Math.min(1,(t-t0)/ms);k=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;window.scrollTo(0,y0+(y-y0)*k);if(k<1)requestAnimationFrame(f)})(t0)}
 function yAt(id,p){var e=$(id);return e.offsetTop+(e.offsetHeight-VH)*(p||0)}
 
+
+/* ═════ 소리 ═════ */
+var sfx=(function(){
+  var AC=null,on=false,master,amb,ambG,lp,noiseBuf,motor=null;
+  function init(){
+    if(AC)return;
+    try{if(navigator.audioSession)navigator.audioSession.type="playback"}catch(_){}
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    master=AC.createGain();master.gain.value=.9;master.connect(AC.destination);
+    var len=AC.sampleRate*4;noiseBuf=AC.createBuffer(1,len,AC.sampleRate);var d=noiseBuf.getChannelData(0),last=0;
+    for(var i=0;i<len;i++){var w=Math.random()*2-1;last=(last+.02*w)/1.02;d[i]=last*3.2}
+    amb=AC.createBufferSource();amb.buffer=noiseBuf;amb.loop=true;
+    lp=AC.createBiquadFilter();lp.type="lowpass";lp.frequency.value=380;lp.Q.value=.7;
+    ambG=AC.createGain();ambG.gain.value=0;
+    var lfo=AC.createOscillator(),lfoG=AC.createGain();lfo.frequency.value=.09;lfoG.gain.value=140;lfo.connect(lfoG);lfoG.connect(lp.frequency);lfo.start();
+    amb.connect(lp);lp.connect(ambG);ambG.connect(master);amb.start();
+  }
+  function noise(dur,type,f0,f1,g,q,delay){
+    if(!on)return;var t=AC.currentTime+(delay||0),s=AC.createBufferSource();s.buffer=noiseBuf;
+    var fl=AC.createBiquadFilter();fl.type=type;fl.Q.value=q||1;fl.frequency.setValueAtTime(f0,t);if(f1)fl.frequency.exponentialRampToValueAtTime(f1,t+dur);
+    var gg=AC.createGain();gg.gain.setValueAtTime(0,t);gg.gain.linearRampToValueAtTime(g,t+Math.min(.02,dur/4));gg.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    s.connect(fl);fl.connect(gg);gg.connect(master);s.start(t,Math.random()*3);s.stop(t+dur+.05);
+  }
+  function tone(f0,f1,dur,g,type,delay){
+    if(!on)return;var t=AC.currentTime+(delay||0),o=AC.createOscillator(),gg=AC.createGain();o.type=type||"sine";
+    o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+dur);
+    gg.gain.setValueAtTime(g,t);gg.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(gg);gg.connect(master);o.start(t);o.stop(t+dur+.05);
+  }
+  return {
+    toggle:function(){init();on=!on;if(AC.state==="suspended")AC.resume();if(!on)ambG.gain.setTargetAtTime(0,AC.currentTime,.2);return on},
+    amb:function(level){if(!AC)return;ambG.gain.setTargetAtTime(on?level:0,AC.currentTime,.6)},
+    dive:function(){noise(1.6,"bandpass",2600,260,.9,.8);noise(2.4,"lowpass",900,140,.7,.5,.15);tone(90,38,.9,.5,"sine",.05)},
+    paper:function(){noise(.22,"highpass",1800,4200,.35,.6);noise(.12,"bandpass",900,500,.25,1.2,.08)},
+    flick:function(){noise(.08,"highpass",2400,null,.18,.7)},
+    tick:function(){noise(.035,"bandpass",3200,null,.35,3)},
+    motor:function(sec){if(!on)return;var t=AC.currentTime,o=AC.createOscillator(),f=AC.createBiquadFilter(),gg=AC.createGain();o.type="sawtooth";o.frequency.value=118;f.type="lowpass";f.frequency.value=420;gg.gain.setValueAtTime(0,t);gg.gain.linearRampToValueAtTime(.06,t+.08);gg.gain.setValueAtTime(.06,t+sec);gg.gain.linearRampToValueAtTime(0,t+sec+.15);o.connect(f);f.connect(gg);gg.connect(master);o.start(t);o.stop(t+sec+.2)},
+    get on(){return on}
+  };
+})();
+$("snd").addEventListener("click",function(){var o=sfx.toggle();this.classList.toggle("on",o);this.setAttribute("aria-pressed",String(o));this.querySelector("span").textContent=o?"소리 끄기":"소리 켜기";req()});
+
 /* ═════ 보고서 릴 ═════ */
 var PAGES=[
  {img:"assets/page01.jpg",pp:"표지",t:"그린피스 동아시아지부 2025 연차보고서"},
@@ -511,7 +566,7 @@ PAGES.forEach(function(p,i){
   var b=document.createElement("button");b.className="pg"+(p.open?" open":"");b.type="button";
   b.innerHTML='<img src="'+p.img+'" alt="">'+(p.open?'<span class="tab">펼치기</span>':'');
   b.setAttribute("aria-label",p.pp+" "+p.t+(p.open?", 펼쳐 보기":""));
-  b.addEventListener("click",function(){if(hub.drag&&hub.drag.moved)return;if(i===hub.front&&p.open)openPage(i);else{hub.user+=i-Math.round(hub.k)}});
+  b.addEventListener("click",function(e){if(hub.drag&&hub.drag.moved)return;if(i===hub.front&&p.open)openPage(i,e);else{hub.user+=i-Math.round(hub.k)}});
   cyl.appendChild(b);p.el=b;
 });
 function hubLayout(){
@@ -541,6 +596,7 @@ function hubFrame(p){
     pg.el.style.zIndex=String(100-Math.round(a));
     pg.el.style.pointerEvents=u>.9&&a<60?"auto":"none";
   });
+  if(front!==hub.front&&hub.shown&&u>.9)sfx.flick();
   if(front!==hub.front||u>.9!==hub.shown){hub.front=front;hub.shown=u>.9;
     var P=PAGES[front];
     $("hcap").innerHTML=hub.shown?'<p class="pp">'+P.pp+'</p><b>'+P.t+'</b>'+(P.open?'<button class="go" id="hgo">'+P.go+' →</button>':'<p class="not">이 시안에서는 14~15쪽과 24~25쪽, 두 곳을 펼쳤습니다.</p>'):"";
@@ -556,22 +612,108 @@ s3d.addEventListener("pointerup",hdEnd);s3d.addEventListener("pointercancel",hdE
 
 // 고른 쪽이 화면을 채우며 그 이야기가 된다
 var zoom=$("zoom");
-function openPage(i){
+function openPage(i,ev){
   var P=PAGES[i],r=P.el.getBoundingClientRect(),W=window.innerWidth,H=window.innerHeight;
+  var vw=Math.min(W,480),lx=(W-vw)/2;
+  // 누른 자리를 화면 좌표로 옮겨 둔다 (카드 안의 상대 위치 → 전체 화면)
+  var tap=[.62,.55];
+  if(ev&&ev.clientX!=null&&ev.clientX>0){tap=[clamp((ev.clientX-r.left)/r.width,0,1),clamp((ev.clientY-r.top)/r.height,0,1)]}
   zoom.style.backgroundImage="url("+(P.big||P.img)+")";
+  zoom.style.backgroundPosition=P.open==="sea"?"62% 50%":"center";
   zoom.style.transition="none";
   zoom.style.cssText+=";left:"+r.left+"px;top:"+r.top+"px;width:"+r.width+"px;height:"+r.height+"px;opacity:1;border-radius:3px";
   void zoom.offsetWidth;
-  var ms=calm?0:700;
+  var ms=calm?0:650;
   zoom.style.transition="all "+ms+"ms cubic-bezier(.6,0,.2,1)";
-  var vw=Math.min(W,480),lx=(W-vw)/2;
   zoom.style.left=lx+"px";zoom.style.top="0px";zoom.style.width=vw+"px";zoom.style.height=H+"px";zoom.style.borderRadius="0";
-  setTimeout(function(){
-    if(P.open==="sea"){window.scrollTo(0,yAt("o1",0)+1);}
-    else openRx();
-    zoom.style.transition="opacity "+(calm?0:500)+"ms";zoom.style.opacity="0";
-  },ms+(calm?0:250));
+  if(P.open==="sea"){
+    try{ov.currentTime=0;var pp=ov.play();if(pp&&pp.catch)pp.catch(function(){})}catch(_){}
+    setTimeout(function(){
+      Water.run(P.big,[(tap[0]-.5)*.35+.62,1-tap[1]],function(){
+        window.scrollTo(0,yAt("o1",0)+1);
+      },function(){zoom.style.transition="none";zoom.style.opacity="0"});
+    },ms+40);
+  }else{
+    sfx.paper();
+    setTimeout(function(){openRx();zoom.style.transition="opacity "+(calm?0:500)+"ms";zoom.style.opacity="0"},ms+(calm?0:200));
+  }
 }
+
+/* ═════ 종이가 바다가 되는 셰이더 ═════ */
+var Water=(function(){
+  var cv=$("water"),gl=null,prog=null,U={},texP=null,texW=null,imgW=new Image(),ready=false;
+  imgW.src="assets/ocean-top.jpg";
+  var VS="attribute vec2 a;varying vec2 v;void main(){v=a*.5+.5;gl_Position=vec4(a,0.,1.);}";
+  var FS=[
+  "precision mediump float;varying vec2 v;uniform sampler2D tP,tW;uniform vec2 sP,oP,sW,oW,c;uniform float t,pr,asp;",
+  "float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}",
+  "float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}",
+  "float fbm(vec2 p){float s=0.,a=.5;for(int i=0;i<4;i++){s+=a*n(p);p*=2.03;a*=.5;}return s;}",
+  "void main(){",
+  " vec2 uv=v;vec2 q=(uv-c)*vec2(asp,1.);float d=length(q);",
+  " float R=pr*1.95;float nz=fbm(uv*3.2+t*.12);",
+  " float fr=d+(nz-.5)*.3;",
+  " float wet=1.-smoothstep(R-.025,R+.025,fr);",
+  " vec2 dir=d>.0001?q/d:vec2(0.);dir.x/=asp;",
+  " float rip=sin(d*58.-t*9.)*exp(-max(fr-R,0.)*6.)*(1.-wet);",
+  " vec2 up=uv+dir*rip*.011;",
+  " vec3 paper=texture2D(tP,(up-.5)*sP+oP).rgb;",
+  " float soak=smoothstep(R+.22,R,fr)*(1.-wet);",
+  " paper=mix(paper,paper*vec3(.32,.48,.6),soak*.9);",
+  " paper+=vec3(.95,.98,1.)*rip*.09-vec3(.05,.04,.02)*abs(rip)*.4;",
+  " vec2 uw=uv+vec2(sin(uv.y*9.+t*1.6),cos(uv.x*8.+t*1.3))*.003*(1.-pr*.7);",
+  " uw+=(vec2(.5,.66)-c)*.55*(1.-smoothstep(.0,.7,pr));",
+  " vec2 tw=(uw-.5)*sW+oW;tw=1.-abs(1.-abs(mod(tw,2.)));",
+  " vec3 water=texture2D(tW,tw).rgb;",
+  " float rim=exp(-pow((fr-R)*60.,2.));",
+  " float cau=0.;",
+  " vec3 col=mix(paper,water,wet)+vec3(.85,.95,1.)*rim*.32;",
+  " gl_FragColor=vec4(col,1.);",
+  "}"].join("\n");
+  function sh(type,src){var s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw gl.getShaderInfoLog(s);return s}
+  function init(){
+    if(gl)return true;
+    try{gl=cv.getContext("webgl",{alpha:false,antialias:false,premultipliedAlpha:false})}catch(_){}
+    if(!gl)return false;
+    try{prog=gl.createProgram();gl.attachShader(prog,sh(gl.VERTEX_SHADER,VS));gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,FS));gl.linkProgram(prog)}catch(e){gl=null;return false}
+    gl.useProgram(prog);
+    var b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+    var al=gl.getAttribLocation(prog,"a");gl.enableVertexAttribArray(al);gl.vertexAttribPointer(al,2,gl.FLOAT,false,0,0);
+    ["tP","tW","sP","oP","sW","oW","c","t","pr","asp"].forEach(function(k){U[k]=gl.getUniformLocation(prog,k)});
+    gl.uniform1i(U.tP,0);gl.uniform1i(U.tW,1);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+    texP=mk();texW=mk();
+    return true;
+  }
+  function mk(){var x=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,x);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,1,1,0,gl.RGB,gl.UNSIGNED_BYTE,new Uint8Array([11,22,34]));return x}
+  function up(tex,unit,src){gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,tex);try{gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,src);return true}catch(_){return false}}
+  function cover(ta,sa,fx){var s=ta>sa?[sa/ta,1]:[1,ta/sa];return {s:s,o:[clamp(fx,s[0]/2,1-s[0]/2),.5]}}
+  function run(src,c,mid,done){
+    if(calm||!init()){mid();done();return}
+    var img=new Image();img.src=src;
+    var go=function(){
+      var W=cv.clientWidth||Math.min(window.innerWidth,480),H=window.innerHeight,dpr=Math.min(window.devicePixelRatio||1,2);
+      cv.style.display="block";cv.width=Math.round(W*dpr*.75);cv.height=Math.round(H*dpr*.75);gl.viewport(0,0,cv.width,cv.height);
+      var sa=W/H;up(texP,0,img);
+      var cp=cover(img.width/img.height,sa,.62);gl.uniform2fv(U.sP,cp.s);gl.uniform2fv(U.oP,cp.o);
+      var cw=cover(720/1280,sa,.5);gl.uniform2fv(U.sW,cw.s);gl.uniform2fv(U.oW,cw.o);
+      gl.uniform2fv(U.c,c);gl.uniform1f(U.asp,sa);
+      document.body.classList.add("lock");sfx.dive();
+      var t0=performance.now(),D=2600,midDone=false,this_w=0;
+      (function f(now){
+        var k=Math.min(1,(now-t0)/D),pr=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+        var vidOk=ov.readyState>=2&&ov.currentTime>.05&&up(texW,1,ov);if(!vidOk&&imgW.complete&&!this_w){up(texW,1,imgW);this_w=1}
+        gl.uniform1f(U.t,(now-t0)/1000);gl.uniform1f(U.pr,pr);
+        gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+        if(!midDone&&k>.05){midDone=true;done();mid()}
+        if(k<1)requestAnimationFrame(f);
+        else{cv.style.transition="opacity .45s";cv.style.opacity="0";setTimeout(function(){cv.style.display="none";cv.style.opacity="1";cv.style.transition="";document.body.classList.remove("lock");req()},460)}
+      })(t0);
+    };
+    if(img.complete)go();else{img.onload=go;img.onerror=function(){mid();done()}}
+  }
+  return {run:run};
+})();
 
 /* ═════ 바다 01 ═════ */
 var ov=$("ov");
@@ -723,8 +865,8 @@ $("pr").addEventListener("click",function(){
   rxs.scrollTo({top:$("ptr").offsetTop-70,behavior:calm?"auto":"smooth"});
   var step=calm?0:110,start=calm?0:500;
   paper.style.transition="transform "+(calm?0:(lns.length*step+600))+"ms linear";
-  timers.push(setTimeout(function(){paper.style.transform="none"},start));
-  lns.forEach(function(l,i){timers.push(setTimeout(function(){l.classList.add("on");var b=l.querySelector(".bar i");if(b)b.style.width=b.dataset.w+"%"},start+i*step))});
+  timers.push(setTimeout(function(){paper.style.transform="none";sfx.motor((lns.length*step+600)/1000)},start));
+  lns.forEach(function(l,i){timers.push(setTimeout(function(){l.classList.add("on");sfx.tick();var b=l.querySelector(".bar i");if(b)b.style.width=b.dataset.w+"%"},start+i*step))});
 });
 // 장면 속 금액은 화면에 들어올 때 올라간다
 if("IntersectionObserver" in window){
@@ -755,6 +897,7 @@ function tick(now){
   o=prog(S.o5);if(o.vis)o5Frame(o.p);
   o=prog(S.o6);if(o.vis)o6Frame(o.p);vid(ev,o.vis&&!rx.classList.contains("open"));
   var max=document.documentElement.scrollHeight-VH;$("bar").style.width=(max>0?window.scrollY/max*100:0)+"%";
+  if(sfx.on){var lv=0;if(rx.classList.contains("open"))lv=.08;else{if(prog(S.o1).vis||prog(S.o6).vis)lv=.75;else if(prog(S.o2).vis||prog(S.o4).vis)lv=.4;else if(prog(S.o3).vis||prog(S.o5).vis)lv=.18}sfx.amb(lv)}
   var h=window.scrollY>S.o1.offsetTop-10;if(h!==lastHome){lastHome=h;$("home").classList.toggle("on",h)}
   if(more)req();
 }
