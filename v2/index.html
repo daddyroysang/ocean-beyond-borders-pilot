@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>/* 항해 데모에서 넘어온 경우: 첫 화면이 그려지기 전에 책 인트로를 숨긴다 */
+(function(){if(/[?&]from=voyage/.test(location.search)){var c=document.documentElement.classList;c.add("from-voyage");if(location.hash==="#receipt")c.add("to-receipt")}})();</script>
+<style>html.from-voyage #hub{display:none!important}html.to-receipt #ocean{opacity:0}</style>
 <title>2025 연차보고서, 펼쳐 보기 — 국경 밖의 바다 (비공식 시안)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1210,7 +1213,7 @@ layout();go(0);
     window.scrollTo({top:el("ocean").offsetTop,behavior:"instant"});
     setTimeout(function(){gls.forEach(function(c){if(c)c.style.visibility=""})},200)};
   jump();window.addEventListener("load",jump);
-  if(h==="#receipt"){var rb=document.querySelector("[data-rx]");if(rb)rb.click()}
+  if(h==="#receipt"){var rb=document.querySelector("[data-rx]");if(rb)rb.click();setTimeout(function(){document.documentElement.classList.remove("to-receipt")},900)}
 })();
 </script>
 </body>
