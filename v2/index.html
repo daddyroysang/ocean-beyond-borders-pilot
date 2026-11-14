@@ -1190,6 +1190,22 @@ function layout(){VW=window.innerWidth;VH=window.innerHeight;hubLayout();req()}
 addEventListener("resize",layout);
 layout();go(0);
 })();
+/* ═════ 항해 데모에서 들어온 경우: 바로 해당 장면으로, 그리고 돌아가는 버튼 ═════ */
+(function(){
+  var from=/[?&]from=voyage/.test(location.search),h=location.hash,el=function(id){return document.getElementById(id)};
+  if(h==="#ocean"){
+    var jump=function(){var gls=[el("heroGL"),el("dissGL")];gls.forEach(function(c){if(c)c.style.visibility="hidden"});
+      window.scrollTo({top:el("ocean").offsetTop,behavior:"instant"});
+      setTimeout(function(){gls.forEach(function(c){if(c)c.style.visibility=""})},200)};
+    jump();window.addEventListener("load",jump);
+  }else if(h==="#receipt"){var rb=document.querySelector("[data-rx]");if(rb)rb.click()}
+  if(from){
+    var a=document.createElement("a");
+    a.href="../voyage/#"+(h==="#receipt"?"donate":"ocean");a.textContent="← 항해로 돌아가기";
+    a.style.cssText="position:fixed;left:12px;top:calc(12px + env(safe-area-inset-top));z-index:99999;padding:9px 14px;border-radius:999px;background:rgba(10,20,26,.72);color:#fff;font-size:13px;font-weight:700;text-decoration:none;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)";
+    document.body.appendChild(a);
+  }
+})();
 </script>
 </body>
 </html>
