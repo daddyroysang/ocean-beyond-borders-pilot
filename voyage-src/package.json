@@ -1,0 +1,7 @@
+{
+  "name": "gp-voyage",
+  "private": true,
+  "description": "항해 데모(voyage) 소스. 빌드 결과는 ../voyage/index.html 한 파일.",
+  "scripts": { "build": "python3 build.py" },
+  "dependencies": { "esbuild": "^0.28.2", "three": "^0.187.0" }
+}
