@@ -5,7 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>/* 항해 데모에서 넘어온 경우: 첫 화면이 그려지기 전에 책 인트로를 숨긴다 */
 (function(){if(/[?&]from=voyage/.test(location.search)){var c=document.documentElement.classList;c.add("from-voyage");if(location.hash==="#receipt")c.add("to-receipt")}})();</script>
-<style>html.from-voyage #hub{display:none!important}html.to-receipt #ocean{opacity:0}</style>
+<style>html.from-voyage #hub{display:none!important}html.to-receipt #ocean{opacity:0}
+/* 물속 배경이 그려지기 전에도 빈 어둠 대신 바닷빛이 보이게, 글자는 배경 다음에 */
+html.from-voyage #ocean .hero{background:radial-gradient(130% 75% at 50% -5%,#8fe6e0 0%,#2aa3b4 30%,#0d5c80 62%,#06304f 100%)}
+html.from-voyage #ocean .hero .hero-in,html.from-voyage #ocean .hero .tap,html.from-voyage #ocean .hero .hint{opacity:0;transition:opacity 1s ease}
+html.from-voyage.vg-ready #ocean .hero .hero-in,html.from-voyage.vg-ready #ocean .hero .tap,html.from-voyage.vg-ready #ocean .hero .hint{opacity:1}</style>
 <title>2025 연차보고서, 펼쳐 보기 — 국경 밖의 바다 (비공식 시안)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1209,10 +1213,16 @@ layout();go(0);
     a.style.cssText="position:fixed;left:12px;top:calc(12px + env(safe-area-inset-top));z-index:99999;padding:9px 14px;border-radius:999px;background:rgba(10,20,26,.72);color:#fff;font-size:13px;font-weight:700;text-decoration:none;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)";
     document.body.appendChild(a);
   }
-  var jump=function(){var gls=[el("heroGL"),el("dissGL")];gls.forEach(function(c){if(c)c.style.visibility="hidden"});
-    window.scrollTo({top:el("ocean").offsetTop,behavior:"instant"});
-    setTimeout(function(){gls.forEach(function(c){if(c)c.style.visibility=""})},200)};
-  jump();window.addEventListener("load",jump);
+  if(from){
+    // 책이 숨겨져 있어 페이지 맨 위가 곧 바다 장면이다. 물속 배경이 한 번 그려진 뒤에 글자를 띄운다.
+    window.scrollTo(0,0);
+    requestAnimationFrame(function(){requestAnimationFrame(function(){setTimeout(function(){document.documentElement.classList.add("vg-ready")},120)})});
+  }else{
+    var jump=function(){var gls=[el("heroGL"),el("dissGL")];gls.forEach(function(c){if(c)c.style.visibility="hidden"});
+      window.scrollTo({top:el("ocean").offsetTop,behavior:"instant"});
+      setTimeout(function(){gls.forEach(function(c){if(c)c.style.visibility=""})},200)};
+    jump();window.addEventListener("load",jump);
+  }
   if(h==="#receipt"){var rb=document.querySelector("[data-rx]");if(rb)rb.click();setTimeout(function(){document.documentElement.classList.remove("to-receipt")},900)}
 })();
 </script>
