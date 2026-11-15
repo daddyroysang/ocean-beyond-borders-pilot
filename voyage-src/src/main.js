@@ -516,7 +516,7 @@ function setActiveNav(id) {      // 선택 표시가 메뉴 사이를 미끄러�
   else { pill.style.opacity = 0; delete nav.dataset.on; }
 }
 // 도착 장면: 섬에 닿으면 그 섬의 영상이 화면을 채우고, 잠시 뒤 카드가 올라온다
-const ARRIVE = { ocean: { loop: false, cardAt: 3700 }, climate: { loop: true }, plastic: { loop: true, pos: '0% 50%' }, donate: { loop: true } };
+const ARRIVE = { ocean: { loop: false, cardAt: 2700 }, climate: { loop: true }, plastic: { loop: true, pos: '0% 50%' }, donate: { loop: true } };
 const arriveVideo = $('arriveVideo');
 let arriveTimer = 0, arriveAt = 0;
 function preloadArrive(id) {
@@ -544,13 +544,13 @@ function staggerChars(el, text, start, step) {      // 숫자는 한 글자씩 �
 }
 function showCard(id) {
   const p = PLACES[id];
-  $('c-tag').textContent = p.tag.toUpperCase(); $('c-tag').style.transitionDelay = '.15s';
-  let t = staggerWords($('c-title'), p.title, 0.28, 0.07);
-  t = staggerWords($('c-body'), p.body, t + 0.08, 0.028);
-  staggerChars($('c-stat'), p.stat, 0.75, 0.05);
-  $('c-statlabel').textContent = p.statLabel; $('c-statlabel').style.transitionDelay = '1.05s';
-  $('c-cta').textContent = p.cta; $('c-cta').style.transitionDelay = '1.2s';
-  $('c-close').style.transitionDelay = '1.35s';
+  $('c-tag').textContent = p.tag.toUpperCase(); $('c-tag').style.transitionDelay = '.08s';
+  let t = staggerWords($('c-title'), p.title, 0.16, 0.055);
+  t = staggerWords($('c-body'), p.body, t + 0.05, 0.02);
+  staggerChars($('c-stat'), p.stat, 0.5, 0.04);
+  $('c-statlabel').textContent = p.statLabel; $('c-statlabel').style.transitionDelay = '.7s';
+  $('c-cta').textContent = p.cta; $('c-cta').style.transitionDelay = '.8s';
+  $('c-close').style.transitionDelay = '.9s';
   $('c-cta').disabled = !p.link; $('c-cta').dataset.link = p.link || ''; $('c-cta').toggleAttribute('data-ext', !!p.ext);
   void $('card').offsetWidth;            // 처음 상태를 한 번 그린 뒤에 등장시킨다
   body.dataset.card = id;
@@ -563,7 +563,7 @@ function openCard(id) {
   arriveVideo.play().catch(() => {});
   body.dataset.arrive = id; arriveAt = performance.now();
   clearTimeout(arriveTimer);
-  arriveTimer = setTimeout(() => { if (state.arrivedId === id) showCard(id); }, (ARRIVE[id] && ARRIVE[id].cardAt) || 2800);
+  arriveTimer = setTimeout(() => { if (state.arrivedId === id) showCard(id); }, (ARRIVE[id] && ARRIVE[id].cardAt) || 1600);
 }
 $('arrive').addEventListener('click', () => { if (state.arrivedId && !body.dataset.card) { clearTimeout(arriveTimer); showCard(state.arrivedId); } });
 function closeCard() { clearTimeout(arriveTimer); delete body.dataset.card; delete body.dataset.arrive; state.arrivedId = null; arriveVideo.pause(); }
