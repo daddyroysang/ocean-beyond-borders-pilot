@@ -15,7 +15,7 @@ python3 build.py      # ../voyage/index.html 을 다시 만든다
 ## 구성
 
 - `src/main.js` — three.js 장면 전체(하늘 파노라마, 바다 셰이더, 배, 섬, 갈매기, 그림자), 조작, 도착 장면, 카드, 이동 중 한마디
-- `src/template.html` — 화면 위 요소와 스타일(헤더, 첫 화면 문구, 유리 카드, 이름표)
+- `src/template.html` — 화면 위 요소와 스타일(헤더, 첫 화면 문구, 유리 카드, 이름표). 섬별 연결 주소는 여기 `#index` 목록의 링크에 한 번만 적는다(카드 버튼도 이 주소를 읽어 쓴다). 목록 여닫기는 3D 묶음과 별개의 짧은 스크립트라 장면이 실패해도 링크는 눌린다
 - `assets/ship.glb` — 배 모델(길이 1로 정규화, 색은 셰이더가 높이로 칠함)
 - `assets/opt/*.glb` — 섬 4개 모델(meshopt 압축, 텍스처 포함)
 - `media/poster_small.jpg` — 첫 화면에 심는 정지 장면

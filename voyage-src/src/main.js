@@ -10,7 +10,7 @@ const PLACES = {
     tag: '캠페인 · 해양', title: '국경 밖의 바다',
     body: '2026년 1월 17일, 글로벌 해양조약이 발효됐습니다. 20년에 걸친 캠페인의 결과입니다.',
     stat: '2026.1.17', statLabel: '글로벌 해양조약 발효',
-    cta: '「국경 밖의 바다」 이야기 보기', link: '../v2/?from=voyage#ocean',
+    cta: '「국경 밖의 바다」 이야기 보기',
     trip: '공해는 전 세계 바다의 61%. 제대로 보호받는 곳은 0.9%입니다.'
   },
   climate: {
@@ -18,7 +18,7 @@ const PLACES = {
     tag: '캠페인 · 기후', title: '기후재난의 현장',
     body: '2026년 8월, 거제에 극한 호우가 쏟아졌습니다. 그린피스와 기후재난 시민대응단은 복구 현장을 다시 찾았습니다.',
     stat: '2026.8', statLabel: '거제 극한 호우',
-    cta: '현장 기록 (준비 중)',
+    cta: '거제 복구 현장 기록 읽기',
     trip: '2026년 여름, 거제에 극한 호우가 쏟아졌습니다.'
   },
   plastic: {
@@ -26,7 +26,7 @@ const PLACES = {
     tag: '캠페인 · 플라스틱', title: '플라스틱 제로',
     body: '시민 10명 중 8명은 일회용 플라스틱을 줄일 의사가 있습니다. 부족한 것은 시스템입니다.',
     stat: '8 / 10', statLabel: '줄일 의사가 있는 시민',
-    cta: '청원 참여 (준비 중)',
+    cta: '플라스틱 중독 사회 이야기 읽기',
     trip: '190만 명의 시민이 강력한 플라스틱 협약을 요구했습니다.'
   },
   donate: {
@@ -34,10 +34,15 @@ const PLACES = {
     tag: '후원', title: '등대',
     body: '그린피스는 독립성을 지키기 위해 정부·기업·정당의 후원을 받지 않습니다.',
     stat: '100%', statLabel: '개인과 독립재단의 후원',
-    cta: '내 후원금이 간 곳 보기', link: '../v2/?from=voyage#receipt',
+    cta: '내 후원금이 간 곳 보기',
     trip: '그린피스는 정부와 기업의 후원을 받지 않습니다.'
   }
 };
+// 연결 주소는 template.html 의 목록(#index)에 한 번만 적는다. 3D가 안 떠도 그 목록은 그대로 눌린다.
+document.querySelectorAll('#index a[data-id]').forEach((a) => {
+  const p = PLACES[a.dataset.id]; if (!p) return;
+  p.link = a.getAttribute('href'); p.ext = /^https?:/.test(p.link);
+});
 const START = new THREE.Vector3(0, 0, 10);
 const GREEN = 0x66cc00;
 const rand = (() => { let a = 7; return () => { a = (a * 16807) % 2147483647; return a / 2147483647; }; })();
@@ -464,7 +469,7 @@ function setMode(m) {
   state.mode = m;
   body.dataset.mode = m; syncMedia();
 }
-function start() { playAmb(); if (state.mode === 'home') setMode('world'); }
+function start() { if (body.dataset.index) return; playAmb(); if (state.mode === 'home') setMode('world'); }
 function goHome() {
   closeCard();
   state.target = START.clone(); state.targetId = 'home'; marker.visible = false; state.camYawT = 0; endTrip();
@@ -546,7 +551,7 @@ function showCard(id) {
   $('c-statlabel').textContent = p.statLabel; $('c-statlabel').style.transitionDelay = '1.05s';
   $('c-cta').textContent = p.cta; $('c-cta').style.transitionDelay = '1.2s';
   $('c-close').style.transitionDelay = '1.35s';
-  $('c-cta').disabled = !p.link; $('c-cta').dataset.link = p.link || '';
+  $('c-cta').disabled = !p.link; $('c-cta').dataset.link = p.link || ''; $('c-cta').toggleAttribute('data-ext', !!p.ext);
   void $('card').offsetWidth;            // 처음 상태를 한 번 그린 뒤에 등장시킨다
   body.dataset.card = id;
 }
@@ -569,6 +574,7 @@ $('start').addEventListener('click', start);
 $('logo').addEventListener('click', goHome);
 $('c-cta').addEventListener('click', () => {          // 어둡게 잠긴 뒤 이야기 페이지로
   const link = $('c-cta').dataset.link; if (!link) return;
+  if (state.arrivedId) history.replaceState(null, '', location.pathname + location.search + '#' + state.arrivedId);   // 뒤로 오면 떠났던 섬 앞에서 다시 시작
   body.dataset.leaving = '1'; setTimeout(() => { location.href = link; }, 650);
 });
 window.addEventListener('pageshow', () => { delete body.dataset.leaving; });
